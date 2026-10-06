@@ -14,7 +14,7 @@ final fileUploaderProvider = Provider<FileUploader>(
 /// Platform file picker service.
 final attachmentPickerProvider = Provider<AttachmentPicker>((ref) {
   final config = ref.watch(appConfigProvider);
-  return config.useFakeBackend
+  return config.useFakeNativeAdapters
       ? DefaultFilePickerService()
       : const NativeFilePicker();
 });

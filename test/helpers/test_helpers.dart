@@ -18,6 +18,7 @@ const testConfig = AppConfig(
   appName: 'Test App',
   apiBaseUrl: 'https://api.test',
   useFakeBackend: true,
+  useFakeNativeAdapters: true,
 );
 
 /// Overrides that make the whole app run in-memory with no delays.

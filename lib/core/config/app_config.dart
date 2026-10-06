@@ -25,6 +25,7 @@ class AppConfig {
     this.enableNetworkLogs = false,
     this.logNetworkBodies = false,
     this.useFakeBackend = false,
+    this.useFakeNativeAdapters = false,
     this.openWebUiApiKey = '',
   });
 
@@ -82,6 +83,10 @@ class AppConfig {
       useFakeBackend: const bool.hasEnvironment('USE_FAKE_BACKEND')
           ? const bool.fromEnvironment('USE_FAKE_BACKEND')
           : (!isProd && environment != AppEnvironment.staging),
+      useFakeNativeAdapters: const bool.fromEnvironment(
+        'USE_FAKE_NATIVE_ADAPTERS',
+        defaultValue: false,
+      ),
     );
   }
 
@@ -98,6 +103,9 @@ class AppConfig {
 
   /// When true, features use in-process fake data sources instead of HTTP.
   final bool useFakeBackend;
+
+  /// When true, uses in-memory fake native adapters (voice, file picker).
+  final bool useFakeNativeAdapters;
 
   bool get isProduction => environment == AppEnvironment.production;
   bool get isDevelopment => environment == AppEnvironment.development;

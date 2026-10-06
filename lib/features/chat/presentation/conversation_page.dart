@@ -8,6 +8,7 @@ import '../../../shared/widgets/app_feedback.dart';
 import '../../../shared/widgets/responsive.dart';
 import '../../../shared/widgets/state_views.dart';
 import '../../file/application/file_providers.dart';
+import '../../voice/application/voice_providers.dart';
 import '../application/chat_providers.dart';
 import '../application/conversation_controller.dart';
 import '../domain/chat_provider.dart';
@@ -118,6 +119,7 @@ class _ConversationPageState extends ConsumerState<ConversationPage> {
             ),
             TypingIndicator(participants: state.typing),
             ChatComposer(
+              voiceRecorder: ref.watch(voiceRecorderProvider),
               onSend: controller.send,
               onAttach: info.supports(ChatCapability.attachments)
                   ? _attach
