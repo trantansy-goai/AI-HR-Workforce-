@@ -342,3 +342,18 @@ Files most worth reviewing:
 - `lib/core/navigation/route_access.dart` + `lib/app/router/app_router.dart` — guard.
 - `lib/core/error/*` — failure model.
 - `AGENTS.md` — rules future agents must follow.
+
+---
+
+## 14. Phase 1 Approved Workspace Navigation & Information Architecture
+
+- **5 Persistent Root Tabs (`StatefulShellRoute.indexedStack`)**:
+  1. Timeline (`/home/timeline`) — Default landing tab, presents internal news/announcements.
+  2. Chat (`/home/chat`) — Discovery root with AI AGENTS (agent catalog & conversation history) and OTHER (human chat, marked BLOCKED).
+  3. E-learning (`/home/learning`) — Unified hub for Courses & Training and Certification Tests.
+  4. Document (`/home/documents`) — Knowledge documents list, detail, and download.
+  5. My Profile (`/home/profile`) — Employee identity, secondary Approvals access, Settings, Sign out.
+- **Shared Workspace Header**: Displayed across all 5 root tabs (employee greeting, enterprise subtitle, notification icon, token quota usage bar).
+- **Secondary Access**: Notifications (`/home/notifications`) accessible from the header; Approvals (`/home/approvals`) accessible via Notifications and My Profile.
+- **Verification**: 128 tests green, 0 analysis warnings, debug APK compiles cleanly.
+
