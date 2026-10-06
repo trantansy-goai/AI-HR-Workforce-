@@ -154,7 +154,8 @@ void main() {
     await repo.stopGeneration('assistant');
     await sending;
 
-    final reply = messages('assistant').lastWhere((m) => m.sender.type == SenderType.ai);
+    final reply = messages('assistant')
+        .lastWhere((m) => m.sender.type == SenderType.ai);
     expect(reply.status, MessageStatus.sent);
     expect(
       reply.metadata.get<AiGenerationInfo>()?.finishReason,

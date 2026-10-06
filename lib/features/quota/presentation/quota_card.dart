@@ -15,7 +15,7 @@ class QuotaUsageCard extends ConsumerWidget {
         padding: const EdgeInsets.all(16),
         child: quotaAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (err, _) => Text('Error loading quota: '),
+          error: (err, _) => Text('Error loading quota: $err'),
           data: (quota) {
             final color = quota.isExceeded
                 ? Colors.red
@@ -40,7 +40,10 @@ class QuotaUsageCard extends ConsumerWidget {
                     ),
                     const SizedBox(width: 8),
                     Chip(
-                      label: Text(quota.periodName, overflow: TextOverflow.ellipsis),
+                      label: Text(
+                        quota.periodName,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                   ],
@@ -56,13 +59,13 @@ class QuotaUsageCard extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        'Used: \ / \ tokens',
+                        'Used: ${quota.usedTokens} / ${quota.limitTokens} tokens',
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '\%',
+                      '${(quota.usagePercentage * 100).toInt()}%',
                       style: TextStyle(
                         color: color,
                         fontWeight: FontWeight.bold,

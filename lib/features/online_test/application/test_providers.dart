@@ -1,10 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/di/core_providers.dart';
 import '../data/fake_test_repository.dart';
 import '../domain/test_models.dart';
 
 final onlineTestRepositoryProvider = Provider<OnlineTestRepository>((ref) {
-  return FakeTestRepository();
+  final config = ref.watch(appConfigProvider);
+  if (config.useFakeBackend) {
+    return FakeTestRepository();
+  }
+  throw UnimplementedError(
+    'Remote Online Test API repository is pending backend integration. Set useFakeBackend=true for development demo mode.',
+  );
 });
 
 final onlineTestsProvider = FutureProvider.autoDispose<List<OnlineTest>>((

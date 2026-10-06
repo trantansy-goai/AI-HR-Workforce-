@@ -1,10 +1,10 @@
-﻿{
+{
   "APP_ENV": "production",
   "APP_NAME": "GOAI Mobile",
   "API_BASE_URL": "https://api.example.com",
   "BUSINESS_API_BASE_URL": "https://business.example.com",
   "OPEN_WEBUI_BASE_URL": "https://openwebui.example.com",
-  "USE_FAKE_BACKEND": true,
+  "USE_FAKE_BACKEND": false,
   "ENABLE_NETWORK_LOGS": false,
   "LOG_NETWORK_BODIES": false
 }

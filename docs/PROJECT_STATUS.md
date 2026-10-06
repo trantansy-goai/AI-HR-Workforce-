@@ -2,36 +2,44 @@
 
 Date: 2026-10-06
 Target Completion: October 8 (Feature Complete) | October 9 (Release/Demo Ready)
-Baseline: `flutter_project_base` v1.0.0
+Baseline: lutter_project_base v1.0.0
 
 ---
 
-## Module Status Overview
+## Module Status Overview (Implementation vs. Live Integration)
 
- | Module | Status | Integrated Component | Notes / Pending Work |
-| --- | --- | --- | --- |
-| **Auth (Business)** | `BLOCKED@ | `AuthController`, `AuthSessionStorage` | Waiting for Business Backend `/api/v1/auths/signin` credentials |
-|f **Session Infrastructure** | `REEAL@ | `SecureStore`, 401 refresh queue | Fully functional with secure JWT token lifecycle |
-| **RBAC / User Roles** | `REAL` | `AppRoutes.access`, `HomePage` | UI permission gating ready; waiting for backend permissions list |
-| **Open WebUI Client** | `REAL` | `OpenWebUiClient` | SSE HTTP streaming client & endpoint parser complete & tested |
-| **Live Open WebUI Connection** | `BLOCKED@ | `OpenWebUiClient` | Client complete; waiting for live Open WebUI host/API key |
-| **Agent Catalog** | `PARTIAL@ | `AgentRepository` & `ModelRepositoryImpl` | `GET /api/models` implemented; agent mapping is cNEEDS_BACKEND_CONFIRMATION` |
-|f **AI Chat** | `REEAL@ | `OpenWebUiChatProvider`, `ChatRepositoryImpl` | Model selection, streaming, retry, cancellation, citations wired |
-| **SSE Streaming** | `REEAL@ | `OpenWebUiSseParser` | Parses deltas, citations, `[DONE]`, malformed chunks, and server errors |
-| **Voice Recording** | `REAL` | `VoiceRecorder`, fake & ui integration | Microphone permission check, start/stop/cancel, duration timer, audio output |
-| **Documents** | `REAL` | `DocumentRepository`, `FakeDocumentRepository`, UI | Document list, detail, download, open flow complete & tested |
-|f **Upload** | `REAL` | `AttachmentPicker`, `DefaultFilePicker`, `FileUploader` | Picker, file validation, local attachment state, attachment in chat |
-|f **E-learning** | `REEAL@ | `LearningRepository`, `FakeLearningRepository`, UI | Learning list, detail/content, attachment complete & tested |
-| **Online Test** | `REAL@ | `OnlineTestRepository`, `FakeTestRepository`, UI | Test list, questions, answer selection, submit,one, result display complete & tested |
-|f **News** | `REEAL@ | `NewsRepository`, `FakeNewsRepository`, UI | News list, detail/content, publishedAt, images complete & tested |
-| **Token Usage / Quota** | `REEAL@ | `QuotaRepository`, `FakeQuotaRepository`, UI | Quota card, used/limit/remaining, warning, exceeded states complete & tested |
-|f **Human Approval** | `REAL@ | `ApprovalRepository`, `FakeApprovalRepository`, UI | Approval list, server-driven actions (approve/reject), action controller complete & tested |
+| Module | Implementation Status | Live Integration Status | Integrated Component | Notes / Pending Work |
+| :--- | :--- | :--- | :--- | :--- |
+| **Auth (Business)** | IMPLEMENTED | BLOCKED | AuthController, AuthSessionStorage | Domain + Fake DataSource complete; awaiting /api/v1/auth/login |
+| **Session** | REAL | REAL | SecureStore, 401 refresh queue | Production-ready token lifecycle & HTTP refresh interceptor |
+| **RBAC / User Roles** | IMPLEMENTED | BLOCKED | AppRoutes.access, HomePage | Server-driven UI gating ready; awaiting backend permissions array |
+| **Open WebUI Client** | REAL | BLOCKED | OpenWebUiClient | Client & SSE parser complete; awaiting live server host & key |
+| **Agent Catalog** | IMPLEMENTED | PARTIAL | AgentRepository, ModelRepositoryImpl | GET /api/models wired; enterprise agent mapping pending |
+| **AI Chat** | REAL | BLOCKED | OpenWebUiChatProvider, ChatRepositoryImpl | Streaming, retry, cancel, citations wired; awaiting live endpoint |
+| **SSE Streaming** | REAL | BLOCKED | OpenWebUiSseParser | Parses text deltas, citations, [DONE], malformed JSON, server errors |
+| **Voice Recording** | IMPLEMENTED | PARTIAL | VoiceRecorder, FakeVoiceRecorder | Recording UI & duration timer ready; native plugin pending STT contract |
+| **Documents** | IMPLEMENTED | BLOCKED | DocumentRepository, UI | Domain, fake repo, list/detail/download UI ready; awaiting API |
+| **Upload / File Picker**| IMPLEMENTED | PARTIAL | AttachmentPicker, DefaultFilePicker | Attachment flow ready; native ile_picker plugin pending upload API |
+| **E-learning** | IMPLEMENTED | BLOCKED | LearningRepository, UI | Domain, fake repo, course list/content UI ready; awaiting API |
+| **Online Test** | IMPLEMENTED | BLOCKED | OnlineTestRepository, UI | Domain, fake repo, test/question/result UI ready; awaiting API |
+| **News** | IMPLEMENTED | BLOCKED | NewsRepository, UI | Domain, fake repo, news list/article UI ready; awaiting API |
+| **Token Usage** | IMPLEMENTED | BLOCKED | QuotaRepository, UI | Quota progress card & warning states ready; awaiting API |
+| **Human Approval** | IMPLEMENTED | BLOCKED | ApprovalRepository, UI | Server-driven approval actions ready; awaiting API |
+
+---
+
+## Status Legend
+
+- IMPLEMENTED: Production Domain, Controller, and UI presentation fully coded and unit/widget tested.
+- REAL: Production-grade infrastructure code implemented with no mock fallbacks.
+- PARTIAL: Client adapter or UI ready; native device plugin or backend route mapping pending live verification.
+- BLOCKED: Live endpoint URL, API key, or backend API contract required from client.
 
 ---
 
 ## Quality Gates Status
 
-- `dart format lib test`: PASS
-- `flutter analyze`: PASS ( 0 issues found!)
-- `flutter test`: PASS (110/110 tests passing)
-- `flutter build apk --debug`: PASS (**&#10004; Built buildpp\outputslutter-apkpp-debug.apk**)
+- dart format lib test: PASS
+- lutter analyze: PASS (0 issues found!)
+- lutter test: PASS (110/110 tests passing)
+- lutter build apk --debug: PASS (pp-debug.apk built)

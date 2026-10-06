@@ -79,10 +79,9 @@ class AppConfig {
       logNetworkBodies:
           !isProd &&
           const bool.fromEnvironment('LOG_NETWORK_BODIES', defaultValue: false),
-      useFakeBackend: const bool.fromEnvironment(
-        'USE_FAKE_BACKEND',
-        defaultValue: true,
-      ),
+      useFakeBackend: const bool.hasEnvironment('USE_FAKE_BACKEND')
+          ? const bool.fromEnvironment('USE_FAKE_BACKEND')
+          : (!isProd && environment != AppEnvironment.staging),
     );
   }
 
