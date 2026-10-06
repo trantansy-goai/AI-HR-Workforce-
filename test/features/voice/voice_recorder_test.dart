@@ -79,21 +79,23 @@ void main() {
       expect(await recorder.hasPermission(), isFalse);
     });
 
-    test('throws exception when starting without microphone permission', () async {
-      when(() => mockRecorder.hasPermission()).thenAnswer((_) async => false);
+    test(
+      'throws exception when starting without microphone permission',
+      () async {
+        when(() => mockRecorder.hasPermission()).thenAnswer((_) async => false);
 
-      await expectLater(
-        () => recorder.start(customPath: '/tmp/test.m4a'),
-        throwsA(isA<Exception>()),
-      );
-      expect(recorder.status, equals(RecordingStatus.error));
-    });
+        await expectLater(
+          () => recorder.start(customPath: '/tmp/test.m4a'),
+          throwsA(isA<Exception>()),
+        );
+        expect(recorder.status, equals(RecordingStatus.error));
+      },
+    );
 
     test('starts and stops recording session cleanly', () async {
       when(() => mockRecorder.hasPermission()).thenAnswer((_) async => true);
-      when(
-        () => mockRecorder.start(any(), path: any(named: 'path')),
-      ).thenAnswer((_) async {});
+      when(() => mockRecorder.start(any(), path: any(named: 'path')))
+          .thenAnswer((_) async {});
       when(() => mockRecorder.stop()).thenAnswer((_) async => '/tmp/test.m4a');
 
       await recorder.start(customPath: '/tmp/test.m4a');
@@ -106,9 +108,8 @@ void main() {
 
     test('cancels recording session cleanly', () async {
       when(() => mockRecorder.hasPermission()).thenAnswer((_) async => true);
-      when(
-        () => mockRecorder.start(any(), path: any(named: 'path')),
-      ).thenAnswer((_) async {});
+      when(() => mockRecorder.start(any(), path: any(named: 'path')))
+          .thenAnswer((_) async {});
       when(() => mockRecorder.cancel()).thenAnswer((_) async {});
 
       await recorder.start(customPath: '/tmp/test.m4a');
