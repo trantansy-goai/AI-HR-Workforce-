@@ -17,9 +17,10 @@ Baseline: lutter_project_base v1.0.0
 | **Agent Catalog** | IMPLEMENTED | PARTIAL | AgentRepository, ModelRepositoryImpl | GET /api/models wired; enterprise agent mapping pending |
 | **AI Chat** | REAL | BLOCKED | OpenWebUiChatProvider, ChatRepositoryImpl | Streaming, retry, cancel, citations wired; awaiting live endpoint |
 | **SSE Streaming** | REAL | BLOCKED | OpenWebUiSseParser | Parses text deltas, citations, [DONE], malformed JSON, server errors |
-| **Voice Recording** | IMPLEMENTED | PARTIAL | VoiceRecorder, FakeVoiceRecorder | Recording UI & duration timer ready; native plugin pending STT contract |
+| **Voice Recording** | IMPLEMENTED | UNVERIFIED_ON_DEVICE | NativeVoiceRecorder, FakeVoiceRecorder | Native recorder (ecord) wired & tested; unverified on physical hardware. STT is BLOCKED |
 | **Documents** | IMPLEMENTED | BLOCKED | DocumentRepository, UI | Domain, fake repo, list/detail/download UI ready; awaiting API |
-| **Upload / File Picker**| IMPLEMENTED | PARTIAL | AttachmentPicker, DefaultFilePicker | Attachment flow ready; native ile_picker plugin pending upload API |
+| **File Picker** | IMPLEMENTED | UNVERIFIED_ON_DEVICE | NativeFilePicker, DefaultFilePickerService | Native file picker (ile_picker) wired & tested; unverified on physical hardware |
+| **Remote Upload** | IMPLEMENTED | BLOCKED | FileUploader, FakeFileUploader | Upload abstraction ready; backend multipart upload API is BLOCKED |
 | **E-learning** | IMPLEMENTED | BLOCKED | LearningRepository, UI | Domain, fake repo, course list/content UI ready; awaiting API |
 | **Online Test** | IMPLEMENTED | BLOCKED | OnlineTestRepository, UI | Domain, fake repo, test/question/result UI ready; awaiting API |
 | **News** | IMPLEMENTED | BLOCKED | NewsRepository, UI | Domain, fake repo, news list/article UI ready; awaiting API |
@@ -30,9 +31,10 @@ Baseline: lutter_project_base v1.0.0
 
 ## Status Legend
 
-- IMPLEMENTED: Production Domain, Controller, and UI presentation fully coded and unit/widget tested.
+- IMPLEMENTED: Production Domain, Native Adapter, Controller, and UI presentation fully coded and unit/widget tested.
 - REAL: Production-grade infrastructure code implemented with no mock fallbacks.
-- PARTIAL: Client adapter or UI ready; native device plugin or backend route mapping pending live verification.
+- UNVERIFIED_ON_DEVICE: Native production adapter implemented and compiles in APK, pending test on a physical Android/iOS handset.
+- PARTIAL: Client adapter or UI ready; backend route mapping pending live verification.
 - BLOCKED: Live endpoint URL, API key, or backend API contract required from client.
 
 ---
@@ -41,5 +43,5 @@ Baseline: lutter_project_base v1.0.0
 
 - dart format lib test: PASS
 - lutter analyze: PASS (0 issues found!)
-- lutter test: PASS (110/110 tests passing)
-- lutter build apk --debug: PASS (pp-debug.apk built)
+- lutter test: PASS (116/116 tests passing)
+- lutter build apk --debug: PASS (pp-debug.apk built with native record and file_picker plugins)

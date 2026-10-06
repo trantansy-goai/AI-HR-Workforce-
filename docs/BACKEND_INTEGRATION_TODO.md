@@ -2,6 +2,11 @@
 
 This document outlines the exact Mobile operations, required backend capabilities, data contracts, domain models, and production adapter requirements to replace development fixtures (Fake...Repository) when the client API arrives.
 
+> **Note on Native Adapters**:
+> - **Voice Recording**: NativeVoiceRecorder is implemented using package:record. Device microphone recording is NOT a backend blocker.
+> - **File Picking**: NativeFilePicker is implemented using package:file_picker. Device document selection is NOT a backend blocker.
+> - Only **Remote Upload** and **STT (Speech-to-Text)** require backend API contracts.
+
 ---
 
 ## 1. Authentication & Session
@@ -46,17 +51,17 @@ This document outlines the exact Mobile operations, required backend capabilitie
 
 ---
 
-## 4. File Picker & Upload
+## 4. File Attachment & Remote Upload
 
 - **Feature**: File Attachment & Remote Upload
-- **Mobile Operation**: Pick file from device storage, upload to server, attach to AI Chat or request.
+- **Mobile Operation**: Upload picked local file to backend storage. (Native file picking is already IMPLEMENTED via NativeFilePicker).
 - **Required Endpoint Capability**: Multipart file upload endpoint.
 - **Required Request Fields**: Multipart binary file (ile), optional ilename, mimeType.
 - **Required Response Fields**: ileId, ileName, ileSizeBytes, contentType, ileUrl.
 - **Domain Model**: Attachment, AttachmentSource.
-- **Current Repository Interface**: FileUploader, AttachmentPicker.
-- **Current Fake Implementation**: FakeFileUploader, DefaultFilePicker.
-- **Production Adapter Needed**: HttpFileUploader, FilePickerService (using ile_picker package).
+- **Current Repository Interface**: FileUploader.
+- **Current Fake Implementation**: FakeFileUploader.
+- **Production Adapter Needed**: HttpFileUploader.
 
 ---
 
@@ -139,11 +144,11 @@ This document outlines the exact Mobile operations, required backend capabilitie
 ## 10. STT (Speech-to-Text) Audio Transcription
 
 - **Feature**: Voice Input Audio Transcription
-- **Mobile Operation**: Record voice audio snippet in chat composer & send to server for STT.
+- **Mobile Operation**: Transcribe local voice recording produced by NativeVoiceRecorder. (Audio recording is already IMPLEMENTED via NativeVoiceRecorder).
 - **Required Endpoint Capability**: Multipart audio file transcription endpoint.
-- **Required Request Fields**: Multipart audio file (udio file in OGG, WAV, or M4A format).
+- **Required Request Fields**: Multipart audio file (udio file in M4A/AAC format).
 - **Required Response Fields**: { "text": "Transcribed text content..." }.
 - **Domain Model**: Plain text string / OutgoingMessage.
-- **Current Repository Interface**: VoiceRecorder.
-- **Current Fake Implementation**: FakeVoiceRecorder.
-- **Production Adapter Needed**: NativeVoiceRecorder (using ecord plugin) + HttpSttDataSource.
+- **Current Repository Interface**: SttDataSource (to be injected into voice controller).
+- **Current Fake Implementation**: None (Audio file remains on device).
+- **Production Adapter Needed**: HttpSttDataSource.
