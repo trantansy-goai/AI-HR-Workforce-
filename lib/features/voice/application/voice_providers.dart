@@ -1,10 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/di/core_providers.dart';
 import '../data/fake_voice_recorder.dart';
+import '../data/native_voice_recorder.dart';
 import '../domain/voice_recorder.dart';
 
 final voiceRecorderProvider = Provider<VoiceRecorder>((ref) {
-  final recorder = FakeVoiceRecorder();
+  final config = ref.watch(appConfigProvider);
+  final VoiceRecorder recorder = config.useFakeBackend
+      ? FakeVoiceRecorder()
+      : NativeVoiceRecorder();
   ref.onDispose(recorder.dispose);
   return recorder;
 });
