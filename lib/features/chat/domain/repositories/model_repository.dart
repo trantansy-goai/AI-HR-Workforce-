@@ -1,4 +1,4 @@
-﻿import '../extensions/ai_extensions.dart';
+import '../extensions/ai_extensions.dart';
 
 abstract interface class ModelRepository {
   Future<List<ModelInfo>> getModels();

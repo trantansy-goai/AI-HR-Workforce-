@@ -1,7 +1,9 @@
-﻿// ignore_for_file: prefer_initializing_formals
+// ignore_for_file: prefer_initializing_formals
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:dio/dio.dart';
+
 import '../../domain/ai/text_generation.dart';
 import '../../domain/extensions/ai_extensions.dart';
 import 'open_webui_sse_parser.dart';
@@ -14,17 +16,18 @@ class OpenWebUiClient implements RemoteAiClient {
     String apiKey = '',
     ModelInfo? initialModel,
     OpenWebUiSseParser sseParser = const OpenWebUiSseParser(),
-  })  : _dio = dio,
-        _baseUrl = openWebUiBaseUrl.endsWith('/')
-            ? openWebUiBaseUrl.substring(0, openWebUiBaseUrl.length - 1)
-            : openWebUiBaseUrl,
-        _apiKey = apiKey,
-        _sseParser = sseParser,
-        _currentModel = initialModel ??
-            const ModelInfo(
-              id: 'open-webui-default',
-              displayName: 'Open WebUI Model',
-            );
+  }) : _dio = dio,
+       _baseUrl = openWebUiBaseUrl.endsWith('/')
+           ? openWebUiBaseUrl.substring(0, openWebUiBaseUrl.length - 1)
+           : openWebUiBaseUrl,
+       _apiKey = apiKey,
+       _sseParser = sseParser,
+       _currentModel =
+           initialModel ??
+           const ModelInfo(
+             id: 'open-webui-default',
+             displayName: 'Open WebUI Model',
+           );
 
   final Dio _dio;
   final String _baseUrl;
@@ -46,9 +49,7 @@ class OpenWebUiClient implements RemoteAiClient {
   Future<List<ModelInfo>> fetchModels() async {
     final url = '$_baseUrl/api/models';
     final options = Options(
-      headers: {
-        if (_apiKey.isNotEmpty) 'Authorization': 'Bearer $_apiKey',
-      },
+      headers: {if (_apiKey.isNotEmpty) 'Authorization': 'Bearer $_apiKey'},
     );
 
     try {
@@ -63,11 +64,13 @@ class OpenWebUiClient implements RemoteAiClient {
               final id = item['id']?.toString() ?? '';
               final name = item['name']?.toString() ?? id;
               if (id.isNotEmpty) {
-                models.add(ModelInfo(
-                  id: id,
-                  displayName: name,
-                  contextWindow: item['context_length'] as int?,
-                ));
+                models.add(
+                  ModelInfo(
+                    id: id,
+                    displayName: name,
+                    contextWindow: item['context_length'] as int?,
+                  ),
+                );
               }
             }
           }
@@ -107,10 +110,7 @@ class OpenWebUiClient implements RemoteAiClient {
           AiRole.assistant => 'assistant',
           AiRole.tool => 'tool',
         };
-        return {
-          'role': roleStr,
-          'content': turn.content,
-        };
+        return {'role': roleStr, 'content': turn.content};
       }).toList(),
       if (request.options.maxTokens != null)
         'max_tokens': request.options.maxTokens,

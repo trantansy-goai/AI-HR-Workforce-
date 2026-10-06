@@ -1,4 +1,5 @@
-﻿import 'dart:convert';
+import 'dart:convert';
+
 import '../../domain/ai/text_generation.dart';
 import '../../domain/extensions/ai_extensions.dart';
 
@@ -40,18 +41,28 @@ class OpenWebUiSseParser {
               }
 
               // Extract citations / RAG sources if provided by Open WebUI
-              if (json.containsKey('citations') || json.containsKey('sources')) {
+              if (json.containsKey('citations') ||
+                  json.containsKey('sources')) {
                 final citationsRaw = json['citations'] ?? json['sources'];
                 if (citationsRaw is List && citationsRaw.isNotEmpty) {
                   final sources = <SourceReference>[];
                   for (final item in citationsRaw) {
                     if (item is Map<String, dynamic>) {
-                      sources.add(SourceReference(
-                        id: item['id']?.toString() ?? '',
-                        title: item['title']?.toString() ?? item['name']?.toString() ?? 'Source',
-                        uri: item['uri']?.toString() ?? item['url']?.toString(),
-                        snippet: item['snippet']?.toString() ?? item['content']?.toString(),
-                      ));
+                      sources.add(
+                        SourceReference(
+                          id: item['id']?.toString() ?? '',
+                          title:
+                              item['title']?.toString() ??
+                              item['name']?.toString() ??
+                              'Source',
+                          uri:
+                              item['uri']?.toString() ??
+                              item['url']?.toString(),
+                          snippet:
+                              item['snippet']?.toString() ??
+                              item['content']?.toString(),
+                        ),
+                      );
                     }
                   }
                   if (sources.isNotEmpty) {

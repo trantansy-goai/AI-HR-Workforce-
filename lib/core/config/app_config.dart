@@ -1,4 +1,4 @@
-﻿/// Runtime environments supported by the app.
+/// Runtime environments supported by the app.
 enum AppEnvironment {
   development,
   staging,

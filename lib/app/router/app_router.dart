@@ -5,12 +5,17 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/auth/session_status.dart';
 import '../../core/navigation/route_access.dart';
+import '../../features/approval/presentation/approval_pages.dart';
 import '../../features/auth/application/auth_providers.dart';
 import '../../features/auth/presentation/sign_in_page.dart';
 import '../../features/chat/presentation/conversation_list_page.dart';
 import '../../features/chat/presentation/conversation_page.dart';
+import '../../features/document/presentation/document_pages.dart';
+import '../../features/elearning/presentation/learning_pages.dart';
 import '../../features/home/presentation/foundation_showcase_page.dart';
 import '../../features/home/presentation/home_page.dart';
+import '../../features/news/presentation/news_pages.dart';
+import '../../features/online_test/presentation/test_pages.dart';
 import '../../features/profile/presentation/profile_page.dart';
 import '../../features/settings/presentation/settings_page.dart';
 import '../pages.dart';
@@ -70,6 +75,56 @@ final routerProvider = Provider<GoRouter>((ref) {
                 ),
               ),
             ],
+          ),
+          GoRoute(
+            path: 'documents',
+            builder: (context, state) => const DocumentListPage(),
+            routes: [
+              GoRoute(
+                path: ':documentId',
+                builder: (context, state) => DocumentDetailPage(
+                  documentId: state.pathParameters['documentId']!,
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'learning',
+            builder: (context, state) => const LearningListPage(),
+            routes: [
+              GoRoute(
+                path: ':courseId',
+                builder: (context, state) => LearningDetailPage(
+                  courseId: state.pathParameters['courseId']!,
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'tests',
+            builder: (context, state) => const TestListPage(),
+            routes: [
+              GoRoute(
+                path: ':testId',
+                builder: (context, state) =>
+                    TestTakingPage(testId: state.pathParameters['testId']!),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'news',
+            builder: (context, state) => const NewsListPage(),
+            routes: [
+              GoRoute(
+                path: ':newsId',
+                builder: (context, state) =>
+                    NewsDetailPage(newsId: state.pathParameters['newsId']!),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'approvals',
+            builder: (context, state) => const ApprovalListPage(),
           ),
           GoRoute(
             path: 'settings',

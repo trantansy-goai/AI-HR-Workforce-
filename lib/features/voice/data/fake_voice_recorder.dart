@@ -1,4 +1,5 @@
-﻿import 'dart:async';
+import 'dart:async';
+
 import '../domain/voice_recorder.dart';
 
 /// In-memory & test implementation of [VoiceRecorder].

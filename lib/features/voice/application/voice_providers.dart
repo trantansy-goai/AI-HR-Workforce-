@@ -1,4 +1,5 @@
-﻿import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../data/fake_voice_recorder.dart';
 import '../domain/voice_recorder.dart';
 

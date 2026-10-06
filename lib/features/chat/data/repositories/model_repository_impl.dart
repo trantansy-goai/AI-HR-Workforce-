@@ -1,4 +1,4 @@
-﻿import '../../domain/extensions/ai_extensions.dart';
+import '../../domain/extensions/ai_extensions.dart';
 import '../../domain/repositories/model_repository.dart';
 import '../sources/open_webui_client.dart';
 

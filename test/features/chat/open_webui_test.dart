@@ -1,4 +1,5 @@
-﻿import 'dart:async';
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_project_base/core/config/app_config.dart';
 import 'package:flutter_project_base/features/chat/data/repositories/model_repository_impl.dart';
@@ -88,7 +89,10 @@ void main() {
 
       expect(chunks.length, equals(1));
       expect(chunks.first, isA<DoneChunk>());
-      expect((chunks.first as DoneChunk).finishReason, equals(FinishReasons.error));
+      expect(
+        (chunks.first as DoneChunk).finishReason,
+        equals(FinishReasons.error),
+      );
     });
   });
 
@@ -107,19 +111,23 @@ void main() {
     });
 
     test('fetches available models from Open WebUI endpoint', () async {
-      when(() => mockDio.get<dynamic>(
-            'https://openwebui.example.com/api/models',
-            options: any(named: 'options'),
-          )).thenAnswer((_) async => Response<dynamic>(
-            requestOptions: RequestOptions(path: ''),
-            statusCode: 200,
-            data: {
-              'data': [
-                {'id': 'gpt-4o', 'name': 'GPT-4o'},
-                {'id': 'llama-3', 'name': 'Llama 3 70B'},
-              ],
-            },
-          ));
+      when(
+        () => mockDio.get<dynamic>(
+          'https://openwebui.example.com/api/models',
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer(
+        (_) async => Response<dynamic>(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 200,
+          data: {
+            'data': [
+              {'id': 'gpt-4o', 'name': 'GPT-4o'},
+              {'id': 'llama-3', 'name': 'Llama 3 70B'},
+            ],
+          },
+        ),
+      );
 
       final models = await repository.getModels();
 

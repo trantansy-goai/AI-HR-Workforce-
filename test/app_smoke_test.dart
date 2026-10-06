@@ -14,7 +14,7 @@ import 'helpers/test_helpers.dart';
 void main() {
   Future<void> pumpApp(WidgetTester tester) async {
     // Phone-sized viewport.
-    tester.view.physicalSize = const Size(1260, 2700);
+    tester.view.physicalSize = const Size(1260, 3600);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
     await tester.pumpWidget(
@@ -45,7 +45,7 @@ void main() {
     await tester.tap(find.text('Continue as guest'));
     await tester.pumpAndSettle();
     expect(find.text('Hello, Guest'), findsOneWidget);
-    expect(find.text('Chat demo'), findsOneWidget);
+    expect(find.text('AI Chat & Agents'), findsOneWidget);
   });
 
   testWidgets('chat demo: open conversation, send, receive AI reply', (
@@ -55,7 +55,7 @@ void main() {
     await tester.tap(find.text('Continue as guest'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Chat demo'));
+    await tester.tap(find.text('AI Chat & Agents'));
     await tester.pumpAndSettle();
     expect(find.text('Mock Assistant'), findsOneWidget);
     expect(find.text('Customer Support'), findsOneWidget);
@@ -87,6 +87,8 @@ void main() {
     await tester.tap(find.text('Continue as guest'));
     await tester.pumpAndSettle();
 
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -600));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Settings'));
     await tester.pumpAndSettle();
 

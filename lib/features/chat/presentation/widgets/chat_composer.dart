@@ -1,13 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../../core/localization/l10n.dart';
 import '../../../../core/theme/app_tokens.dart';
 import '../../../file/domain/attachment.dart';
+import '../../../voice/data/fake_voice_recorder.dart';
+import '../../../voice/domain/voice_recorder.dart';
 import '../../domain/entities/message.dart';
 import 'attachment_chip.dart';
 
-/// Message input with send / stop / attach and reply preview.
-/// State-management agnostic: everything goes through callbacks.
+/// Message input with send / stop / attach / voice recording and reply preview.
 class ChatComposer extends StatefulWidget {
   const ChatComposer({
     super.key,
@@ -19,6 +22,7 @@ class ChatComposer extends StatefulWidget {
     this.onCancelReply,
     this.attachments = const [],
     this.onRemoveAttachment,
+    this.voiceRecorder,
   });
 
   final ValueChanged<String> onSend;
@@ -29,6 +33,7 @@ class ChatComposer extends StatefulWidget {
   final VoidCallback? onCancelReply;
   final List<Attachment> attachments;
   final ValueChanged<String>? onRemoveAttachment;
+  final VoiceRecorder? voiceRecorder;
 
   @override
   State<ChatComposer> createState() => _ChatComposerState();
@@ -37,18 +42,28 @@ class ChatComposer extends StatefulWidget {
 class _ChatComposerState extends State<ChatComposer> {
   final _controller = TextEditingController();
   bool _hasText = false;
+  late final VoiceRecorder _recorder;
+  bool _isRecording = false;
+  Duration _recordDuration = Duration.zero;
+  StreamSubscription<Duration>? _durationSub;
 
   @override
   void initState() {
     super.initState();
+    _recorder = widget.voiceRecorder ?? FakeVoiceRecorder();
     _controller.addListener(() {
       final hasText = _controller.text.trim().isNotEmpty;
       if (hasText != _hasText) setState(() => _hasText = hasText);
+    });
+
+    _durationSub = _recorder.durationStream.listen((duration) {
+      if (mounted) setState(() => _recordDuration = duration);
     });
   }
 
   @override
   void dispose() {
+    _durationSub?.cancel();
     _controller.dispose();
     super.dispose();
   }
@@ -61,6 +76,33 @@ class _ChatComposerState extends State<ChatComposer> {
     _controller.clear();
   }
 
+  Future<void> _toggleVoiceRecording() async {
+    if (!_isRecording) {
+      final hasPerm = await _recorder.hasPermission();
+      if (!hasPerm) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Microphone permission denied')),
+          );
+        }
+        return;
+      }
+      await _recorder.start();
+      setState(() => _isRecording = true);
+    } else {
+      final audioPath = await _recorder.stop();
+      setState(() => _isRecording = false);
+      if (audioPath != null && mounted) {
+        widget.onSend('[Voice Note Recorded: $audioPath]');
+      }
+    }
+  }
+
+  Future<void> _cancelVoiceRecording() async {
+    await _recorder.cancel();
+    setState(() => _isRecording = false);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -71,15 +113,41 @@ class _ChatComposerState extends State<ChatComposer> {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.sm,
-            AppSpacing.sm,
-            AppSpacing.sm,
-            AppSpacing.sm,
-          ),
+          padding: const EdgeInsets.all(AppSpacing.sm),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              if (_isRecording)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.xs,
+                  ),
+                  margin: const EdgeInsets.only(bottom: AppSpacing.xs),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.errorContainer,
+                    borderRadius: BorderRadius.circular(AppRadius.sm),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.mic, color: Colors.red),
+                      const SizedBox(width: AppSpacing.xs),
+                      Text(
+                        'Recording: ${_recordDuration.inSeconds}s',
+                        style: TextStyle(
+                          color: theme.colorScheme.onErrorContainer,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.red),
+                        onPressed: _cancelVoiceRecording,
+                        tooltip: 'Cancel Recording',
+                      ),
+                    ],
+                  ),
+                ),
               if (widget.replyTo != null)
                 _ReplyBanner(
                   reply: widget.replyTo!,
@@ -114,6 +182,12 @@ class _ChatComposerState extends State<ChatComposer> {
                       icon: const Icon(Icons.attach_file),
                       onPressed: widget.onAttach,
                     ),
+                  IconButton(
+                    tooltip: _isRecording ? 'Stop Recording' : 'Voice Record',
+                    icon: Icon(_isRecording ? Icons.stop_circle : Icons.mic),
+                    color: _isRecording ? Colors.red : null,
+                    onPressed: _toggleVoiceRecording,
+                  ),
                   Expanded(
                     child: TextField(
                       controller: _controller,

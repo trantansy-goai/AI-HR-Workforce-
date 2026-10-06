@@ -7,9 +7,9 @@ import '../../../core/localization/l10n.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../shared/widgets/responsive.dart';
 import '../../auth/application/auth_providers.dart';
+import '../../quota/presentation/quota_card.dart';
 
-/// Demo landing page linking to each foundation module.
-/// Replace with the real home screen in a product app.
+/// Dashboard landing page for GOAI Mobile Phase 1.
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
@@ -22,29 +22,53 @@ class HomePage extends ConsumerWidget {
         ? l10n.authGuestName
         : user.displayName ?? user.email ?? l10n.authGuestName;
 
-    final items = [
+    final items = const [
       _HomeItem(
         Icons.forum_outlined,
-        l10n.homeChatTitle,
-        l10n.homeChatSubtitle,
+        'AI Chat & Agents',
+        'Chat with Open WebUI assistant & enterprise agents',
         AppRoutes.chat,
       ),
       _HomeItem(
-        Icons.widgets_outlined,
-        l10n.homeShowcaseTitle,
-        l10n.homeShowcaseSubtitle,
-        AppRoutes.showcase,
+        Icons.folder_shared_outlined,
+        'Knowledge Documents',
+        'Access company policies and onboarding files',
+        AppRoutes.documents,
+      ),
+      _HomeItem(
+        Icons.school_outlined,
+        'E-Learning',
+        'Complete interactive security & AI training',
+        AppRoutes.learning,
+      ),
+      _HomeItem(
+        Icons.assignment_turned_in_outlined,
+        'Online Tests',
+        'Take compliance and knowledge exams',
+        AppRoutes.tests,
+      ),
+      _HomeItem(
+        Icons.newspaper_outlined,
+        'Company News',
+        'Latest announcements and platform updates',
+        AppRoutes.news,
+      ),
+      _HomeItem(
+        Icons.approval_outlined,
+        'Approvals',
+        'Review and approve pending employee requests',
+        AppRoutes.approvals,
       ),
       _HomeItem(
         Icons.person_outline,
-        l10n.homeProfileTitle,
-        l10n.homeProfileSubtitle,
+        'My Profile',
+        'View user account identity and roles',
         AppRoutes.profile,
       ),
       _HomeItem(
         Icons.settings_outlined,
-        l10n.homeSettingsTitle,
-        l10n.homeSettingsSubtitle,
+        'Settings',
+        'App theme, language, and configuration',
         AppRoutes.settings,
       ),
     ];
@@ -56,7 +80,7 @@ class HomePage extends ConsumerWidget {
     };
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.homeTitle)),
+      appBar: AppBar(title: const Text('GOAI Workplace')),
       body: ResponsiveCenter(
         maxWidth: 1100,
         child: CustomScrollView(
@@ -72,7 +96,9 @@ class HomePage extends ConsumerWidget {
                       style: theme.textTheme.headlineSmall,
                     ),
                     const SizedBox(height: AppSpacing.xs),
-                    Text(l10n.homeSubtitle, style: theme.textTheme.bodyMedium),
+                    const Text('Enterprise AI Assistant & Employee Workspace'),
+                    const SizedBox(height: AppSpacing.md),
+                    const QuotaUsageCard(),
                   ],
                 ),
               ),
@@ -80,8 +106,6 @@ class HomePage extends ConsumerWidget {
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               sliver: SliverToBoxAdapter(
-                // Wrap instead of a fixed-height grid so tiles grow with
-                // text scale and translations.
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     const gap = AppSpacing.md;
@@ -144,7 +168,7 @@ class _HomeCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(item.title, style: theme.textTheme.titleMedium),
+                    Text(item.title, style: theme.textTheme.titleMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
                     Text(
                       item.subtitle,
                       style: theme.textTheme.bodySmall,
