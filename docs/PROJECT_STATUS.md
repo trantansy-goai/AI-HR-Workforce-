@@ -8,23 +8,24 @@ Baseline: `flutter_project_base` v1.0.0
 
 ## Module Status Overview
 
-| Module | Status | Inherited Base Component | Pending Phase 1 Work |
+| Module | Status | Integrated Component | Notes / Pending Work |
 | --- | --- | --- | --- |
-| **Auth** | `PARTIAL` | `AuthController`, `AuthUser`, `AuthSessionStorage` | Connect `HttpAuthRemoteDataSource` to Open WebUI `/api/v1/auths/signin` |
-| **Session** | `REAL` | `SecureStore`, single-flight token refresh interceptor | Production ready out of the box |
-| **RBAC** | `NOT_STARTED` | `UserProfile` | Parse user roles & permissions from `/api/v1/auths/verify` into UI |
-| **Open WebUI** | `NOT_STARTED` | `RemoteAiClient` interface | Build SSE HTTP client for `/api/chat/completions` |
-| **Agent** | `NOT_STARTED` | — | Fetch models/agents list from Open WebUI `/api/models` |
-| **AI Chat** | `PARTIAL` | `ChatRepositoryImpl`, `ConversationPage`, `MessageBubble` | Wire `OpenWebUiChatProvider` into `chatProviderProvider` |
-| **Streaming** | `PARTIAL` | `MessageDelta` streaming pipeline & caret UI | Process SSE stream chunks from Open WebUI |
-| **Voice Recording** | `NOT_STARTED` | — | Integrate `record` plugin for audio capture & STT payload |
-| **Documents** | `NOT_STARTED` | — | Document list & attached file viewer UI |
-| **Upload** | `PARTIAL` | `Attachment` model & `FileUploader` pipeline | Implement `OpenWebUiFileUploader` for `/api/v1/files/` |
-| **E-learning** | `NOT_STARTED` | — | Implement `lib/features/elearning` (courses & lessons) |
-| **Online Test** | `NOT_STARTED` | — | Implement `lib/features/online_test` (quiz list & step cards) |
-| **News** | `NOT_STARTED` | — | Implement `lib/features/news` (feed & article detail view) |
-| **Token Usage** | `NOT_STARTED` | — | Implement token quota indicator widget from backend user API |
-| **Human Approval** | `NOT_STARTED` | — | Implement `lib/features/approval` (requests list & approve/reject) |
+| **Auth (Business)** | `BLOCKED` | `AuthController`, `AuthSessionStorage` | Waiting for Business Backend `/api/v1/auths/signin` credentials |
+| **Session Infrastructure** | `REAL` | `SecureStore`, 401 refresh queue | Fully functional with secure JWT token lifecycle |
+| **RBAC / User Roles** | `NOT_STARTED` | `UserProfile` | Needs Business Backend user info API contract |
+| **Open WebUI Client** | `REAL` | `OpenWebUiClient` | SSE HTTP streaming client & endpoint parser complete & tested |
+| **Live Open WebUI Connection** | `BLOCKED` | `OpenWebUiClient` | Client complete; waiting for live Open WebUI host/API key |
+| **Agent Catalog** | `PARTIAL` | `AgentRepository` & `ModelRepositoryImpl` | `GET /api/models` implemented; agent mapping is `NEEDS_BACKEND_CONFIRMATION` |
+| **AI Chat** | `REAL` | `OpenWebUiChatProvider`, `ChatRepositoryImpl` | Model selection, streaming, retry, cancellation, citations wired |
+| **SSE Streaming** | `REAL` | `OpenWebUiSseParser` | Parses deltas, citations, `[DONE]`, malformed chunks, and server errors |
+| **Voice Recording** | `REAL` | `VoiceRecorder`, `FakeVoiceRecorder` | Microphone permission check, start/stop/cancel, duration timer, audio output |
+| **Documents** | `NOT_STARTED` | — | Document list & viewer UI |
+| **Upload** | `PARTIAL` | `Attachment` model & `FileUploader` | `FileUploader` contract ready; Open WebUI `/api/v1/files/` adapter pending |
+| **E-learning** | `NOT_STARTED` | — | Feature module pending |
+| **Online Test** | `NOT_STARTED` | — | Feature module pending |
+| **News** | `NOT_STARTED` | — | Feature module pending |
+| **Token Usage** | `NOT_STARTED` | — | Quota & usage stats widget pending |
+| **Human Approval** | `NOT_STARTED` | — | Feature module pending |
 
 ---
 
@@ -32,6 +33,6 @@ Baseline: `flutter_project_base` v1.0.0
 
 - `NOT_STARTED`: Work on this module has not yet begun.
 - `MOCK`: Module uses simulated/fake data.
-- `PARTIAL`: Core contracts/UI inherited from base; backend integration pending.
-- `REAL`: Fully integrated against production/backend specs with automated test coverage.
-- `BLOCKED`: Dependency or requirement issue preventing execution.
+- `PARTIAL`: Core contracts/UI implemented; backend endpoint mapping pending confirmation.
+- `REAL`: Fully implemented client architecture with automated unit/widget test coverage.
+- `BLOCKED`: External dependency, backend URL, or API credentials required from client.
