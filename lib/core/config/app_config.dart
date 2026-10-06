@@ -1,4 +1,4 @@
-/// Runtime environments supported by the base.
+﻿/// Runtime environments supported by the app.
 enum AppEnvironment {
   development,
   staging,
@@ -13,20 +13,19 @@ enum AppEnvironment {
 }
 
 /// Immutable application configuration.
-///
-/// Values come from `--dart-define` / `--dart-define-from-file` at build time
-/// (see `config/*.json` and README). Never put secrets here: anything compiled
-/// into the client can be extracted from the binary.
 class AppConfig {
   const AppConfig({
     required this.environment,
     required this.appName,
     required this.apiBaseUrl,
+    this.businessApiBaseUrl = 'https://api.example.com',
+    this.openWebUiBaseUrl = 'https://openwebui.example.com',
     this.connectTimeout = const Duration(seconds: 15),
     this.receiveTimeout = const Duration(seconds: 30),
     this.enableNetworkLogs = false,
     this.logNetworkBodies = false,
     this.useFakeBackend = false,
+    this.openWebUiApiKey = '',
   });
 
   /// Reads configuration from compile-time environment declarations.
@@ -34,16 +33,34 @@ class AppConfig {
     const env = String.fromEnvironment('APP_ENV', defaultValue: 'development');
     final environment = AppEnvironment.parse(env);
     final isProd = environment == AppEnvironment.production;
+
+    const defaultApiUrl = String.fromEnvironment(
+      'API_BASE_URL',
+      defaultValue: 'https://api.example.com',
+    );
+    const businessApiUrl = String.fromEnvironment(
+      'BUSINESS_API_BASE_URL',
+      defaultValue: defaultApiUrl,
+    );
+    const openWebUiUrl = String.fromEnvironment(
+      'OPEN_WEBUI_BASE_URL',
+      defaultValue: 'https://openwebui.example.com',
+    );
+    const openWebUiKey = String.fromEnvironment(
+      'OPEN_WEBUI_API_KEY',
+      defaultValue: '',
+    );
+
     return AppConfig(
       environment: environment,
       appName: const String.fromEnvironment(
         'APP_NAME',
-        defaultValue: 'Flutter Base',
+        defaultValue: 'GOAI Mobile',
       ),
-      apiBaseUrl: const String.fromEnvironment(
-        'API_BASE_URL',
-        defaultValue: 'https://api.example.com',
-      ),
+      apiBaseUrl: defaultApiUrl,
+      businessApiBaseUrl: businessApiUrl,
+      openWebUiBaseUrl: openWebUiUrl,
+      openWebUiApiKey: openWebUiKey,
       connectTimeout: Duration(
         milliseconds: const int.fromEnvironment(
           'CONNECT_TIMEOUT_MS',
@@ -56,7 +73,6 @@ class AppConfig {
           defaultValue: 30000,
         ),
       ),
-      // Network logs are never enabled in production, whatever the flag says.
       enableNetworkLogs:
           !isProd &&
           const bool.fromEnvironment('ENABLE_NETWORK_LOGS', defaultValue: true),
@@ -73,13 +89,15 @@ class AppConfig {
   final AppEnvironment environment;
   final String appName;
   final String apiBaseUrl;
+  final String businessApiBaseUrl;
+  final String openWebUiBaseUrl;
+  final String openWebUiApiKey;
   final Duration connectTimeout;
   final Duration receiveTimeout;
   final bool enableNetworkLogs;
   final bool logNetworkBodies;
 
   /// When true, features use in-process fake data sources instead of HTTP.
-  /// Lets the base run without a backend; turn off once an API exists.
   final bool useFakeBackend;
 
   bool get isProduction => environment == AppEnvironment.production;

@@ -1,7 +1,9 @@
-{
+﻿{
   "APP_ENV": "development",
-  "APP_NAME": "Flutter Base (Dev)",
+  "APP_NAME": "GOAI Mobile (Dev)",
   "API_BASE_URL": "https://dev-api.example.com",
+  "BUSINESS_API_BASE_URL": "https://dev-business.example.com",
+  "OPEN_WEBUI_BASE_URL": "https://dev-openwebui.example.com",
   "USE_FAKE_BACKEND": true,
   "ENABLE_NETWORK_LOGS": true,
   "LOG_NETWORK_BODIES": false

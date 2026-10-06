@@ -1,7 +1,9 @@
-{
+﻿{
   "APP_ENV": "staging",
-  "APP_NAME": "Flutter Base (Staging)",
+  "APP_NAME": "GOAI Mobile (Staging)",
   "API_BASE_URL": "https://staging-api.example.com",
+  "BUSINESS_API_BASE_URL": "https://staging-business.example.com",
+  "OPEN_WEBUI_BASE_URL": "https://staging-openwebui.example.com",
   "USE_FAKE_BACKEND": true,
   "ENABLE_NETWORK_LOGS": true,
   "LOG_NETWORK_BODIES": false
