@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../data/default_file_picker.dart';
 import '../data/demo_file_services.dart';
 import '../domain/file_services.dart';
 
@@ -8,7 +9,7 @@ final fileUploaderProvider = Provider<FileUploader>(
   (ref) => FakeFileUploader(),
 );
 
-/// Override with a `file_picker`/`image_picker` implementation in the app.
+/// Platform file picker service.
 final attachmentPickerProvider = Provider<AttachmentPicker>(
-  (ref) => DemoAttachmentPicker(),
+  (ref) => DefaultFilePickerService(),
 );
