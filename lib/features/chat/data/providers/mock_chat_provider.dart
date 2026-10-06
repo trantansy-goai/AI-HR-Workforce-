@@ -49,6 +49,16 @@ class MockChatProvider implements GenerativeChatProvider {
     displayName: 'Linh (Support)',
     type: SenderType.agent,
   );
+  static const hrParticipant = Participant(
+    id: 'mock-hr',
+    displayName: 'HR Assistant',
+    type: SenderType.ai,
+  );
+  static const legalParticipant = Participant(
+    id: 'mock-legal',
+    displayName: 'Legal Assistant',
+    type: SenderType.ai,
+  );
   static const teammateA = Participant(
     id: 'user-an',
     displayName: 'An',
@@ -336,6 +346,40 @@ class MockChatProvider implements GenerativeChatProvider {
         content:
             'Hi! I am a mock AI assistant. Ask me anything — end with "?" '
             'to see citations.',
+      ),
+    );
+
+    _conversations['assistant-hr-1'] = Conversation(
+      id: 'assistant-hr-1',
+      title: 'Leave Policy & Benefits',
+      kind: ConversationKind.assistant,
+      participants: [self, hrParticipant],
+      updatedAt: now.subtract(const Duration(hours: 2)),
+    );
+    _remember(
+      Message(
+        id: 'seed-hr-1',
+        conversationId: 'assistant-hr-1',
+        sender: hrParticipant,
+        createdAt: now.subtract(const Duration(hours: 2)),
+        content: 'Hi! I am your HR Assistant. You have 14 annual leave days remaining.',
+      ),
+    );
+
+    _conversations['assistant-legal-1'] = Conversation(
+      id: 'assistant-legal-1',
+      title: 'NDA Template Guidance',
+      kind: ConversationKind.assistant,
+      participants: [self, legalParticipant],
+      updatedAt: now.subtract(const Duration(hours: 5)),
+    );
+    _remember(
+      Message(
+        id: 'seed-legal-1',
+        conversationId: 'assistant-legal-1',
+        sender: legalParticipant,
+        createdAt: now.subtract(const Duration(hours: 5)),
+        content: 'Hello. I can review non-disclosure agreements and corporate compliance policies.',
       ),
     );
 

@@ -309,4 +309,70 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get showcaseAttachments => 'Attachments';
+
+  @override
+  String get mainNavTimeline => 'Timeline';
+
+  @override
+  String get mainNavChat => 'Chat';
+
+  @override
+  String get mainNavLearning => 'E-learning';
+
+  @override
+  String get mainNavDocuments => 'Document';
+
+  @override
+  String get mainNavProfile => 'My Profile';
+
+  @override
+  String get headerSubtitle => 'Enterprise AI Assistant & Employee Workspace';
+
+  @override
+  String get headerTokenQuota => 'Token quota';
+
+  @override
+  String get headerQuotaUnavailable => 'Quota unavailable';
+
+  @override
+  String get headerQuotaExceeded => 'Quota exceeded';
+
+  @override
+  String get headerQuotaWarning => 'Quota warning';
+
+  @override
+  String get notificationTitle => 'Notifications';
+
+  @override
+  String get notificationEmpty => 'No notifications yet';
+
+  @override
+  String get chatAiAgents => 'AI AGENTS';
+
+  @override
+  String get chatOther => 'OTHER';
+
+  @override
+  String get chatHumanBlockedHint =>
+      'Remote human chat is awaiting backend contract (BLOCKED)';
+
+  @override
+  String get chatStartNew => 'Start new conversation';
+
+  @override
+  String chatAgentHistory(String name) {
+    return '$name History';
+  }
+
+  @override
+  String get profileApprovals => 'Pending Approvals';
+
+  @override
+  String get profileSettings => 'Settings';
+
+  @override
+  String get elearningCourses => 'Courses & Training';
+
+  @override
+  String get elearningTests => 'Certification Tests';
 }

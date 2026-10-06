@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/theme/app_tokens.dart';
 import '../../../shared/widgets/responsive.dart';
+import '../../../shared/widgets/shared_workspace_header.dart';
 import '../../../shared/widgets/state_views.dart';
 import '../application/document_providers.dart';
 
@@ -14,46 +16,72 @@ class DocumentListPage extends ConsumerWidget {
     final documentsAsync = ref.watch(documentsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Knowledge Documents')),
-      body: ResponsiveCenter(
-        child: documentsAsync.when(
-          loading: () => const LoadingView(label: 'Loading documents...'),
-          error: (err, stack) => ErrorView(
-            message: err.toString(),
-            onRetry: () => ref.refresh(documentsProvider),
-          ),
-          data: (documents) {
-            if (documents.isEmpty) {
-              return const EmptyView(
-                title: 'No Documents Available',
-                message: 'No company documents have been published yet.',
-              );
-            }
-            return ListView.separated(
-              padding: const EdgeInsets.all(16),
-              itemCount: documents.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 8),
-              itemBuilder: (context, index) {
-                final doc = documents[index];
-                return Card(
-                  child: ListTile(
-                    leading: CircleAvatar(child: Text(doc.fileType)),
-                    title: Text(
-                      doc.title,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(
-                      doc.description,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () => context.push('/home/documents/${doc.id}'),
+      body: SafeArea(
+        child: ResponsiveCenter(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SharedWorkspaceHeader(),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.lg,
+                  vertical: AppSpacing.xs,
+                ),
+                child: Text(
+                  'Knowledge Documents',
+                  style: Theme.of(context).textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+              ),
+              Expanded(
+                child: documentsAsync.when(
+                  loading: () =>
+                      const LoadingView(label: 'Loading documents...'),
+                  error: (err, stack) => ErrorView(
+                    message: err.toString(),
+                    onRetry: () => ref.refresh(documentsProvider),
                   ),
-                );
-              },
-            );
-          },
+                  data: (documents) {
+                    if (documents.isEmpty) {
+                      return const EmptyView(
+                        title: 'No Documents Available',
+                        message:
+                            'No company documents have been published yet.',
+                      );
+                    }
+                    return ListView.separated(
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      itemCount: documents.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 8),
+                      itemBuilder: (context, index) {
+                        final doc = documents[index];
+                        return Card(
+                          child: ListTile(
+                            leading: CircleAvatar(child: Text(doc.fileType)),
+                            title: Text(
+                              doc.title,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text(
+                              doc.description,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            trailing: const Icon(Icons.chevron_right),
+                            onTap: () =>
+                                context.push('/home/documents/${doc.id}'),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

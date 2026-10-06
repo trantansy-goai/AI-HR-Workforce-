@@ -667,6 +667,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Attachments'**
   String get showcaseAttachments;
+
+  /// No description provided for @mainNavTimeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeline'**
+  String get mainNavTimeline;
+
+  /// No description provided for @mainNavChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get mainNavChat;
+
+  /// No description provided for @mainNavLearning.
+  ///
+  /// In en, this message translates to:
+  /// **'E-learning'**
+  String get mainNavLearning;
+
+  /// No description provided for @mainNavDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Document'**
+  String get mainNavDocuments;
+
+  /// No description provided for @mainNavProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'My Profile'**
+  String get mainNavProfile;
+
+  /// No description provided for @headerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enterprise AI Assistant & Employee Workspace'**
+  String get headerSubtitle;
+
+  /// No description provided for @headerTokenQuota.
+  ///
+  /// In en, this message translates to:
+  /// **'Token quota'**
+  String get headerTokenQuota;
+
+  /// No description provided for @headerQuotaUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Quota unavailable'**
+  String get headerQuotaUnavailable;
+
+  /// No description provided for @headerQuotaExceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Quota exceeded'**
+  String get headerQuotaExceeded;
+
+  /// No description provided for @headerQuotaWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Quota warning'**
+  String get headerQuotaWarning;
+
+  /// No description provided for @notificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationTitle;
+
+  /// No description provided for @notificationEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet'**
+  String get notificationEmpty;
+
+  /// No description provided for @chatAiAgents.
+  ///
+  /// In en, this message translates to:
+  /// **'AI AGENTS'**
+  String get chatAiAgents;
+
+  /// No description provided for @chatOther.
+  ///
+  /// In en, this message translates to:
+  /// **'OTHER'**
+  String get chatOther;
+
+  /// No description provided for @chatHumanBlockedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote human chat is awaiting backend contract (BLOCKED)'**
+  String get chatHumanBlockedHint;
+
+  /// No description provided for @chatStartNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Start new conversation'**
+  String get chatStartNew;
+
+  /// No description provided for @chatAgentHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} History'**
+  String chatAgentHistory(String name);
+
+  /// No description provided for @profileApprovals.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Approvals'**
+  String get profileApprovals;
+
+  /// No description provided for @profileSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get profileSettings;
+
+  /// No description provided for @elearningCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Courses & Training'**
+  String get elearningCourses;
+
+  /// No description provided for @elearningTests.
+  ///
+  /// In en, this message translates to:
+  /// **'Certification Tests'**
+  String get elearningTests;
 }
 
 class _AppLocalizationsDelegate

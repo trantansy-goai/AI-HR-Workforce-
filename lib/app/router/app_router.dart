@@ -8,18 +8,22 @@ import '../../core/navigation/route_access.dart';
 import '../../features/approval/presentation/approval_pages.dart';
 import '../../features/auth/application/auth_providers.dart';
 import '../../features/auth/presentation/sign_in_page.dart';
-import '../../features/chat/presentation/conversation_list_page.dart';
+import '../../features/chat/presentation/agent_conversation_list_page.dart';
+import '../../features/chat/presentation/chat_discovery_page.dart';
 import '../../features/chat/presentation/conversation_page.dart';
 import '../../features/document/presentation/document_pages.dart';
+import '../../features/elearning/presentation/elearning_hub_page.dart';
 import '../../features/elearning/presentation/learning_pages.dart';
 import '../../features/home/presentation/foundation_showcase_page.dart';
-import '../../features/home/presentation/home_page.dart';
+import '../../features/home/presentation/timeline_page.dart';
 import '../../features/news/presentation/news_pages.dart';
+import '../../features/notification/presentation/notification_list_page.dart';
 import '../../features/online_test/presentation/test_pages.dart';
 import '../../features/profile/presentation/profile_page.dart';
 import '../../features/settings/presentation/settings_page.dart';
 import '../pages.dart';
 import 'app_routes.dart';
+import 'workspace_shell.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
@@ -60,85 +64,124 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.signIn,
         builder: (context, state) => const SignInPage(),
       ),
-      GoRoute(
-        path: AppRoutes.home,
-        builder: (context, state) => const HomePage(),
-        routes: [
-          GoRoute(
-            path: 'chat',
-            builder: (context, state) => const ConversationListPage(),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            WorkspaceShell(navigationShell: navigationShell),
+        branches: [
+          // Branch 0: Timeline (default landing tab)
+          StatefulShellBranch(
             routes: [
               GoRoute(
-                path: ':conversationId',
-                builder: (context, state) => ConversationPage(
-                  conversationId: state.pathParameters['conversationId']!,
-                ),
+                path: AppRoutes.home,
+                builder: (context, state) => const TimelinePage(),
+                routes: [
+                  GoRoute(
+                    parentNavigatorKey: rootNavigatorKey,
+                    path: 'news/:newsId',
+                    builder: (context, state) =>
+                        NewsDetailPage(newsId: state.pathParameters['newsId']!),
+                  ),
+                ],
               ),
             ],
           ),
-          GoRoute(
-            path: 'documents',
-            builder: (context, state) => const DocumentListPage(),
+          // Branch 1: Chat
+          StatefulShellBranch(
             routes: [
               GoRoute(
-                path: ':documentId',
-                builder: (context, state) => DocumentDetailPage(
-                  documentId: state.pathParameters['documentId']!,
-                ),
+                path: AppRoutes.chat,
+                builder: (context, state) => const ChatDiscoveryPage(),
+                routes: [
+                  GoRoute(
+                    path: 'agent/:agentId',
+                    builder: (context, state) => AgentConversationListPage(
+                      agentId: state.pathParameters['agentId']!,
+                    ),
+                  ),
+                  GoRoute(
+                    parentNavigatorKey: rootNavigatorKey,
+                    path: ':conversationId',
+                    builder: (context, state) => ConversationPage(
+                      conversationId: state.pathParameters['conversationId']!,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-          GoRoute(
-            path: 'learning',
-            builder: (context, state) => const LearningListPage(),
+          // Branch 2: E-learning
+          StatefulShellBranch(
             routes: [
               GoRoute(
-                path: ':courseId',
-                builder: (context, state) => LearningDetailPage(
-                  courseId: state.pathParameters['courseId']!,
-                ),
+                path: AppRoutes.learning,
+                builder: (context, state) => const ELearningHubPage(),
+                routes: [
+                  GoRoute(
+                    parentNavigatorKey: rootNavigatorKey,
+                    path: ':courseId',
+                    builder: (context, state) => LearningDetailPage(
+                      courseId: state.pathParameters['courseId']!,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-          GoRoute(
-            path: 'tests',
-            builder: (context, state) => const TestListPage(),
+          // Branch 3: Documents
+          StatefulShellBranch(
             routes: [
               GoRoute(
-                path: ':testId',
-                builder: (context, state) =>
-                    TestTakingPage(testId: state.pathParameters['testId']!),
+                path: AppRoutes.documents,
+                builder: (context, state) => const DocumentListPage(),
+                routes: [
+                  GoRoute(
+                    parentNavigatorKey: rootNavigatorKey,
+                    path: ':documentId',
+                    builder: (context, state) => DocumentDetailPage(
+                      documentId: state.pathParameters['documentId']!,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-          GoRoute(
-            path: 'news',
-            builder: (context, state) => const NewsListPage(),
+          // Branch 4: My Profile
+          StatefulShellBranch(
             routes: [
               GoRoute(
-                path: ':newsId',
-                builder: (context, state) =>
-                    NewsDetailPage(newsId: state.pathParameters['newsId']!),
+                path: AppRoutes.profile,
+                builder: (context, state) => const ProfilePage(),
               ),
             ],
-          ),
-          GoRoute(
-            path: 'approvals',
-            builder: (context, state) => const ApprovalListPage(),
-          ),
-          GoRoute(
-            path: 'settings',
-            builder: (context, state) => const SettingsPage(),
-          ),
-          GoRoute(
-            path: 'profile',
-            builder: (context, state) => const ProfilePage(),
-          ),
-          GoRoute(
-            path: 'showcase',
-            builder: (context, state) => const FoundationShowcasePage(),
           ),
         ],
+      ),
+      // Deep detail & secondary standalone routes on rootNavigatorKey
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: '/home/tests/:testId',
+        builder: (context, state) =>
+            TestTakingPage(testId: state.pathParameters['testId']!),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: AppRoutes.notifications,
+        builder: (context, state) => const NotificationListPage(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: AppRoutes.settings,
+        builder: (context, state) => const SettingsPage(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: AppRoutes.approvals,
+        builder: (context, state) => const ApprovalListPage(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: AppRoutes.showcase,
+        builder: (context, state) => const FoundationShowcasePage(),
       ),
     ],
   );

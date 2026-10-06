@@ -122,5 +122,33 @@
   "showcaseSendNotification": "Send in-app notification",
   "showcaseNotificationTitle": "Hello from the notification center",
   "showcaseNotificationBody": "In-app notifications are delivered through a replaceable service.",
-  "showcaseAttachments": "Attachments"
+  "showcaseAttachments": "Attachments",
+  "mainNavTimeline": "Timeline",
+  "mainNavChat": "Chat",
+  "mainNavLearning": "E-learning",
+  "mainNavDocuments": "Document",
+  "mainNavProfile": "My Profile",
+  "headerSubtitle": "Enterprise AI Assistant & Employee Workspace",
+  "headerTokenQuota": "Token quota",
+  "headerQuotaUnavailable": "Quota unavailable",
+  "headerQuotaExceeded": "Quota exceeded",
+  "headerQuotaWarning": "Quota warning",
+  "notificationTitle": "Notifications",
+  "notificationEmpty": "No notifications yet",
+  "chatAiAgents": "AI AGENTS",
+  "chatOther": "OTHER",
+  "chatHumanBlockedHint": "Remote human chat is awaiting backend contract (BLOCKED)",
+  "chatStartNew": "Start new conversation",
+  "chatAgentHistory": "{name} History",
+  "@chatAgentHistory": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "profileApprovals": "Pending Approvals",
+  "profileSettings": "Settings",
+  "elearningCourses": "Courses & Training",
+  "elearningTests": "Certification Tests"
 }

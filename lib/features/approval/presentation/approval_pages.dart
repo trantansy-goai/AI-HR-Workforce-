@@ -43,9 +43,17 @@ class ApprovalListPage extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Chip(label: Text(item.requestType)),
-                            const Spacer(),
+                            Flexible(
+                              child: Chip(
+                                label: Text(
+                                  item.requestType,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
                             Text(
                               item.status.name.toUpperCase(),
                               style: TextStyle(

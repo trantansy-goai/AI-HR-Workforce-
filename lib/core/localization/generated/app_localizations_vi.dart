@@ -313,4 +313,70 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get showcaseAttachments => 'Tệp đính kèm';
+
+  @override
+  String get mainNavTimeline => 'Bảng tin';
+
+  @override
+  String get mainNavChat => 'Trò chuyện';
+
+  @override
+  String get mainNavLearning => 'Đào tạo';
+
+  @override
+  String get mainNavDocuments => 'Tài liệu';
+
+  @override
+  String get mainNavProfile => 'Hồ sơ';
+
+  @override
+  String get headerSubtitle => 'Trợ lý AI Doanh nghiệp & Không gian làm việc';
+
+  @override
+  String get headerTokenQuota => 'Hạn mức token';
+
+  @override
+  String get headerQuotaUnavailable => 'Không thể tải hạn mức';
+
+  @override
+  String get headerQuotaExceeded => 'Vượt quá hạn mức';
+
+  @override
+  String get headerQuotaWarning => 'Cảnh báo hạn mức';
+
+  @override
+  String get notificationTitle => 'Thông báo';
+
+  @override
+  String get notificationEmpty => 'Chưa có thông báo nào';
+
+  @override
+  String get chatAiAgents => 'TRỢ LÝ AI';
+
+  @override
+  String get chatOther => 'KHÁC';
+
+  @override
+  String get chatHumanBlockedHint =>
+      'Chat trực tiếp đang chờ backend tích hợp (BLOCKED)';
+
+  @override
+  String get chatStartNew => 'Bắt đầu cuộc trò chuyện mới';
+
+  @override
+  String chatAgentHistory(String name) {
+    return 'Lịch sử trò chuyện $name';
+  }
+
+  @override
+  String get profileApprovals => 'Yêu cầu phê duyệt';
+
+  @override
+  String get profileSettings => 'Cài đặt';
+
+  @override
+  String get elearningCourses => 'Khóa học đào tạo';
+
+  @override
+  String get elearningTests => 'Bài kiểm tra chứng chỉ';
 }

@@ -14,8 +14,11 @@ abstract final class AppRoutes {
   static const tests = '/home/tests';
   static const news = '/home/news';
   static const approvals = '/home/approvals';
+  static const notifications = '/home/notifications';
 
   static String conversation(String id) => '$chat/${Uri.encodeComponent(id)}';
+  static String agentHistory(String agentId) =>
+      '$chat/agent/${Uri.encodeComponent(agentId)}';
   static String document(String id) => '$documents/${Uri.encodeComponent(id)}';
   static String course(String id) => '$learning/${Uri.encodeComponent(id)}';
   static String test(String id) => '$tests/${Uri.encodeComponent(id)}';

@@ -5,6 +5,7 @@ import '../../auth/application/auth_providers.dart';
 import '../../file/application/file_providers.dart';
 import '../data/cache/in_memory_chat_cache.dart';
 import '../data/chat_repository_impl.dart';
+import '../data/fixtures/chat_fixtures.dart';
 import '../data/providers/mock_chat_provider.dart';
 import '../data/providers/open_webui_chat_provider.dart';
 import '../data/repositories/model_repository_impl.dart';
@@ -12,6 +13,7 @@ import '../data/sources/open_webui_client.dart';
 import '../domain/chat_cache.dart';
 import '../domain/chat_provider.dart';
 import '../domain/chat_repository.dart';
+import '../domain/entities/agent_item.dart';
 import '../domain/entities/conversation.dart';
 import '../domain/entities/participant.dart';
 
@@ -94,4 +96,9 @@ final conversationsProvider = StreamProvider.autoDispose<List<Conversation>>((
   final result = await repository.refreshConversations();
   if (result.failureOrNull case final failure?) throw failure;
   yield* repository.watchConversations();
+});
+
+/// AI Agents list provider backed by centralized development fixtures.
+final agentsProvider = Provider<List<AgentItem>>((ref) {
+  return ChatFixtures.agents;
 });
