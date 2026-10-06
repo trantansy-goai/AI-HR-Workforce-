@@ -1,4 +1,4 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+﻿import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/core_providers.dart';
 import '../../auth/application/auth_providers.dart';
@@ -6,6 +6,9 @@ import '../../file/application/file_providers.dart';
 import '../data/cache/in_memory_chat_cache.dart';
 import '../data/chat_repository_impl.dart';
 import '../data/providers/mock_chat_provider.dart';
+import '../data/providers/open_webui_chat_provider.dart';
+import '../data/repositories/model_repository_impl.dart';
+import '../data/sources/open_webui_client.dart';
 import '../domain/chat_cache.dart';
 import '../domain/chat_provider.dart';
 import '../domain/chat_repository.dart';
@@ -26,16 +29,42 @@ final chatSelfProvider = Provider<Participant>((ref) {
   );
 });
 
-/// The transport behind the chat. The base wires [MockChatProvider];
-/// apps override this with Remote/Local AI or realtime providers:
-///
-/// ```dart
-/// chatProviderProvider.overrideWith((ref) => RemoteAIChatProvider(...))
-/// ```
-final chatProviderProvider = Provider<ChatProvider>((ref) {
-  final provider = MockChatProvider(self: ref.watch(chatSelfProvider));
+/// Open WebUI HTTP & SSE API client.
+final openWebUiClientProvider = Provider<OpenWebUiClient>((ref) {
+  final config = ref.watch(appConfigProvider);
+  final dio = ref.watch(authenticatedDioProvider);
+  return OpenWebUiClient(
+    dio: dio,
+    openWebUiBaseUrl: config.openWebUiBaseUrl,
+    apiKey: config.openWebUiApiKey,
+  );
+});
+
+/// Model & Agent repository.
+final modelRepositoryProvider = Provider<ModelRepositoryImpl>((ref) {
+  return ModelRepositoryImpl(ref.watch(openWebUiClientProvider));
+});
+
+/// Open WebUI generative chat provider.
+final openWebUiChatProvider = Provider<OpenWebUiChatProvider>((ref) {
+  final provider = OpenWebUiChatProvider(
+    client: ref.watch(openWebUiClientProvider),
+  );
   ref.onDispose(provider.dispose);
   return provider;
+});
+
+/// The active transport behind the chat.
+/// When fake backend is enabled, defaults to MockChatProvider;
+/// otherwise uses OpenWebUiChatProvider.
+final chatProviderProvider = Provider<ChatProvider>((ref) {
+  final config = ref.watch(appConfigProvider);
+  if (config.useFakeBackend) {
+    final provider = MockChatProvider(self: ref.watch(chatSelfProvider));
+    ref.onDispose(provider.dispose);
+    return provider;
+  }
+  return ref.watch(openWebUiChatProvider);
 });
 
 /// Swap for a persistent implementation (Drift/SQLite) for offline history.
