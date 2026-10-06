@@ -17,9 +17,9 @@ Baseline: lutter_project_base v1.0.0
 | **Agent Catalog** | IMPLEMENTED | PARTIAL | AgentRepository, ModelRepositoryImpl | GET /api/models wired; enterprise agent mapping pending |
 | **AI Chat** | REAL | BLOCKED | OpenWebUiChatProvider, ChatRepositoryImpl | Streaming, retry, cancel, citations wired; awaiting live endpoint |
 | **SSE Streaming** | REAL | BLOCKED | OpenWebUiSseParser | Parses text deltas, citations, [DONE], malformed JSON, server errors |
-| **Voice Recording** | IMPLEMENTED | UNVERIFIED_ON_DEVICE | NativeVoiceRecorder, FakeVoiceRecorder | Native recorder (ecord) wired & tested; unverified on physical hardware. STT is BLOCKED |
+| **Voice Recording** | IMPLEMENTED | VERIFIED_ON_PHYSICAL_DEVICE | NativeVoiceRecorder, FakeVoiceRecorder | Native recorder (record) verified on Samsung SM-X510 (Android 16). STT is BLOCKED |
 | **Documents** | IMPLEMENTED | BLOCKED | DocumentRepository, UI | Domain, fake repo, list/detail/download UI ready; awaiting API |
-| **File Picker** | IMPLEMENTED | UNVERIFIED_ON_DEVICE | NativeFilePicker, DefaultFilePickerService | Native file picker (ile_picker) wired & tested; unverified on physical hardware |
+| **File Picker** | IMPLEMENTED | VERIFIED_ON_PHYSICAL_DEVICE | NativeFilePicker, DefaultFilePickerService | Native file picker (file_picker) verified on Samsung SM-X510 (Android 16) |
 | **Remote Upload** | IMPLEMENTED | BLOCKED | FileUploader, FakeFileUploader | Upload abstraction ready; backend multipart upload API is BLOCKED |
 | **E-learning** | IMPLEMENTED | BLOCKED | LearningRepository, UI | Domain, fake repo, course list/content UI ready; awaiting API |
 | **Online Test** | IMPLEMENTED | BLOCKED | OnlineTestRepository, UI | Domain, fake repo, test/question/result UI ready; awaiting API |
