@@ -54,6 +54,30 @@ The application implements the approved 5-tab persistent bottom navigation with 
 | **Bản tin / News** | PASS | Internal company posts list, article detail view, timestamps, formatted metadata; accessible via Trang chủ & Tài khoản. |
 | **Quota in Header** | PASS | Quota token progress bar (85% used, 42,500/50,000 tokens), interval chip, threshold warning state. |
 | **Approval** | PASS | Accessible from Việc của tôi and Notifications; requests list, request types, requester metadata, status chips (APPROVED / REJECTED). |
+| **Responsive Shell** | PASS | Switches to `NavigationBar` on phone (<600dp) and `NavigationRail` on tablet (>=600dp) with GoAI brand logo. |
+| **Trang chủ Dashboard** | PASS | Single-column on phone; 2-column dashboard layout on tablet portrait & landscape without stretched cards. |
+| **Hỏi HR Master-Detail** | PASS | Single column on phone; master-detail split on wide tablet with conversation panel and active chat composer. |
+| **Học tập Hub Grid** | PASS | Adaptive 2-column course and test cards on tablet portrait and landscape. |
+| **Việc của tôi 2-Column** | PASS | 2-column layout (Checklist left, Cases + Approvals right) on tablet. |
+| **Account, Settings & News** | PASS | Constrained to reading max-width (760dp); news cards render as responsive grid. |
+
+---
+
+## Responsive UI Verification Summary
+
+- **Responsive UI:** VERIFIED
+- **Phone:** VERIFIED (Tested at ~360x800 and ~390x844 simulated dp; single-column layout, bottom navigation bar, stacked header)
+- **Tablet portrait:** VERIFIED (Tested at ~720x1152 dp on Samsung Galaxy Tab S9 FE; NavigationRail, 2-column cards, adaptive header)
+- **Tablet landscape:** VERIFIED (Tested at ~1152x720 dp on Samsung Galaxy Tab S9 FE; wide NavigationRail, master-detail Hỏi HR, 2-column news)
+
+### Verification Screenshots
+Screenshots saved under `test/reports/screenshots/`:
+1. `1_trang_chu_phone.png`: Trang chủ on mobile phone width (360x800)
+2. `2_trang_chu_tablet_portrait.png`: Trang chủ on tablet portrait (720x1152)
+3. `3_trang_chu_tablet_landscape.png`: Trang chủ on tablet landscape (1152x720)
+4. `4_hoi_hr_phone.png`: Hỏi HR single-column discovery on phone
+5. `5_hoi_hr_tablet.png`: Hỏi HR master-detail split on tablet
+6. `6_hoc_tap_tablet.png`: Học tập adaptive card grid on tablet
 
 ---
 
@@ -66,7 +90,7 @@ The application implements the approved 5-tab persistent bottom navigation with 
 - Riverpod Lifecycle Errors: 0
 - GoRouter Errors: 0
 - File / Path Exceptions: 0
-- RenderFlex / Layout Overflows: 0 (Tested and guarded against narrow viewports and Samsung tablet width)
+- RenderFlex / Layout Overflows: 0 (Tested and guarded across phone, tablet portrait, and tablet landscape)
 
 ---
 
@@ -75,3 +99,4 @@ The application implements the approved 5-tab persistent bottom navigation with 
 1. **Remote AI Chat & STT:** Open WebUI server credentials (host URL + API key) and STT backend endpoint contract.
 2. **Remote Backend & Upload:** Business Backend contracts for Auth, Documents, File Upload, E-learning, Online Test, News, Quota, and Approvals.
 3. **Human Chat Backend:** Future human-to-human messaging contracts (WebSocket / presence / typing / group chat) are currently BLOCKED.
+

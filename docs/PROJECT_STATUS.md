@@ -100,10 +100,55 @@ The top-level navigation structure is organized into exactly 5 persistent bottom
 
 ---
 
+## Responsive Phone + Tablet UI Pass
+
+- **Responsive UI:** VERIFIED
+- **Phone (< 600dp):** VERIFIED (~360x800, ~390x844)
+- **Tablet Portrait (>= 600dp):** VERIFIED (~720x1152 on Samsung Tab S9 FE / ~800x1280)
+- **Tablet Landscape (>= 840dp):** VERIFIED (~1152x720 on Samsung Tab S9 FE / ~1280x800)
+
+### Breakpoints & Content Constraints
+- `ResponsiveBreakpoints`:
+  - `compact`: `< 600dp` (Mobile phone portrait & landscape)
+  - `tablet`: `>= 600dp` (Standard tablet portrait)
+  - `wideTablet`: `>= 840dp` (Wide tablet landscape / foldable unfolded)
+  - `desktop`: `>= 1200dp`
+- `ContentConstraints`:
+  - `reading`: `760dp` (Reading, forms, settings, notifications)
+  - `dashboard`: `1100dp` (Trang chủ dashboard canvas)
+  - `chat`: `800dp` (Chat message bubbles and composer max width)
+  - `dialog`: `560dp`
+
+### Adaptive Navigation Strategy
+- Single unified navigation model with `StatefulShellRoute.indexedStack` preserving all 5 branches (`Trang chủ`, `Hỏi HR`, `Việc của tôi`, `Học tập`, `Tài khoản`).
+- Width-driven adaptive rendering via `LayoutBuilder`:
+  - `< 600dp`: Material 3 `NavigationBar` at bottom with GoAI primary blue active tint.
+  - `>= 600dp`: Side `NavigationRail` with official GoAI splash logo header, preserving full vertical canvas for dashboard.
+
+### Adaptive Screen Compositions
+1. **Trang chủ (Dashboard):**
+   - Phone: Natural single-column scroll flow (Greeting & quota -> pending tasks -> quick actions -> work/learning cards -> Bản tin mới).
+   - Tablet: Adaptive 2-column dashboard layout (Left: Việc sắp đến hạn A3 + Yêu cầu HR A0; Right: Khóa học của tôi A7 + Bài kiểm tra chứng chỉ A4; Bottom: 2-column Bản tin mới cards).
+2. **Shared Workspace Header:**
+   - Phone: Compact stacked greeting with full-width token quota status bar.
+   - Tablet: Horizontal row pairing employee greeting and role on the left with token quota status and notification bell on the right.
+3. **Hỏi HR (Enterprise AI Discovery & Chat):**
+   - Phone: Single-column discovery root navigating to agent history and conversation.
+   - Wide Tablet (`>= 840dp`): Master-detail split layout (Left: Search prompt, chips, and AI Agent catalog; Right: Embedded active conversation or start prompt).
+4. **Việc của tôi:**
+   - Tablet: 2-column layout (Left: A3 Onboarding checklist; Right: A0/A4 Case tracking and M11 Approvals inbox).
+5. **Học tập (Learning Hub):**
+   - Courses: 1 column on `< 600dp`, 2 columns on `600–960dp`, 3 columns on `>= 960dp`.
+   - Tests: 1 column on `< 600dp`, 2 columns on `>= 600dp`.
+6. **Account, News, Notifications & Settings:**
+   - Constrained to `ContentConstraints.reading` (`760dp`); News & Documents use 2-column card grids on tablet.
+
+---
+
 ## Quality Gates Status
 
 - `dart format lib test`: PASS (Clean format)
 - `flutter analyze`: PASS (0 issues found!)
-- `flutter test`: PASS (135/135 tests passing)
-- `flutter build apk --debug`: PASS (`app-debug.apk` built with native record and file_picker plugins)
-- Physical Device Baseline: Samsung SM-X510 (Galaxy Tab S9 FE, Android 16); cold launch native splash, Flutter splash, Login branding, and 5-tab workspace verified with 0 layout overflows.
+- `flutter test`: PASS (142/142 tests passing across all suites)
+- `flutter build apk --debug`: PASS (`app-debug.apk` built with native record, file_picker, and responsive layouts)
+- Physical Device Baseline: Samsung SM-X510 (Galaxy Tab S9 FE, Android 16); verified both portrait and landscape orientation with 0 layout overflows.
