@@ -315,19 +315,31 @@ class AppLocalizationsVi extends AppLocalizations {
   String get showcaseAttachments => 'Tệp đính kèm';
 
   @override
-  String get mainNavTimeline => 'Bảng tin';
+  String get mainNavHome => 'Trang chủ';
 
   @override
-  String get mainNavChat => 'Trò chuyện';
+  String get mainNavAskHr => 'Hỏi HR';
 
   @override
-  String get mainNavLearning => 'Đào tạo';
+  String get mainNavMyWork => 'Việc của tôi';
+
+  @override
+  String get mainNavLearning => 'Học tập';
+
+  @override
+  String get mainNavAccount => 'Tài khoản';
+
+  @override
+  String get mainNavTimeline => 'Trang chủ';
+
+  @override
+  String get mainNavChat => 'Hỏi HR';
 
   @override
   String get mainNavDocuments => 'Tài liệu';
 
   @override
-  String get mainNavProfile => 'Hồ sơ';
+  String get mainNavProfile => 'Tài khoản';
 
   @override
   String get headerSubtitle => 'Trợ lý AI Doanh nghiệp & Không gian làm việc';
@@ -351,7 +363,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get notificationEmpty => 'Chưa có thông báo nào';
 
   @override
-  String get chatAiAgents => 'TRỢ LÝ AI';
+  String get chatAiAgents => 'TRỢ LÝ AI & HR';
 
   @override
   String get chatOther => 'KHÁC';
@@ -379,4 +391,52 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get elearningTests => 'Bài kiểm tra chứng chỉ';
+
+  @override
+  String get myWorkTitle => 'Việc của tôi';
+
+  @override
+  String get myWorkChecklistTitle => 'Checklist hội nhập';
+
+  @override
+  String get myWorkCasesTitle => 'Yêu cầu & Case của tôi';
+
+  @override
+  String get myWorkApprovalsTitle => 'Chờ tôi phê duyệt';
+
+  @override
+  String get homeNewsSection => 'BẢN TIN MỚI';
+
+  @override
+  String get homeViewAllNews => 'Xem tất cả';
+
+  @override
+  String get homeUpcomingWork => 'Việc sắp đến hạn';
+
+  @override
+  String get homeMyCourses => 'Khóa học của tôi';
+
+  @override
+  String get homePendingCase => 'Yêu cầu HR #HR-1042';
+
+  @override
+  String homePendingTasksStrip(int count) {
+    return 'Bạn có $count việc cần hoàn thành tuần này.';
+  }
+
+  @override
+  String get accountNews => 'Bản tin nội bộ';
+
+  @override
+  String get askHrSearchPrompt =>
+      'Nhập câu hỏi… Ví dụ: quy trình xin nghỉ phép';
+
+  @override
+  String get askHrPolicyChip => 'Chính sách';
+
+  @override
+  String get askHrFormChip => 'Biểu mẫu';
+
+  @override
+  String get askHrMyRequestsChip => 'Yêu cầu của tôi';
 }

@@ -9,13 +9,14 @@ import '../../features/approval/presentation/approval_pages.dart';
 import '../../features/auth/application/auth_providers.dart';
 import '../../features/auth/presentation/sign_in_page.dart';
 import '../../features/chat/presentation/agent_conversation_list_page.dart';
-import '../../features/chat/presentation/chat_discovery_page.dart';
+import '../../features/chat/presentation/ask_hr_page.dart';
 import '../../features/chat/presentation/conversation_page.dart';
 import '../../features/document/presentation/document_pages.dart';
 import '../../features/elearning/presentation/elearning_hub_page.dart';
 import '../../features/elearning/presentation/learning_pages.dart';
 import '../../features/home/presentation/foundation_showcase_page.dart';
-import '../../features/home/presentation/timeline_page.dart';
+import '../../features/home/presentation/trang_chu_page.dart';
+import '../../features/my_work/presentation/my_work_page.dart';
 import '../../features/news/presentation/news_pages.dart';
 import '../../features/notification/presentation/notification_list_page.dart';
 import '../../features/online_test/presentation/test_pages.dart';
@@ -43,9 +44,13 @@ final routerProvider = Provider<GoRouter>((ref) {
   // Re-evaluate redirects whenever the session status changes, without
   // rebuilding the router (which would reset navigation state).
   final refresh = ValueNotifier<SessionStatus>(ref.read(sessionStatusProvider));
-  ref
-    ..listen(sessionStatusProvider, (_, next) => refresh.value = next)
-    ..onDispose(refresh.dispose);
+  final sub = ref.listen<SessionStatus>(sessionStatusProvider, (_, next) {
+    refresh.value = next;
+  });
+  ref.onDispose(() {
+    sub.close();
+    refresh.dispose();
+  });
 
   final router = GoRouter(
     navigatorKey: rootNavigatorKey,
@@ -68,29 +73,21 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state, navigationShell) =>
             WorkspaceShell(navigationShell: navigationShell),
         branches: [
-          // Branch 0: Timeline (default landing tab)
+          // Branch 0: Trang chủ (Workspace Dashboard)
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: AppRoutes.home,
-                builder: (context, state) => const TimelinePage(),
-                routes: [
-                  GoRoute(
-                    parentNavigatorKey: rootNavigatorKey,
-                    path: 'news/:newsId',
-                    builder: (context, state) =>
-                        NewsDetailPage(newsId: state.pathParameters['newsId']!),
-                  ),
-                ],
+                builder: (context, state) => const TrangChuPage(),
               ),
             ],
           ),
-          // Branch 1: Chat
+          // Branch 1: Hỏi HR
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: AppRoutes.chat,
-                builder: (context, state) => const ChatDiscoveryPage(),
+                path: AppRoutes.askHr,
+                builder: (context, state) => const AskHrPage(),
                 routes: [
                   GoRoute(
                     path: 'agent/:agentId',
@@ -109,7 +106,16 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          // Branch 2: E-learning
+          // Branch 2: Việc của tôi
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.myWork,
+                builder: (context, state) => const MyWorkPage(),
+              ),
+            ],
+          ),
+          // Branch 3: Học tập (E-learning & Online Tests)
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -127,29 +133,11 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          // Branch 3: Documents
+          // Branch 4: Tài khoản (Profile & Account)
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: AppRoutes.documents,
-                builder: (context, state) => const DocumentListPage(),
-                routes: [
-                  GoRoute(
-                    parentNavigatorKey: rootNavigatorKey,
-                    path: ':documentId',
-                    builder: (context, state) => DocumentDetailPage(
-                      documentId: state.pathParameters['documentId']!,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          // Branch 4: My Profile
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoutes.profile,
+                path: AppRoutes.account,
                 builder: (context, state) => const ProfilePage(),
               ),
             ],
@@ -157,6 +145,33 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
       // Deep detail & secondary standalone routes on rootNavigatorKey
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: AppRoutes.news,
+        builder: (context, state) => const NewsListPage(),
+        routes: [
+          GoRoute(
+            parentNavigatorKey: rootNavigatorKey,
+            path: ':newsId',
+            builder: (context, state) =>
+                NewsDetailPage(newsId: state.pathParameters['newsId']!),
+          ),
+        ],
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: AppRoutes.documents,
+        builder: (context, state) => const DocumentListPage(),
+        routes: [
+          GoRoute(
+            parentNavigatorKey: rootNavigatorKey,
+            path: ':documentId',
+            builder: (context, state) => DocumentDetailPage(
+              documentId: state.pathParameters['documentId']!,
+            ),
+          ),
+        ],
+      ),
       GoRoute(
         parentNavigatorKey: rootNavigatorKey,
         path: '/home/tests/:testId',

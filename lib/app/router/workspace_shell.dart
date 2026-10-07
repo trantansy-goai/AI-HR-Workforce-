@@ -26,14 +26,19 @@ class WorkspaceShell extends StatelessWidget {
         },
         destinations: [
           NavigationDestination(
-            icon: const Icon(Icons.timeline_outlined),
-            selectedIcon: const Icon(Icons.timeline),
-            label: l10n.mainNavTimeline,
+            icon: const Icon(Icons.home_outlined),
+            selectedIcon: const Icon(Icons.home),
+            label: l10n.mainNavHome,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.chat_bubble_outline),
-            selectedIcon: const Icon(Icons.chat_bubble),
-            label: l10n.mainNavChat,
+            icon: const Icon(Icons.forum_outlined),
+            selectedIcon: const Icon(Icons.forum),
+            label: l10n.mainNavAskHr,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.checklist_outlined),
+            selectedIcon: const Icon(Icons.checklist),
+            label: l10n.mainNavMyWork,
           ),
           NavigationDestination(
             icon: const Icon(Icons.school_outlined),
@@ -41,14 +46,9 @@ class WorkspaceShell extends StatelessWidget {
             label: l10n.mainNavLearning,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.description_outlined),
-            selectedIcon: const Icon(Icons.description),
-            label: l10n.mainNavDocuments,
-          ),
-          NavigationDestination(
             icon: const Icon(Icons.person_outline),
             selectedIcon: const Icon(Icons.person),
-            label: l10n.mainNavProfile,
+            label: l10n.mainNavAccount,
           ),
         ],
       ),

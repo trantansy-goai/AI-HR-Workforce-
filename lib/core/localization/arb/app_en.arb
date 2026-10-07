@@ -123,11 +123,15 @@
   "showcaseNotificationTitle": "Hello from the notification center",
   "showcaseNotificationBody": "In-app notifications are delivered through a replaceable service.",
   "showcaseAttachments": "Attachments",
-  "mainNavTimeline": "Timeline",
-  "mainNavChat": "Chat",
-  "mainNavLearning": "E-learning",
+  "mainNavHome": "Home",
+  "mainNavAskHr": "Ask HR",
+  "mainNavMyWork": "My Work",
+  "mainNavLearning": "Learning",
+  "mainNavAccount": "Account",
+  "mainNavTimeline": "Home",
+  "mainNavChat": "Ask HR",
   "mainNavDocuments": "Document",
-  "mainNavProfile": "My Profile",
+  "mainNavProfile": "Account",
   "headerSubtitle": "Enterprise AI Assistant & Employee Workspace",
   "headerTokenQuota": "Token quota",
   "headerQuotaUnavailable": "Quota unavailable",
@@ -135,7 +139,7 @@
   "headerQuotaWarning": "Quota warning",
   "notificationTitle": "Notifications",
   "notificationEmpty": "No notifications yet",
-  "chatAiAgents": "AI AGENTS",
+  "chatAiAgents": "AI & HR AGENTS",
   "chatOther": "OTHER",
   "chatHumanBlockedHint": "Remote human chat is awaiting backend contract (BLOCKED)",
   "chatStartNew": "Start new conversation",
@@ -150,5 +154,27 @@
   "profileApprovals": "Pending Approvals",
   "profileSettings": "Settings",
   "elearningCourses": "Courses & Training",
-  "elearningTests": "Certification Tests"
+  "elearningTests": "Certification Tests",
+  "myWorkTitle": "My Work",
+  "myWorkChecklistTitle": "Onboarding Checklist",
+  "myWorkCasesTitle": "My Cases & Requests",
+  "myWorkApprovalsTitle": "Pending My Approval",
+  "homeNewsSection": "COMPANY NEWS",
+  "homeViewAllNews": "View all",
+  "homeUpcomingWork": "Upcoming Work",
+  "homeMyCourses": "My Courses",
+  "homePendingCase": "HR Request #HR-1042",
+  "homePendingTasksStrip": "You have {count} tasks to complete this week.",
+  "@homePendingTasksStrip": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountNews": "Internal News & Bulletins",
+  "askHrSearchPrompt": "Type a question… e.g. leave policy",
+  "askHrPolicyChip": "Policy",
+  "askHrFormChip": "Forms",
+  "askHrMyRequestsChip": "My Requests"
 }

@@ -120,6 +120,14 @@ class _ProfileView extends ConsumerWidget {
           child: Column(
             children: [
               ListTile(
+                leading: const Icon(Icons.newspaper_outlined),
+                title: Text(l10n.accountNews),
+                subtitle: const Text('Thông báo & tin tức chính thức'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push(AppRoutes.news),
+              ),
+              const Divider(height: 1),
+              ListTile(
                 leading: const Icon(Icons.approval_outlined),
                 title: Text(l10n.profileApprovals),
                 subtitle: const Text('Review and approve requests'),

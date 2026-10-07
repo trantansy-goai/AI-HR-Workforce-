@@ -311,19 +311,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showcaseAttachments => 'Attachments';
 
   @override
-  String get mainNavTimeline => 'Timeline';
+  String get mainNavHome => 'Home';
 
   @override
-  String get mainNavChat => 'Chat';
+  String get mainNavAskHr => 'Ask HR';
 
   @override
-  String get mainNavLearning => 'E-learning';
+  String get mainNavMyWork => 'My Work';
+
+  @override
+  String get mainNavLearning => 'Learning';
+
+  @override
+  String get mainNavAccount => 'Account';
+
+  @override
+  String get mainNavTimeline => 'Home';
+
+  @override
+  String get mainNavChat => 'Ask HR';
 
   @override
   String get mainNavDocuments => 'Document';
 
   @override
-  String get mainNavProfile => 'My Profile';
+  String get mainNavProfile => 'Account';
 
   @override
   String get headerSubtitle => 'Enterprise AI Assistant & Employee Workspace';
@@ -347,7 +359,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationEmpty => 'No notifications yet';
 
   @override
-  String get chatAiAgents => 'AI AGENTS';
+  String get chatAiAgents => 'AI & HR AGENTS';
 
   @override
   String get chatOther => 'OTHER';
@@ -375,4 +387,51 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get elearningTests => 'Certification Tests';
+
+  @override
+  String get myWorkTitle => 'My Work';
+
+  @override
+  String get myWorkChecklistTitle => 'Onboarding Checklist';
+
+  @override
+  String get myWorkCasesTitle => 'My Cases & Requests';
+
+  @override
+  String get myWorkApprovalsTitle => 'Pending My Approval';
+
+  @override
+  String get homeNewsSection => 'COMPANY NEWS';
+
+  @override
+  String get homeViewAllNews => 'View all';
+
+  @override
+  String get homeUpcomingWork => 'Upcoming Work';
+
+  @override
+  String get homeMyCourses => 'My Courses';
+
+  @override
+  String get homePendingCase => 'HR Request #HR-1042';
+
+  @override
+  String homePendingTasksStrip(int count) {
+    return 'You have $count tasks to complete this week.';
+  }
+
+  @override
+  String get accountNews => 'Internal News & Bulletins';
+
+  @override
+  String get askHrSearchPrompt => 'Type a question… e.g. leave policy';
+
+  @override
+  String get askHrPolicyChip => 'Policy';
+
+  @override
+  String get askHrFormChip => 'Forms';
+
+  @override
+  String get askHrMyRequestsChip => 'My Requests';
 }

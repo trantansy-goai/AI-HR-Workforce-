@@ -668,23 +668,47 @@ abstract class AppLocalizations {
   /// **'Attachments'**
   String get showcaseAttachments;
 
+  /// No description provided for @mainNavHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get mainNavHome;
+
+  /// No description provided for @mainNavAskHr.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask HR'**
+  String get mainNavAskHr;
+
+  /// No description provided for @mainNavMyWork.
+  ///
+  /// In en, this message translates to:
+  /// **'My Work'**
+  String get mainNavMyWork;
+
+  /// No description provided for @mainNavLearning.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning'**
+  String get mainNavLearning;
+
+  /// No description provided for @mainNavAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get mainNavAccount;
+
   /// No description provided for @mainNavTimeline.
   ///
   /// In en, this message translates to:
-  /// **'Timeline'**
+  /// **'Home'**
   String get mainNavTimeline;
 
   /// No description provided for @mainNavChat.
   ///
   /// In en, this message translates to:
-  /// **'Chat'**
+  /// **'Ask HR'**
   String get mainNavChat;
-
-  /// No description provided for @mainNavLearning.
-  ///
-  /// In en, this message translates to:
-  /// **'E-learning'**
-  String get mainNavLearning;
 
   /// No description provided for @mainNavDocuments.
   ///
@@ -695,7 +719,7 @@ abstract class AppLocalizations {
   /// No description provided for @mainNavProfile.
   ///
   /// In en, this message translates to:
-  /// **'My Profile'**
+  /// **'Account'**
   String get mainNavProfile;
 
   /// No description provided for @headerSubtitle.
@@ -743,7 +767,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatAiAgents.
   ///
   /// In en, this message translates to:
-  /// **'AI AGENTS'**
+  /// **'AI & HR AGENTS'**
   String get chatAiAgents;
 
   /// No description provided for @chatOther.
@@ -793,6 +817,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Certification Tests'**
   String get elearningTests;
+
+  /// No description provided for @myWorkTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Work'**
+  String get myWorkTitle;
+
+  /// No description provided for @myWorkChecklistTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Onboarding Checklist'**
+  String get myWorkChecklistTitle;
+
+  /// No description provided for @myWorkCasesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Cases & Requests'**
+  String get myWorkCasesTitle;
+
+  /// No description provided for @myWorkApprovalsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending My Approval'**
+  String get myWorkApprovalsTitle;
+
+  /// No description provided for @homeNewsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'COMPANY NEWS'**
+  String get homeNewsSection;
+
+  /// No description provided for @homeViewAllNews.
+  ///
+  /// In en, this message translates to:
+  /// **'View all'**
+  String get homeViewAllNews;
+
+  /// No description provided for @homeUpcomingWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming Work'**
+  String get homeUpcomingWork;
+
+  /// No description provided for @homeMyCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'My Courses'**
+  String get homeMyCourses;
+
+  /// No description provided for @homePendingCase.
+  ///
+  /// In en, this message translates to:
+  /// **'HR Request #HR-1042'**
+  String get homePendingCase;
+
+  /// No description provided for @homePendingTasksStrip.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {count} tasks to complete this week.'**
+  String homePendingTasksStrip(int count);
+
+  /// No description provided for @accountNews.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal News & Bulletins'**
+  String get accountNews;
+
+  /// No description provided for @askHrSearchPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a question… e.g. leave policy'**
+  String get askHrSearchPrompt;
+
+  /// No description provided for @askHrPolicyChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy'**
+  String get askHrPolicyChip;
+
+  /// No description provided for @askHrFormChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Forms'**
+  String get askHrFormChip;
+
+  /// No description provided for @askHrMyRequestsChip.
+  ///
+  /// In en, this message translates to:
+  /// **'My Requests'**
+  String get askHrMyRequestsChip;
 }
 
 class _AppLocalizationsDelegate

@@ -21,6 +21,12 @@ final approvalListProvider = FutureProvider.autoDispose<List<ApprovalItem>>((
   return repo.getApprovals();
 });
 
+/// Permission-aware check for Manager/HR approval actions.
+/// Overridable in ProviderScope for testing permission-gated UI.
+final hasApprovalPermissionProvider = Provider<bool>((ref) {
+  return true;
+});
+
 class ApprovalActionState {
   const ApprovalActionState({this.isSubmitting = false, this.error});
   final bool isSubmitting;
