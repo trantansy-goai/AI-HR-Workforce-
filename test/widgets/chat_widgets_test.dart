@@ -7,6 +7,8 @@ import 'package:flutter_project_base/features/chat/presentation/widgets/chat_com
 import 'package:flutter_project_base/features/chat/presentation/widgets/message_bubble.dart';
 import 'package:flutter_project_base/features/chat/presentation/widgets/typing_indicator.dart';
 import 'package:flutter_project_base/features/file/domain/attachment.dart';
+import 'package:flutter_project_base/features/file/presentation/attachment_viewers.dart';
+import 'package:flutter_project_base/features/voice/data/fake_voice_recorder.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/test_helpers.dart';
@@ -124,7 +126,7 @@ void main() {
       );
       expect(find.text('Original question'), findsOneWidget);
       expect(find.text('report.pdf'), findsOneWidget);
-      expect(find.text('2.0 KB'), findsOneWidget);
+      expect(find.text('2.0 KB · PDF'), findsOneWidget);
       expect(find.text('Sources'), findsOneWidget);
       expect(find.text('Guide'), findsOneWidget);
     });
@@ -205,11 +207,13 @@ void main() {
     ) async {
       var cancelled = false;
       var attached = false;
+      var media = false;
       await tester.pumpWidget(
         testApp(
           ChatComposer(
             onSend: (_) {},
-            onAttach: () => attached = true,
+            onAttachFile: () => attached = true,
+            onAttachMedia: () => media = true,
             replyTo: const ReplyReference(
               messageId: 'x',
               senderName: 'Linh',
@@ -222,8 +226,154 @@ void main() {
       expect(find.text('Replying to Linh'), findsOneWidget);
       await tester.tap(find.byIcon(Icons.close));
       await tester.tap(find.byIcon(Icons.attach_file));
+      await tester.tap(find.byIcon(Icons.photo_library_outlined));
       expect(cancelled, isTrue);
       expect(attached, isTrue);
+      expect(media, isTrue);
+    });
+
+    testWidgets('mic is hidden without onVoiceRecorded', (tester) async {
+      await tester.pumpWidget(testApp(ChatComposer(onSend: (_) {})));
+      expect(find.byIcon(Icons.mic), findsNothing);
+    });
+
+    testWidgets('records a voice note and hands back path + duration', (
+      tester,
+    ) async {
+      final recorder = FakeVoiceRecorder();
+      String? path;
+      await tester.pumpWidget(
+        testApp(
+          ChatComposer(
+            onSend: (_) {},
+            voiceRecorder: recorder,
+            onVoiceRecorded: (p, _) => path = p,
+          ),
+        ),
+      );
+      await tester.tap(find.byIcon(Icons.mic));
+      await tester.pump();
+      expect(find.textContaining('Recording'), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.stop_circle));
+      await tester.pump();
+      expect(path, '/tmp/fake_voice_recording.m4a');
+      expect(find.textContaining('Recording'), findsNothing);
+      recorder.dispose();
+    });
+
+    testWidgets('blocked microphone offers to open app settings', (
+      tester,
+    ) async {
+      final recorder = FakeVoiceRecorder(
+        grantPermission: false,
+        permanentlyDenied: true,
+      );
+      await tester.pumpWidget(
+        testApp(
+          ChatComposer(
+            onSend: (_) {},
+            voiceRecorder: recorder,
+            onVoiceRecorded: (_, _) {},
+          ),
+        ),
+      );
+      await tester.tap(find.byIcon(Icons.mic));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Microphone access needed'), findsOneWidget);
+      await tester.tap(find.text('Open settings'));
+      await tester.pumpAndSettle();
+      expect(recorder.settingsOpened, 1);
+      expect(find.textContaining('Recording'), findsNothing);
+      recorder.dispose();
+    });
+
+    testWidgets('denied microphone also offers settings; cancel closes', (
+      tester,
+    ) async {
+      final recorder = FakeVoiceRecorder(grantPermission: false);
+      await tester.pumpWidget(
+        testApp(
+          ChatComposer(
+            onSend: (_) {},
+            voiceRecorder: recorder,
+            onVoiceRecorded: (_, _) {},
+          ),
+        ),
+      );
+      await tester.tap(find.byIcon(Icons.mic));
+      await tester.pumpAndSettle();
+      expect(find.text('Microphone access needed'), findsOneWidget);
+
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsNothing);
+      expect(recorder.settingsOpened, 0);
+      recorder.dispose();
+    });
+  });
+
+  group('MessageBubble attachments', () {
+    Message withAttachment(Attachment a, {String content = ''}) =>
+        message(content: content, attachments: [a]);
+
+    const pdf = Attachment(
+      id: 'f',
+      name: 'Hop_dong.docx',
+      mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      kind: AttachmentKind.document,
+      source: LocalAttachmentSource('/tmp/Hop_dong.docx'),
+      sizeBytes: 1536,
+    );
+
+    testWidgets('is at most 2/3 of the screen width', (tester) async {
+      tester.view.physicalSize = const Size(1200, 2400);
+      tester.view.devicePixelRatio = 3;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        testApp(
+          MessageBubble(
+            message: withAttachment(pdf, content: 'x' * 400),
+            isMine: true,
+          ),
+        ),
+      );
+      final width = tester.getSize(find.byType(GestureDetector).first).width;
+      expect(width, lessThanOrEqualTo(400 * 2 / 3 + 0.5));
+    });
+
+    testWidgets('file shows type, size and opens the file viewer', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        testApp(MessageBubble(message: withAttachment(pdf), isMine: true)),
+      );
+      expect(find.text('Hop_dong.docx'), findsOneWidget);
+      expect(find.text('1.5 KB · DOCX'), findsOneWidget);
+      expect(find.byIcon(Icons.description), findsOneWidget);
+
+      await tester.tap(find.text('Hop_dong.docx'));
+      await tester.pumpAndSettle();
+      expect(find.byType(FileViewerPage), findsOneWidget);
+      expect(find.text('Open with another app'), findsOneWidget);
+    });
+
+    testWidgets('image opens the full-screen image viewer', (tester) async {
+      const image = Attachment(
+        id: 'i',
+        name: 'anh.jpg',
+        mimeType: 'image/jpeg',
+        kind: AttachmentKind.image,
+        source: LocalAttachmentSource('/tmp/does-not-exist.jpg'),
+      );
+      await tester.pumpWidget(
+        testApp(MessageBubble(message: withAttachment(image), isMine: false)),
+      );
+      await tester.tap(find.bySemanticsLabel('anh.jpg'));
+      await tester.pumpAndSettle();
+      expect(find.byType(ImageViewerPage), findsOneWidget);
+      expect(find.byType(InteractiveViewer), findsOneWidget);
     });
   });
 

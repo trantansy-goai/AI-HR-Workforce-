@@ -3,6 +3,7 @@ import 'package:flutter_project_base/features/voice/data/native_voice_recorder.d
 import 'package:flutter_project_base/features/voice/domain/voice_recorder.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 
 class MockAudioRecorder extends Mock implements AudioRecorder {}
@@ -60,29 +61,63 @@ void main() {
   group('NativeVoiceRecorder', () {
     late MockAudioRecorder mockRecorder;
     late NativeVoiceRecorder recorder;
+    var micStatus = PermissionStatus.denied;
+    var requestResult = PermissionStatus.granted;
+    var settingsOpened = 0;
 
     setUp(() {
+      micStatus = PermissionStatus.denied;
+      requestResult = PermissionStatus.granted;
+      settingsOpened = 0;
       mockRecorder = MockAudioRecorder();
       when(() => mockRecorder.dispose()).thenAnswer((_) async {});
-      recorder = NativeVoiceRecorder(recorder: mockRecorder);
+      recorder = NativeVoiceRecorder(
+        recorder: mockRecorder,
+        permissionStatus: () async => micStatus,
+        requestPermissionDelegate: () async => requestResult,
+        openSettings: () async {
+          settingsOpened++;
+          return true;
+        },
+      );
     });
 
     tearDown(() {
       recorder.dispose();
     });
 
-    test('delegates permission check to AudioRecorder', () async {
-      when(() => mockRecorder.hasPermission()).thenAnswer((_) async => true);
+    test('checks the microphone permission without prompting', () async {
+      micStatus = PermissionStatus.granted;
       expect(await recorder.hasPermission(), isTrue);
 
-      when(() => mockRecorder.hasPermission()).thenAnswer((_) async => false);
+      micStatus = PermissionStatus.denied;
       expect(await recorder.hasPermission(), isFalse);
+    });
+
+    test('maps the permission request result', () async {
+      requestResult = PermissionStatus.granted;
+      expect(await recorder.requestPermission(), MicPermission.granted);
+
+      requestResult = PermissionStatus.denied;
+      expect(await recorder.requestPermission(), MicPermission.denied);
+
+      // Android 11+ stops prompting after repeated denials.
+      requestResult = PermissionStatus.permanentlyDenied;
+      expect(
+        await recorder.requestPermission(),
+        MicPermission.permanentlyDenied,
+      );
+    });
+
+    test('opens app settings for a blocked microphone', () async {
+      await recorder.openPermissionSettings();
+      expect(settingsOpened, 1);
     });
 
     test(
       'throws exception when starting without microphone permission',
       () async {
-        when(() => mockRecorder.hasPermission()).thenAnswer((_) async => false);
+        micStatus = PermissionStatus.denied;
 
         await expectLater(
           () => recorder.start(customPath: '/tmp/test.m4a'),
@@ -93,7 +128,7 @@ void main() {
     );
 
     test('starts and stops recording session cleanly', () async {
-      when(() => mockRecorder.hasPermission()).thenAnswer((_) async => true);
+      micStatus = PermissionStatus.granted;
       when(() => mockRecorder.start(any(), path: any(named: 'path')))
           .thenAnswer((_) async {});
       when(() => mockRecorder.stop()).thenAnswer((_) async => '/tmp/test.m4a');
@@ -107,7 +142,7 @@ void main() {
     });
 
     test('cancels recording session cleanly', () async {
-      when(() => mockRecorder.hasPermission()).thenAnswer((_) async => true);
+      micStatus = PermissionStatus.granted;
       when(() => mockRecorder.start(any(), path: any(named: 'path')))
           .thenAnswer((_) async {});
       when(() => mockRecorder.cancel()).thenAnswer((_) async {});

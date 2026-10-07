@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/theme/app_tokens.dart';
 import '../../../shared/widgets/responsive.dart';
 import '../../../shared/widgets/state_views.dart';
 import '../application/test_providers.dart';
@@ -77,7 +78,9 @@ class TestTakingPage extends ConsumerWidget {
                 Icon(
                   res.isPassed ? Icons.check_circle : Icons.cancel,
                   size: 80,
-                  color: res.isPassed ? Colors.green : Colors.red,
+                  color: res.isPassed
+                      ? AppHrPalette.accent
+                      : AppHrPalette.danger,
                 ),
                 const SizedBox(height: 16),
                 Text(

@@ -1,387 +1,255 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/router/app_routes.dart';
 import '../../../core/localization/l10n.dart';
 import '../../../core/theme/app_tokens.dart';
-import '../../../shared/widgets/responsive.dart';
-import '../../../shared/widgets/shared_workspace_header.dart';
-import '../application/chat_providers.dart';
-import '../domain/entities/agent_item.dart';
-import '../domain/entities/conversation.dart';
+import '../../../core/theme/hr_theme.dart';
+import '../../../shared/widgets/app_button.dart';
+import '../../../shared/widgets/hr_top_bar.dart';
+import '../../../shared/widgets/hr_widgets.dart';
+import 'widgets/hr_answer_widgets.dart';
 
-import 'conversation_page.dart';
-
-/// Tab 2: Hỏi HR (Ask HR / Enterprise AI Assistant discovery)
-/// Allows employees to select an HR/AI assistant, review past conversations,
-/// or start a new inquiry. On wide tablets, provides a master-detail split layout.
-class AskHrPage extends ConsumerStatefulWidget {
+/// Tab 2: Hỏi HR (M03 · A4) — ask a policy question, jump to common topics,
+/// and see how answers are handled (sample exchange + privacy notice).
+///
+/// Typing a question opens a new HR-assistant conversation with it. Phones
+/// and portrait tablets show one column; landscape tablets put the question
+/// area beside the sample exchange.
+class AskHrPage extends StatefulWidget {
   const AskHrPage({super.key});
 
   @override
-  ConsumerState<AskHrPage> createState() => _AskHrPageState();
+  State<AskHrPage> createState() => _AskHrPageState();
 }
 
-class _AskHrPageState extends ConsumerState<AskHrPage> {
-  String? _selectedConversationId;
-  String? _selectedAgentId;
+class _AskHrPageState extends State<AskHrPage> {
+  final _questionController = TextEditingController();
+
+  @override
+  void dispose() {
+    _questionController.dispose();
+    super.dispose();
+  }
+
+  void _ask() {
+    final question = _questionController.text.trim();
+    if (question.isEmpty) return;
+    _questionController.clear();
+    FocusScope.of(context).unfocus();
+    final id = 'agent-hr-assistant-${DateTime.now().millisecondsSinceEpoch}';
+    context.push(AppRoutes.conversation(id, initialMessage: question));
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final theme = Theme.of(context);
-    final agents = ref.watch(agentsProvider);
-    final conversationsAsync = ref.watch(conversationsProvider);
 
-    return Scaffold(
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final isWideTablet =
-                constraints.maxWidth >= ResponsiveBreakpoints.wideTablet;
-
-            if (isWideTablet) {
-              return Row(
-                children: [
-                  // Master Pane: Agent discovery & history
-                  SizedBox(
-                    width: 380,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SharedWorkspaceHeader(),
-                        Expanded(
-                          child: _buildDiscoveryList(
-                            context,
-                            ref,
-                            theme,
-                            l10n,
-                            agents,
-                            conversationsAsync,
-                            isMasterDetail: true,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const VerticalDivider(width: 1, thickness: 1),
-                  // Detail Pane: Active conversation or empty state
-                  Expanded(
-                    child: _selectedConversationId != null
-                        ? ConversationPage(
-                            key: ValueKey(_selectedConversationId),
-                            conversationId: _selectedConversationId!,
-                          )
-                        : _buildEmptyDetailState(theme, l10n),
-                  ),
-                ],
-              );
-            }
-
-            // Compact / phone / medium portrait layout
-            return ResponsiveCenter(
-              maxWidth: ContentConstraints.reading,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SharedWorkspaceHeader(),
-                  Expanded(
-                    child: _buildDiscoveryList(
-                      context,
-                      ref,
-                      theme,
-                      l10n,
-                      agents,
-                      conversationsAsync,
-                      isMasterDetail: false,
-                    ),
-                  ),
-                ],
+    return Theme(
+      data: hrScopedTheme(Theme.of(context)),
+      child: Scaffold(
+        backgroundColor: AppHrPalette.background,
+        body: SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
+              HrTopBar(
+                title: l10n.homeAppBarTitle,
+                actions: const [HrNotificationButton()],
               ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEmptyDetailState(ThemeData theme, AppLocalizations l10n) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xxl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppSpacing.xl),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer.withValues(
-                  alpha: 0.3,
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final width = constraints.maxWidth;
+                    if (width >= ResponsiveBreakpoints.wideTablet) {
+                      return _buildWide();
+                    }
+                    return _buildSingleColumn(
+                      isTablet: width >= ResponsiveBreakpoints.tablet,
+                    );
+                  },
                 ),
-                shape: BoxShape.circle,
               ),
-              child: Icon(
-                Icons.forum_outlined,
-                size: 56,
-                color: theme.colorScheme.primary,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Text(
-              'Chọn trợ lý AI để bắt đầu',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              'Trao đổi chính sách nhân sự, biểu mẫu, quy trình công việc',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            FilledButton.icon(
-              icon: const Icon(Icons.chat_bubble_outline),
-              label: const Text('Bắt đầu với HR Assistant'),
-              onPressed: () {
-                setState(() {
-                  _selectedAgentId = 'hr-assistant';
-                  _selectedConversationId =
-                      'agent-hr-assistant-${DateTime.now().millisecondsSinceEpoch}';
-                });
-              },
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildDiscoveryList(
-    BuildContext context,
-    WidgetRef ref,
-    ThemeData theme,
-    AppLocalizations l10n,
-    List<AgentItem> agents,
-    AsyncValue<List<Conversation>> conversationsAsync, {
-    required bool isMasterDetail,
-  }) {
+  Widget _buildSingleColumn({required bool isTablet}) {
     return ListView(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      padding: EdgeInsets.symmetric(
+        horizontal: isTablet ? AppSpacing.xl : AppSpacing.lg,
+        vertical: isTablet ? AppSpacing.xxl : AppSpacing.xl,
+      ),
       children: [
-        // Search prompt banner
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.md),
+        Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 640),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  'Bạn cần HR hỗ trợ gì?',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest.withValues(
-                      alpha: 0.4,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: theme.colorScheme.outlineVariant),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.search,
-                        size: 18,
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          l10n.askHrSearchPrompt,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                Wrap(
-                  spacing: AppSpacing.xs,
-                  runSpacing: AppSpacing.xs,
-                  children: [
-                    ActionChip(
-                      label: Text(l10n.askHrPolicyChip),
-                      visualDensity: VisualDensity.compact,
-                      onPressed: () {
-                        if (isMasterDetail) {
-                          setState(() {
-                            _selectedAgentId = 'hr-assistant';
-                            _selectedConversationId =
-                                'agent-hr-assistant-${DateTime.now().millisecondsSinceEpoch}';
-                          });
-                        } else {
-                          context.push(AppRoutes.agentHistory('hr-assistant'));
-                        }
-                      },
-                    ),
-                    ActionChip(
-                      label: Text(l10n.askHrFormChip),
-                      visualDensity: VisualDensity.compact,
-                      onPressed: () {
-                        if (isMasterDetail) {
-                          setState(() {
-                            _selectedAgentId = 'hr-assistant';
-                            _selectedConversationId =
-                                'agent-hr-assistant-${DateTime.now().millisecondsSinceEpoch}';
-                          });
-                        } else {
-                          context.push(AppRoutes.agentHistory('hr-assistant'));
-                        }
-                      },
-                    ),
-                    ActionChip(
-                      label: Text(l10n.askHrMyRequestsChip),
-                      visualDensity: VisualDensity.compact,
-                      onPressed: () => context.go(AppRoutes.myWork),
-                    ),
-                  ],
-                ),
+                ..._buildQuestionArea(),
+                const SizedBox(height: AppSpacing.xl),
+                ..._buildSampleExchange(),
               ],
             ),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.lg),
-
-        // AI AGENTS
-        Text(
-          l10n.chatAiAgents,
-          style: theme.textTheme.labelLarge?.copyWith(
-            letterSpacing: 1.1,
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.primary,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-
-        for (final agent in agents)
-          Card(
-            margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: isMasterDetail && _selectedAgentId == agent.id
-                  ? BorderSide(color: theme.colorScheme.primary, width: 2)
-                  : BorderSide.none,
-            ),
-            color: isMasterDetail && _selectedAgentId == agent.id
-                ? theme.colorScheme.primaryContainer.withValues(alpha: 0.15)
-                : null,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(12),
-              onTap: () {
-                if (isMasterDetail) {
-                  setState(() {
-                    _selectedAgentId = agent.id;
-                    _selectedConversationId =
-                        'agent-${agent.id}-${DateTime.now().millisecondsSinceEpoch}';
-                  });
-                } else {
-                  context.push(AppRoutes.agentHistory(agent.id));
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: theme.colorScheme.primaryContainer,
-                      foregroundColor: theme.colorScheme.onPrimaryContainer,
-                      child: Icon(_agentIcon(agent.id)),
-                    ),
-                    const SizedBox(width: AppSpacing.md),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            agent.name,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            agent.description,
-                            style: theme.textTheme.bodySmall,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    const Icon(Icons.chevron_right, size: 20),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-        const SizedBox(height: AppSpacing.lg),
-
-        // OTHER (human chat placeholder)
-        Row(
-          children: [
-            Text(
-              l10n.chatOther,
-              style: theme.textTheme.labelLarge?.copyWith(
-                letterSpacing: 1.1,
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.outline,
-              ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Chip(
-              label: const Text('BLOCKED'),
-              visualDensity: VisualDensity.compact,
-              backgroundColor: Colors.grey.shade200,
-              labelStyle: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey.shade700,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        Text(
-          l10n.chatHumanBlockedHint,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.outline,
           ),
         ),
       ],
     );
   }
 
-  IconData _agentIcon(String id) => switch (id) {
-    'hr-assistant' => Icons.badge_outlined,
-    'legal-assistant' => Icons.gavel_outlined,
-    _ => Icons.smart_toy_outlined,
-  };
+  Widget _buildWide() {
+    return ListView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      padding: const EdgeInsets.all(AppSpacing.xxl),
+      children: [
+        Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1000),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: _buildQuestionArea(large: true),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.xxl),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: _buildSampleExchange(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Heading, question field and topic shortcuts.
+  List<Widget> _buildQuestionArea({bool large = false}) {
+    final l10n = context.l10n;
+    return [
+      HrPageTitle(l10n.askHrTitle, large: large),
+      const SizedBox(height: AppSpacing.lg),
+      ValueListenableBuilder(
+        valueListenable: _questionController,
+        builder: (context, value, _) => TextField(
+          controller: _questionController,
+          textInputAction: TextInputAction.send,
+          onSubmitted: (_) => _ask(),
+          decoration: InputDecoration(
+            hintText: l10n.askHrSearchPrompt,
+            suffixIcon: value.text.trim().isEmpty
+                ? null
+                : IconButton(
+                    tooltip: l10n.askHrSend,
+                    onPressed: _ask,
+                    icon: const Icon(
+                      Icons.send_rounded,
+                      color: AppHrPalette.accent,
+                    ),
+                  ),
+          ),
+        ),
+      ),
+      const SizedBox(height: AppSpacing.md),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _TopicPill(
+            label: l10n.askHrPolicyChip,
+            background: AppHrPalette.accentSoft,
+            foreground: AppHrPalette.accent,
+            onTap: () => context.go(AppRoutes.askHrAnswer),
+          ),
+          _TopicPill(
+            label: l10n.askHrFormChip,
+            background: AppHrPalette.infoSoft,
+            foreground: AppHrPalette.infoInk,
+            onTap: () => context.push(AppRoutes.documents),
+          ),
+          _TopicPill(
+            label: l10n.askHrMyRequestsChip,
+            background: AppHrPalette.violetSoft,
+            foreground: AppHrPalette.violetInk,
+            onTap: () => context.go(AppRoutes.myWork),
+          ),
+        ],
+      ),
+    ];
+  }
+
+  /// Sample question/answer, privacy notice and the policy-sources CTA.
+  List<Widget> _buildSampleExchange() {
+    final l10n = context.l10n;
+    return [
+      HrChatBubble(text: l10n.askHrSampleQuestion, fromUser: true),
+      const SizedBox(height: AppSpacing.lg),
+      HrChatBubble(text: l10n.askHrSampleAnswer, fromUser: false),
+      const SizedBox(height: AppSpacing.lg),
+      HrNoticeBox(text: l10n.askHrPrivacyNotice),
+      const SizedBox(height: AppSpacing.md),
+      AppButton(
+        label: l10n.askHrViewPolicySources,
+        onPressed: () => context.go(AppRoutes.askHrAnswer),
+        expand: true,
+      ),
+    ];
+  }
+}
+
+class _TopicPill extends StatelessWidget {
+  const _TopicPill({
+    required this.label,
+    required this.background,
+    required this.foreground,
+    required this.onTap,
+  });
+
+  final String label;
+  final Color background;
+  final Color foreground;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Flexible(
+      child: Material(
+        color: background,
+        shape: const StadiumBorder(),
+        child: InkWell(
+          customBorder: const StadiumBorder(),
+          onTap: onTap,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 36),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              child: Center(
+                widthFactor: 1,
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: foreground,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

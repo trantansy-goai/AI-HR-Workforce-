@@ -12,7 +12,9 @@ void main() {
     test('fetches learning course list', () async {
       final courses = await repo.getCourses();
       expect(courses.length, greaterThanOrEqualTo(3));
-      expect(courses.first.isCompleted, isTrue);
+      expect(courses.first.isMandatory, isTrue);
+      expect(courses.first.dueDate, isNotNull);
+      expect(courses.any((c) => c.isCompleted), isTrue);
     });
 
     test('fetches course detail by id', () async {

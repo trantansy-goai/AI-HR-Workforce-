@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_tokens.dart';
 
-enum AppButtonVariant { primary, secondary, text }
+enum AppButtonVariant { primary, secondary, tonal, text }
 
 /// Standard button with built-in loading state.
 ///
@@ -53,6 +53,10 @@ class AppButton extends StatelessWidget {
         child: child,
       ),
       AppButtonVariant.secondary => OutlinedButton(
+        onPressed: callback,
+        child: child,
+      ),
+      AppButtonVariant.tonal => FilledButton.tonal(
         onPressed: callback,
         child: child,
       ),

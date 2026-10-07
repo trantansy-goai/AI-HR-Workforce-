@@ -15,13 +15,21 @@ import '../domain/chat_provider.dart';
 import '../domain/entities/conversation.dart';
 import '../domain/entities/message.dart';
 import 'widgets/chat_composer.dart';
+import 'widgets/file_type_sheet.dart';
 import 'widgets/message_bubble.dart';
 import 'widgets/typing_indicator.dart';
 
 class ConversationPage extends ConsumerStatefulWidget {
-  const ConversationPage({super.key, required this.conversationId});
+  const ConversationPage({
+    super.key,
+    required this.conversationId,
+    this.initialMessage,
+  });
 
   final String conversationId;
+
+  /// Sent once when the page opens (e.g. a question typed on Hỏi HR).
+  final String? initialMessage;
 
   @override
   ConsumerState<ConversationPage> createState() => _ConversationPageState();
@@ -37,6 +45,12 @@ class _ConversationPageState extends ConsumerState<ConversationPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    final initial = widget.initialMessage?.trim();
+    if (initial != null && initial.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _controller.send(initial);
+      });
+    }
   }
 
   @override
@@ -53,8 +67,20 @@ class _ConversationPageState extends ConsumerState<ConversationPage> {
     }
   }
 
-  Future<void> _attach() async {
-    final picked = await ref.read(attachmentPickerProvider).pick();
+  /// Photos/videos through the system picker (Android Photo Picker, iOS
+  /// PHPicker).
+  Future<void> _attachMedia() async {
+    final picked = await ref.read(attachmentPickerProvider).pickMedia();
+    if (picked.isNotEmpty) _controller.addAttachments(picked);
+  }
+
+  /// File-type sheet, then the system file picker filtered to that type.
+  Future<void> _attachFile() async {
+    final choice = await showFileTypeSheet(context);
+    if (choice == null) return;
+    final picked = await ref
+        .read(attachmentPickerProvider)
+        .pickFiles(extensions: choice.extensions);
     if (picked.isNotEmpty) _controller.addAttachments(picked);
   }
 
@@ -121,8 +147,14 @@ class _ConversationPageState extends ConsumerState<ConversationPage> {
             ChatComposer(
               voiceRecorder: ref.watch(voiceRecorderProvider),
               onSend: controller.send,
-              onAttach: info.supports(ChatCapability.attachments)
-                  ? _attach
+              onAttachMedia: info.supports(ChatCapability.attachments)
+                  ? _attachMedia
+                  : null,
+              onAttachFile: info.supports(ChatCapability.attachments)
+                  ? _attachFile
+                  : null,
+              onVoiceRecorded: info.supports(ChatCapability.attachments)
+                  ? controller.sendVoiceNote
                   : null,
               onStop: info.supports(ChatCapability.stopGeneration)
                   ? controller.stopGeneration

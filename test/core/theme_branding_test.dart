@@ -15,10 +15,20 @@ void main() {
       expect(AppBrandColors.secondaryGold, const Color(0xFFD99F37));
     });
 
-    test('applies primary blue as theme primary in light mode', () {
+    test('applies the brand blue as theme primary in light mode', () {
       final theme = const AppTheme().light;
+      expect(AppHrPalette.accent, AppBrandColors.primaryBlue);
       expect(theme.colorScheme.primary, AppBrandColors.primaryBlue);
       expect(theme.colorScheme.secondary, AppBrandColors.secondaryGold);
+    });
+
+    test('uses the GO AI HR canvas, white app bars and bordered cards', () {
+      final theme = const AppTheme().light;
+      expect(theme.scaffoldBackgroundColor, AppHrPalette.background);
+      expect(theme.appBarTheme.backgroundColor, AppHrPalette.surface);
+      expect(theme.cardTheme.color, AppHrPalette.surface);
+      final cardShape = theme.cardTheme.shape! as RoundedRectangleBorder;
+      expect(cardShape.side.color, AppHrPalette.border);
     });
 
     test('configures bottom navigation bar styling with brand colors', () {
@@ -28,14 +38,14 @@ void main() {
 
       final selectedIcon = navTheme.iconTheme?.resolve({WidgetState.selected});
       final unselectedIcon = navTheme.iconTheme?.resolve({});
-      expect(selectedIcon?.color, AppBrandColors.primaryBlue);
+      expect(selectedIcon?.color, AppHrPalette.accent);
       expect(unselectedIcon?.color, theme.colorScheme.onSurfaceVariant);
 
       final selectedText = navTheme.labelTextStyle?.resolve({
         WidgetState.selected,
       });
       final unselectedText = navTheme.labelTextStyle?.resolve({});
-      expect(selectedText?.color, AppBrandColors.primaryBlue);
+      expect(selectedText?.color, AppHrPalette.accent);
       expect(selectedText?.fontWeight, FontWeight.w600);
       expect(unselectedText?.color, theme.colorScheme.onSurfaceVariant);
     });
@@ -44,19 +54,19 @@ void main() {
       final theme = const AppTheme().light;
       expect(
         theme.filledButtonTheme.style?.backgroundColor?.resolve({}),
-        AppBrandColors.primaryBlue,
+        AppHrPalette.accent,
       );
       expect(
         theme.outlinedButtonTheme.style?.foregroundColor?.resolve({}),
-        AppBrandColors.primaryBlue,
+        AppHrPalette.accent,
       );
       expect(
         theme.textButtonTheme.style?.foregroundColor?.resolve({}),
-        AppBrandColors.primaryBlue,
+        AppHrPalette.accent,
       );
-      expect(theme.tabBarTheme.labelColor, AppBrandColors.primaryBlue);
-      expect(theme.tabBarTheme.indicatorColor, AppBrandColors.primaryBlue);
-      expect(theme.progressIndicatorTheme.color, AppBrandColors.primaryBlue);
+      expect(theme.tabBarTheme.labelColor, AppHrPalette.accent);
+      expect(theme.tabBarTheme.indicatorColor, AppHrPalette.accent);
+      expect(theme.progressIndicatorTheme.color, AppHrPalette.accent);
     });
   });
 
@@ -102,9 +112,10 @@ void main() {
         );
         expect(materialApp.themeMode, ThemeMode.light);
 
-        final theme = Theme.of(tester.element(find.byType(Scaffold).first));
+        // App-level theme (screens such as sign-in may scope their own accent).
+        final theme = Theme.of(tester.element(find.byType(Navigator).first));
         expect(theme.brightness, Brightness.light);
-        expect(theme.colorScheme.primary, AppBrandColors.primaryBlue);
+        expect(theme.colorScheme.primary, AppHrPalette.accent);
         expect(theme.colorScheme.secondary, AppBrandColors.secondaryGold);
       },
     );
@@ -129,9 +140,10 @@ void main() {
         );
         expect(materialApp.themeMode, ThemeMode.light);
 
-        final theme = Theme.of(tester.element(find.byType(Scaffold).first));
+        // App-level theme (screens such as sign-in may scope their own accent).
+        final theme = Theme.of(tester.element(find.byType(Navigator).first));
         expect(theme.brightness, Brightness.light);
-        expect(theme.colorScheme.primary, AppBrandColors.primaryBlue);
+        expect(theme.colorScheme.primary, AppHrPalette.accent);
         expect(theme.colorScheme.secondary, AppBrandColors.secondaryGold);
       },
     );

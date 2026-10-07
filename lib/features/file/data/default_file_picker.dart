@@ -20,7 +20,36 @@ class DefaultFilePickerService implements AttachmentPicker {
       return simulatedFiles!;
     }
 
-    // Default development picked file fixture
+    return _documentFixture();
+  }
+
+  @override
+  Future<List<Attachment>> pickFiles({List<String>? extensions}) async {
+    if (shouldCancel) return const [];
+    return simulatedFiles ?? _documentFixture();
+  }
+
+  @override
+  Future<List<Attachment>> pickMedia() async {
+    if (shouldCancel) return const [];
+    if (simulatedFiles != null) return simulatedFiles!;
+    final now = DateTime.now();
+    return [
+      Attachment(
+        id: 'media-${now.millisecondsSinceEpoch}',
+        name: 'photo_${now.millisecondsSinceEpoch}.jpg',
+        mimeType: 'image/jpeg',
+        kind: AttachmentKind.image,
+        source: LocalAttachmentSource(
+          '/tmp/picked_photo_${now.millisecondsSinceEpoch}.jpg',
+        ),
+        sizeBytes: 482133,
+      ),
+    ];
+  }
+
+  // Default development picked file fixture
+  List<Attachment> _documentFixture() {
     final now = DateTime.now();
     final fileId = 'picked-${now.millisecondsSinceEpoch}';
     return [

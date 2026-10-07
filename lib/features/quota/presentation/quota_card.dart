@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/theme/app_tokens.dart';
 import '../application/quota_providers.dart';
 
 class QuotaUsageCard extends ConsumerWidget {
@@ -18,10 +19,10 @@ class QuotaUsageCard extends ConsumerWidget {
           error: (err, _) => Text('Error loading quota: $err'),
           data: (quota) {
             final color = quota.isExceeded
-                ? Colors.red
+                ? AppHrPalette.danger
                 : quota.isWarning
-                ? Colors.orange
-                : Colors.green;
+                ? AppHrPalette.amberInk
+                : AppHrPalette.accent;
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -3,7 +3,7 @@ import 'package:flutter_project_base/app/app.dart';
 import 'package:flutter_project_base/features/chat/application/chat_providers.dart';
 import 'package:flutter_project_base/features/chat/data/providers/mock_chat_provider.dart';
 import 'package:flutter_project_base/features/chat/domain/chat_provider.dart';
-import 'package:flutter_project_base/features/chat/presentation/ask_hr_page.dart';
+import 'package:flutter_project_base/features/chat/presentation/chat_hub_page.dart';
 import 'package:flutter_project_base/features/elearning/presentation/elearning_hub_page.dart';
 import 'package:flutter_project_base/features/home/presentation/trang_chu_page.dart';
 import 'package:flutter_project_base/features/my_work/presentation/my_work_page.dart';
@@ -107,6 +107,7 @@ void main() {
       expect(find.text('Upcoming Work'), findsOneWidget);
       expect(find.text('My Courses'), findsOneWidget);
       expect(find.text('HR Request #HR-1042'), findsOneWidget);
+      await tester.scrollUntilVisible(find.text('COMPANY NEWS'), 200);
       expect(find.text('COMPANY NEWS'), findsOneWidget);
 
       expect(tester.takeException(), isNull);
@@ -127,18 +128,69 @@ void main() {
     });
   });
 
-  group('Hỏi HR Master-Detail on Wide Tablet', () {
+  group('Trang Chủ mockup elements', () {
+    testWidgets('phone shows header, summary, quick actions and quota', (
+      tester,
+    ) async {
+      await signInWithDimensions(tester, width: 360, height: 800);
+
+      expect(find.text('GO AI · HR'), findsOneWidget);
+      expect(find.text('Hi Guest 👋'), findsOneWidget);
+      expect(
+        find.text('You have 2 tasks to finish this week.', findRichText: true),
+        findsOneWidget,
+      );
+      expect(find.text('Ask policy'), findsOneWidget);
+      expect(find.text('Send request'), findsOneWidget);
+      expect(find.text('AI token quota'), findsOneWidget);
+      expect(find.text('A3'), findsOneWidget);
+      expect(find.text('A7'), findsOneWidget);
+      expect(find.text('A0'), findsOneWidget);
+    });
+
+    testWidgets('"Ask policy" opens the Ask HR tab', (tester) async {
+      await signInWithDimensions(tester, width: 360, height: 800);
+
+      await tester.tap(find.text('Ask policy'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('How can HR help?'), findsOneWidget);
+    });
+
+    testWidgets('landscape tablet (1280x800) lays cards out in a row', (
+      tester,
+    ) async {
+      await signInWithDimensions(tester, width: 1280, height: 800);
+
+      expect(tester.takeException(), isNull);
+      final work = tester.getTopLeft(find.text('Upcoming Work'));
+      final courses = tester.getTopLeft(find.text('My Courses'));
+      final request = tester.getTopLeft(find.text('HR Request #HR-1042'));
+      expect(courses.dy, work.dy);
+      expect(request.dy, work.dy);
+      expect(courses.dx, greaterThan(work.dx));
+      expect(request.dx, greaterThan(courses.dx));
+    });
+  });
+
+  group('Chat list Master-Detail on Wide Tablet', () {
     testWidgets(
-      'renders single-column discovery on phone and master-detail on wide tablet',
+      'chat list (under Account) renders master-detail on wide tablet',
       (tester) async {
         // Wide tablet landscape 1280x800
         await signInWithDimensions(tester, width: 1280, height: 800);
 
-        // Switch to Ask HR tab
-        await tester.tap(find.text('Ask HR').first);
+        // Account tab -> Chat list
+        await tester.tap(find.text('Account').first);
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(find.text('Language / security / sign out'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Language / security / sign out'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Chat list'));
         await tester.pumpAndSettle();
 
-        expect(find.byType(AskHrPage), findsOneWidget);
+        expect(find.byType(ChatHubPage), findsOneWidget);
 
         // On wide tablet: master pane has agents, detail pane has empty placeholder or chat
         expect(find.text('AI & HR AGENTS'), findsOneWidget);
@@ -171,7 +223,7 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('My Work tab adapts into two-column layout on tablet', (
+    testWidgets('My Work tab stacks its blocks in one list on tablet', (
       tester,
     ) async {
       await signInWithDimensions(tester, width: 800, height: 1280);
@@ -181,7 +233,13 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(MyWorkPage), findsOneWidget);
-      expect(find.text('Nhân viên vận hành · Nhà máy A'), findsOneWidget);
+      expect(find.text('Operations staff · Plant A'), findsOneWidget);
+      final caseTitle = tester.getTopLeft(
+        find.text('Xác nhận thông tin cá nhân'),
+      );
+      final onboarding = tester.getTopLeft(find.text('ONBOARDING'));
+      expect(onboarding.dy, greaterThan(caseTitle.dy));
+      expect(onboarding.dx, closeTo(caseTitle.dx, 40));
       expect(tester.takeException(), isNull);
     });
   });

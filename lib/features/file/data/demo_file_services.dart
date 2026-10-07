@@ -53,4 +53,23 @@ class DemoAttachmentPicker implements AttachmentPicker {
       ),
     ];
   }
+
+  @override
+  Future<List<Attachment>> pickFiles({List<String>? extensions}) => pick();
+
+  @override
+  Future<List<Attachment>> pickMedia() async {
+    const name = 'sample-photo.jpg';
+    final mime = MimeTypes.fromFileName(name);
+    return [
+      Attachment(
+        id: _ids.next(),
+        name: name,
+        mimeType: mime,
+        kind: MimeTypes.kindOf(mime),
+        sizeBytes: 320 * 1024,
+        source: const LocalAttachmentSource('/demo/sample-photo.jpg'),
+      ),
+    ];
+  }
 }

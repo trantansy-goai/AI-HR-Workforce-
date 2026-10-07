@@ -48,12 +48,9 @@ void main() {
       await tester.tap(find.text('Continue as guest'));
       await tester.pumpAndSettle();
 
-      // Shared Header
-      expect(find.text('Hello, Guest'), findsOneWidget);
-      expect(
-        find.text('Enterprise AI Assistant & Employee Workspace'),
-        findsOneWidget,
-      );
+      // Home app bar & greeting
+      expect(find.text('GO AI · HR'), findsOneWidget);
+      expect(find.text('Hi Guest 👋'), findsOneWidget);
 
       // 5 Main Navigation Tabs exist
       expect(find.text('Home'), findsWidgets);
@@ -63,10 +60,7 @@ void main() {
       expect(find.text('Account'), findsWidgets);
 
       // Default landing tab is Home dashboard showing overview & internal news
-      expect(
-        find.text('GOAI Mobile Phase 1 Milestone Reached'),
-        findsOneWidget,
-      );
+      expect(find.text('Thông điệp từ Ban điều hành'), findsOneWidget);
     },
   );
 
@@ -77,8 +71,14 @@ void main() {
       await tester.tap(find.text('Continue as guest'));
       await tester.pumpAndSettle();
 
-      // Switch to Ask HR tab
-      await tester.tap(find.text('Ask HR'));
+      // Chat list lives under the Account tab for now
+      await tester.tap(find.text('Account'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Language / security / sign out'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Language / security / sign out'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Chat list'));
       await tester.pumpAndSettle();
 
       // Agents are visible
@@ -125,11 +125,15 @@ void main() {
       await tester.tap(find.text('Account'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Internal News & Bulletins'), findsOneWidget);
-      expect(find.text('Settings'), findsOneWidget);
+      expect(find.text('Company news'), findsOneWidget);
+      expect(find.text('My notifications'), findsWidgets);
 
-      // Navigate to Settings
-      await tester.tap(find.text('Settings'));
+      // Navigate to Settings via the account menu
+      await tester.ensureVisible(find.text('Language / security / sign out'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Language / security / sign out'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Language & settings'));
       await tester.pumpAndSettle();
 
       // Verify theme switching UI is completely removed and light mode is enforced

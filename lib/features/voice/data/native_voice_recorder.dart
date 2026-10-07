@@ -2,16 +2,33 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 
 import '../domain/voice_recorder.dart';
 
-/// Production native implementation of [VoiceRecorder] using [AudioRecorder].
+/// Reads or requests the microphone permission status.
+typedef MicStatusDelegate = Future<PermissionStatus> Function();
+
+/// Production native implementation of [VoiceRecorder] using [AudioRecorder]
+/// for capture and `permission_handler` for the microphone permission.
 class NativeVoiceRecorder implements VoiceRecorder {
-  NativeVoiceRecorder({AudioRecorder? recorder})
-    : _recorder = recorder ?? AudioRecorder();
+  NativeVoiceRecorder({
+    AudioRecorder? recorder,
+    MicStatusDelegate? permissionStatus,
+    MicStatusDelegate? requestPermissionDelegate,
+    Future<bool> Function()? openSettings,
+  }) : _recorder = recorder ?? AudioRecorder(),
+       _permissionStatus =
+           permissionStatus ?? (() => Permission.microphone.status),
+       _request =
+           requestPermissionDelegate ?? (() => Permission.microphone.request()),
+       _openSettings = openSettings ?? openAppSettings;
 
   final AudioRecorder _recorder;
+  final MicStatusDelegate _permissionStatus;
+  final MicStatusDelegate _request;
+  final Future<bool> Function() _openSettings;
 
   RecordingStatus _status = RecordingStatus.idle;
   Timer? _timer;
@@ -25,13 +42,34 @@ class NativeVoiceRecorder implements VoiceRecorder {
   @override
   Stream<Duration> get durationStream => _durationController.stream;
 
+  /// Checks without prompting (permission_handler tells us when the system
+  /// will no longer show the prompt, which `record` can't).
   @override
   Future<bool> hasPermission() async {
     try {
-      return await _recorder.hasPermission();
+      return (await _permissionStatus()).isGranted;
     } catch (_) {
       return false;
     }
+  }
+
+  @override
+  Future<MicPermission> requestPermission() async {
+    try {
+      final status = await _request();
+      if (status.isGranted || status.isLimited) return MicPermission.granted;
+      if (status.isPermanentlyDenied || status.isRestricted) {
+        return MicPermission.permanentlyDenied;
+      }
+      return MicPermission.denied;
+    } catch (_) {
+      return MicPermission.denied;
+    }
+  }
+
+  @override
+  Future<void> openPermissionSettings() async {
+    await _openSettings();
   }
 
   @override

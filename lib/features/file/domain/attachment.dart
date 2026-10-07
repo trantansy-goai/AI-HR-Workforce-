@@ -57,6 +57,7 @@ class Attachment extends Equatable {
     this.media,
     this.uploadStatus = UploadStatus.none,
     this.uploadProgress,
+    this.localPath,
   });
 
   final String id;
@@ -70,6 +71,22 @@ class Attachment extends Equatable {
 
   /// 0..1 while uploading, null when unknown.
   final double? uploadProgress;
+
+  /// Copy of the file on this device, kept after upload so the sender can
+  /// preview/play it without downloading it back.
+  final String? localPath;
+
+  /// Best on-device path for previews: [localPath], or the local source.
+  String? get devicePath => switch (source) {
+    LocalAttachmentSource(:final path) => path,
+    RemoteAttachmentSource() => localPath,
+  };
+
+  /// Remote URL when the bytes only exist on the server.
+  String? get remoteUrl => switch (source) {
+    RemoteAttachmentSource(:final url) => url,
+    LocalAttachmentSource() => null,
+  };
 
   bool get isLocal => source is LocalAttachmentSource;
   bool get needsUpload => isLocal && uploadStatus != UploadStatus.uploaded;
@@ -89,6 +106,8 @@ class Attachment extends Equatable {
     media: media ?? this.media,
     uploadStatus: uploadStatus ?? this.uploadStatus,
     uploadProgress: uploadProgress ?? this.uploadProgress,
+    // Swapping a local source for a remote one keeps the device copy.
+    localPath: localPath ?? devicePath,
   );
 
   @override
@@ -102,5 +121,6 @@ class Attachment extends Equatable {
     media,
     uploadStatus,
     uploadProgress,
+    localPath,
   ];
 }

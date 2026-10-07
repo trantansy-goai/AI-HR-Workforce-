@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/error/app_failure.dart';
 import '../../../core/error/result.dart';
 import '../../file/domain/attachment.dart';
+import '../../file/domain/mime_types.dart';
 import '../domain/chat_provider.dart';
 import '../domain/entities/message.dart';
 import '../domain/entities/participant.dart';
@@ -142,6 +143,28 @@ class ConversationController extends Notifier<ConversationState> {
           text: text,
           attachments: attachments,
           replyTo: reply == null ? null : ReplyReference.of(reply),
+        );
+  }
+
+  /// Sends a recorded voice note on its own (pending attachments stay put).
+  Future<void> sendVoiceNote(String path, Duration duration) {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final name = 'voice_$now.m4a';
+    final mime = MimeTypes.fromFileName(name);
+    return ref
+        .read(chatRepositoryProvider)
+        .sendMessage(
+          conversationId,
+          attachments: [
+            Attachment(
+              id: 'voice_$now',
+              name: name,
+              mimeType: mime,
+              kind: AttachmentKind.audio,
+              source: LocalAttachmentSource(path),
+              media: MediaInfo(duration: duration),
+            ),
+          ],
         );
   }
 

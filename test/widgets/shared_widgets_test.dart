@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_base/core/error/app_failure.dart';
 import 'package:flutter_project_base/shared/widgets/app_button.dart';
+import 'package:flutter_project_base/shared/widgets/app_feedback.dart';
 import 'package:flutter_project_base/shared/widgets/app_text_field.dart';
+import 'package:flutter_project_base/shared/widgets/hr_top_bar.dart';
 import 'package:flutter_project_base/shared/widgets/state_views.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -30,6 +32,73 @@ void main() {
       await tester.tap(find.byType(FilledButton));
       expect(taps, 0);
     });
+
+    testWidgets('tonal variant renders a tappable filled button', (
+      tester,
+    ) async {
+      var taps = 0;
+      await tester.pumpWidget(
+        testApp(
+          AppButton(
+            label: 'Go',
+            variant: AppButtonVariant.tonal,
+            onPressed: () => taps++,
+          ),
+        ),
+      );
+      expect(find.byType(FilledButton), findsOneWidget);
+      await tester.tap(find.text('Go'));
+      expect(taps, 1);
+    });
+  });
+
+  testWidgets('HrTopBar shows title and back button only when wired', (
+    tester,
+  ) async {
+    var backs = 0;
+    await tester.pumpWidget(
+      testApp(const Column(children: [HrTopBar(title: 'GO AI · HR')])),
+    );
+    expect(find.text('GO AI · HR'), findsOneWidget);
+    expect(find.byType(BackButton), findsNothing);
+
+    await tester.pumpWidget(
+      testApp(
+        Column(
+          children: [HrTopBar(title: 'GO AI · HR', onBack: () => backs++)],
+        ),
+      ),
+    );
+    await tester.tap(find.byType(BackButton));
+    expect(backs, 1);
+  });
+
+  testWidgets('showConfirmDialog ignores taps outside; Cancel returns false', (
+    tester,
+  ) async {
+    bool? result;
+    await tester.pumpWidget(
+      testApp(
+        Builder(
+          builder: (context) => TextButton(
+            onPressed: () async =>
+                result = await context.showConfirmDialog(title: 'Sure?'),
+            child: const Text('Open'),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+
+    await tester.tapAt(const Offset(5, 5));
+    await tester.pumpAndSettle();
+    expect(find.text('Sure?'), findsOneWidget);
+
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(find.text('Sure?'), findsNothing);
+    expect(result, isFalse);
   });
 
   testWidgets('AppTextField toggles password visibility', (tester) async {

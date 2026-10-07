@@ -3,15 +3,15 @@ import 'package:flutter/services.dart';
 
 import 'app_tokens.dart';
 
-/// Material 3 theme built from a single seed color.
+/// Material 3 theme built from a single seed color, styled after the
+/// GO AI HR mockups (brand-blue accent, light grey canvas, white bordered cards,
+/// white app bars with a hairline divider) so screens without a dedicated
+/// mockup still match the designed ones.
 ///
 /// Apps re-brand by passing their own [seedColor] (and optionally a font
 /// family) instead of editing component styles one by one.
 class AppTheme {
-  const AppTheme({
-    this.seedColor = AppBrandColors.primaryBlue,
-    this.fontFamily,
-  });
+  const AppTheme({this.seedColor = AppHrPalette.accent, this.fontFamily});
 
   final Color seedColor;
   final String? fontFamily;
@@ -19,10 +19,26 @@ class AppTheme {
   ThemeData get light => _build();
 
   ThemeData _build() {
-    final scheme = ColorScheme.fromSeed(
-      seedColor: seedColor,
-      brightness: Brightness.light,
-    ).copyWith(primary: seedColor, secondary: AppBrandColors.secondaryGold);
+    final scheme =
+        ColorScheme.fromSeed(
+          seedColor: seedColor,
+          brightness: Brightness.light,
+        ).copyWith(
+          primary: seedColor,
+          onPrimary: Colors.white,
+          primaryContainer: AppHrPalette.accentSoft,
+          onPrimaryContainer: seedColor,
+          secondary: AppBrandColors.secondaryGold,
+          secondaryContainer: AppHrPalette.accentSoft,
+          onSecondaryContainer: seedColor,
+          surface: AppHrPalette.surface,
+          onSurface: AppHrPalette.ink,
+          onSurfaceVariant: AppHrPalette.inkMuted,
+          outlineVariant: AppHrPalette.border,
+          error: AppHrPalette.danger,
+        );
+    const radius = BorderRadius.all(Radius.circular(10));
+    const cardRadius = BorderRadius.all(Radius.circular(14));
     final base = ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
@@ -33,21 +49,42 @@ class AppTheme {
 
     return base.copyWith(
       textTheme: textTheme,
-      scaffoldBackgroundColor: scheme.surface,
+      scaffoldBackgroundColor: AppHrPalette.background,
       appBarTheme: AppBarTheme(
         centerTitle: false,
-        backgroundColor: scheme.surface,
-        foregroundColor: scheme.onSurface,
+        backgroundColor: AppHrPalette.surface,
+        foregroundColor: AppHrPalette.ink,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
-        scrolledUnderElevation: 1,
-        titleTextStyle: textTheme.titleLarge,
+        scrolledUnderElevation: 0,
+        shape: const Border(bottom: BorderSide(color: AppHrPalette.divider)),
+        titleTextStyle: textTheme.titleLarge?.copyWith(
+          color: AppHrPalette.ink,
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+        ),
         systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
-      cardTheme: CardThemeData(
+      cardTheme: const CardThemeData(
         elevation: 0,
-        color: scheme.surfaceContainerLow,
-        shape: const RoundedRectangleBorder(borderRadius: AppRadius.lgAll),
+        color: AppHrPalette.surface,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: cardRadius,
+          side: BorderSide(color: AppHrPalette.border),
+        ),
         margin: EdgeInsets.zero,
+      ),
+      dividerTheme: const DividerThemeData(color: AppHrPalette.divider),
+      listTileTheme: const ListTileThemeData(iconColor: AppHrPalette.inkMuted),
+      chipTheme: ChipThemeData(
+        backgroundColor: AppHrPalette.accentSoft,
+        side: BorderSide.none,
+        shape: const StadiumBorder(),
+        labelStyle: textTheme.labelMedium?.copyWith(
+          color: seedColor,
+          fontWeight: FontWeight.w700,
+        ),
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: scheme.surface,
@@ -96,22 +133,23 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        fillColor: AppHrPalette.surface,
+        hintStyle: const TextStyle(color: AppHrPalette.inkMuted),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.lg,
           vertical: AppSpacing.md,
         ),
-        border: OutlineInputBorder(
-          borderRadius: AppRadius.mdAll,
-          borderSide: BorderSide(color: scheme.outlineVariant),
+        border: const OutlineInputBorder(
+          borderRadius: radius,
+          borderSide: BorderSide(color: AppHrPalette.border),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: AppRadius.mdAll,
-          borderSide: BorderSide(color: scheme.outlineVariant),
+        enabledBorder: const OutlineInputBorder(
+          borderRadius: radius,
+          borderSide: BorderSide(color: AppHrPalette.border),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: AppRadius.mdAll,
-          borderSide: BorderSide(color: scheme.primary, width: 2),
+          borderRadius: radius,
+          borderSide: BorderSide(color: scheme.primary, width: 1.5),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
@@ -119,17 +157,21 @@ class AppTheme {
           backgroundColor: scheme.primary,
           foregroundColor: scheme.onPrimary,
           minimumSize: const Size(64, 48),
-          shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdAll),
-          textStyle: textTheme.labelLarge,
+          shape: const RoundedRectangleBorder(borderRadius: radius),
+          textStyle: textTheme.labelLarge?.copyWith(
+            fontWeight: FontWeight.w800,
+          ),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: scheme.primary,
           minimumSize: const Size(64, 48),
-          side: BorderSide(color: scheme.outlineVariant),
-          shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdAll),
-          textStyle: textTheme.labelLarge,
+          side: const BorderSide(color: AppHrPalette.border),
+          shape: const RoundedRectangleBorder(borderRadius: radius),
+          textStyle: textTheme.labelLarge?.copyWith(
+            fontWeight: FontWeight.w800,
+          ),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
@@ -144,7 +186,13 @@ class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: AppRadius.mdAll),
       ),
       dialogTheme: const DialogThemeData(
+        backgroundColor: AppHrPalette.surface,
+        surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: AppRadius.lgAll),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: AppHrPalette.surface,
+        surfaceTintColor: Colors.transparent,
       ),
     );
   }

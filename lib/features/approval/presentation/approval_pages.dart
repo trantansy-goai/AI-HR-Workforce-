@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/theme/app_tokens.dart';
 import '../../../shared/widgets/responsive.dart';
 import '../../../shared/widgets/state_views.dart';
 import '../application/approval_providers.dart';
@@ -59,10 +60,10 @@ class ApprovalListPage extends ConsumerWidget {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: item.status == ApprovalStatus.pending
-                                    ? Colors.orange
+                                    ? AppHrPalette.amberInk
                                     : item.status == ApprovalStatus.approved
-                                    ? Colors.green
-                                    : Colors.red,
+                                    ? AppHrPalette.accent
+                                    : AppHrPalette.danger,
                               ),
                             ),
                           ],

@@ -34,7 +34,7 @@ class FakeMyWorkRepository implements MyWorkRepository {
     ),
   ];
 
-  static final _caseItems = [
+  final _caseItems = <CaseTrackingItem>[
     const CaseTrackingItem(
       id: '#HR-1042',
       title: 'Xác nhận thông tin cá nhân',
@@ -58,5 +58,29 @@ class FakeMyWorkRepository implements MyWorkRepository {
   Future<List<CaseTrackingItem>> getCases() async {
     await Future<void>.delayed(const Duration(milliseconds: 200));
     return List.unmodifiable(_caseItems);
+  }
+
+  @override
+  Future<CaseTrackingItem> submitRequest(HrRequestDraft draft) async {
+    await Future<void>.delayed(const Duration(milliseconds: 200));
+    final now = DateTime.now();
+    String dayMonth(DateTime d) =>
+        '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}';
+    final description = draft.description.trim();
+    final created = CaseTrackingItem(
+      id: '#HR-${1042 + _caseItems.length}',
+      title: description.length > 60
+          ? '${description.substring(0, 57)}...'
+          : description,
+      status: 'Đã nhận',
+      updatedDate: dayMonth(now),
+      expectedResponseDate: dayMonth(now.add(const Duration(days: 2))),
+      assignee: 'HR được phân công',
+      currentStep: 1,
+      totalSteps: 4,
+      stepLabel: 'Đã tiếp nhận yêu cầu',
+    );
+    _caseItems.insert(0, created);
+    return created;
   }
 }

@@ -19,6 +19,7 @@
   "errorUnknown": "An unexpected error occurred.",
   "authSignInTitle": "Welcome back",
   "authSignInSubtitle": "Please verify your account to view your information.",
+  "authHeaderTitle": "GO AI HR",
   "authSecurityBadge": "SECURITY",
   "authBrandEyebrow": "GO AI · HR WORKFORCE",
   "authEmployeeAccountLabel": "Employee ID or company account",
@@ -26,9 +27,8 @@
   "authPhoneNumberLabel": "Registered phone number",
   "authPhoneNumberHint": "Enter registered phone number",
   "authSendVerificationCode": "Send verification code",
-  "authSsoPrompt": "Enterprise has SSO?",
+  "authSsoPrompt": "Enterprise has SSO? Choose \"Company sign-in\".",
   "authSsoButton": "Company sign-in",
-  "authSsoBlockedMessage": "Enterprise SSO login is awaiting backend infrastructure connection (BLOCKED).",
   "authFirstTimeTitle": "First-time user",
   "authFirstTimeBody": "HR issues activation code; verify phone number then set PIN on device.",
   "authSharedDeviceNotice": "Using a shared phone? Sign out completely after each session.",
@@ -177,17 +177,294 @@
   "homeUpcomingWork": "Upcoming Work",
   "homeMyCourses": "My Courses",
   "homePendingCase": "HR Request #HR-1042",
-  "homePendingTasksStrip": "You have {count} tasks to complete this week.",
-  "@homePendingTasksStrip": {
+  "accountNews": "Internal News & Bulletins",
+  "askHrSearchPrompt": "Type a question… e.g. leave policy",
+  "askHrPolicyChip": "Policy",
+  "askHrFormChip": "Forms",
+  "askHrMyRequestsChip": "My Requests",
+  "homeAppBarTitle": "GO AI · HR",
+  "homeHeroGreeting": "Hi {name} 👋",
+  "@homeHeroGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homePendingTasksLead": "You have ",
+  "homePendingTasksCount": "{count, plural, =1{1 task} other{{count} tasks}}",
+  "@homePendingTasksCount": {
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
-  "accountNews": "Internal News & Bulletins",
-  "askHrSearchPrompt": "Type a question… e.g. leave policy",
-  "askHrPolicyChip": "Policy",
-  "askHrFormChip": "Forms",
-  "askHrMyRequestsChip": "My Requests"
+  "homePendingTasksTail": " to finish this week.",
+  "homeAskPolicyAction": "Ask policy",
+  "homeSendRequestAction": "Send request",
+  "homeUpcomingWorkDetail": "Finish onboarding checklist · due 10/10",
+  "homeMyCoursesDetail": "Basic workplace safety · 12 min left",
+  "homePendingCaseDetail": "Waiting for HR · expected 09/10",
+  "homeQuotaTitle": "AI token quota",
+  "homeNewsEmpty": "No news yet.",
+  "homeNewsLoading": "Loading news...",
+  "askHrTitle": "How can HR help?",
+  "askHrSend": "Send question",
+  "askHrSampleQuestion": "I need to see the leave policy.",
+  "askHrSampleAnswer": "I can summarise the current policy and link the approved version. Do you want the eligibility rules or how to submit a request?",
+  "askHrPrivacyNotice": "Personal information needs extra verification. Complaints open a confidential case for HR.",
+  "askHrViewPolicySources": "View policy & sources",
+  "askHrAnswerTitle": "Annual leave policy",
+  "askHrAnswerBody": "Under the approved policy, you send a request to your manager following the company process. Exact eligibility depends on your contract type and remaining leave balance.",
+  "askHrSourceEyebrow": "APPROVED SOURCE",
+  "askHrSourceTitle": "Leave policy • version 2.1",
+  "askHrSourceMeta": "Effective: 01/09/2026 · Owner: HR",
+  "askHrSourcePath": "Company document library → accessible version → section 3.2",
+  "askHrSourceWarning": "No effective version found or conflicting info? Escalate to HR; don't treat the answer as definitive policy.",
+  "askHrOpenSource": "Open original document",
+  "askHrCreateRequest": "Create HR request",
+  "chatHubTitle": "Chat list",
+  "profileChatList": "Chat list",
+  "profileChatListSubtitle": "AI assistants & conversation history (temporary)",
+  "myWorkOnboardingEyebrow": "ONBOARDING",
+  "myWorkOnboardingRole": "Operations staff · Plant A",
+  "myWorkOnboardingTemplate": "Template: role + location + contract type · approved by HR",
+  "myWorkOnboardingProgress": "{done}/{total} items confirmed",
+  "myWorkOnboardingShowRest": "Show remaining items",
+  "myWorkOnboardingCollapse": "Show less",
+  "myWorkOnboardingEvidenceNote": "“Checklist complete” records evidence; the official record is updated by the source system after review.",
+  "myWorkCasesEmpty": "You have no cases yet.",
+  "myWorkCaseUpdated": "Updated {date}",
+  "myWorkStepReceived": "Received",
+  "myWorkStepAssigned": "Assigned",
+  "myWorkStepInProgress": "In progress",
+  "myWorkStepDone": "Done",
+  "myWorkCaseStatusBody": "Expected response {date}. You'll be notified if more information is needed.",
+  "myWorkCaseSecureTitle": "Secure exchange",
+  "myWorkCaseSecureBody": "View and add details within your own case only.",
+  "myWorkCaseAddDocs": "Add documents",
+  "myWorkCaseDocsAdded": "{count, plural, =1{Attached 1 file to the case} other{Attached {count} files to the case}}",
+  "myWorkCaseEscalationNote": "Overdue → A0 reminds and escalates to the owner.",
+  "myWorkNewRequestButton": "New HR request",
+  "myWorkNewRequest": "Send HR request",
+  "myWorkRequestTypeHint": "Request type: personal information confirmation",
+  "myWorkRequestTypePersonalInfo": "Personal information confirmation",
+  "myWorkRequestTypeLeave": "Leave",
+  "myWorkRequestTypePolicy": "Policy & benefits",
+  "myWorkRequestTypeComplaint": "Complaint (confidential)",
+  "myWorkRequestTypeRequired": "Please choose a request type",
+  "myWorkRequestDescriptionHint": "Briefly describe what you need",
+  "myWorkRequestDescriptionRequired": "Please describe your request",
+  "myWorkRequestAttachHint": "Attach documents (if needed)",
+  "myWorkRequestAttached": "{count, plural, =1{1 file attached} other{{count} files attached}}",
+  "myWorkRequestPrivacyNotice": "Share only what's needed. Sensitive information is routed to HR by permission.",
+  "myWorkRequestSubmit": "Submit request",
+  "myWorkRequestAfterTitle": "After you submit",
+  "myWorkRequestAfterBody": "You get a case code (e.g. #HR-1042) · expected response: 2 working days · handler: assigned HR.",
+  "myWorkRequestUrgentNote": "Complaints/urgent: routed straight to the authorised handler, not via your direct manager.",
+  "myWorkRequestSubmitted": "Request sent · {id}",
+  "@myWorkOnboardingProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@myWorkCaseUpdated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@myWorkCaseStatusBody": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@myWorkCaseDocsAdded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@myWorkRequestAttached": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@myWorkRequestSubmitted": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "myWorkRoleEmployee": "Employee",
+  "myWorkRoleHrAdmin": "HR / Admin",
+  "myWorkRoleDemoHint": "Demo mode: choose a role to preview the Work tab",
+  "hrApprovalsEyebrow": "FOR AUTHORISED APPROVERS",
+  "hrApprovalsTitle": "Awaiting my approval",
+  "hrApprovalProbationTitle": "Probation review file",
+  "hrApprovalProbationMeta": "#PB-238 · Nguyen A · due 11/10",
+  "hrApprovalProbationBadge": "Pending",
+  "hrApprovalChecklistTitle": "Checklist with exceptions",
+  "hrApprovalChecklistMeta": "#ON-320 · missing documents · due 09/10",
+  "hrApprovalChecklistBadge": "Verify",
+  "hrApprovalsScopeNote": "2 items · rights follow position, unit, reporting line and authority level.",
+  "hrApprovalsOpenReview": "Open review file",
+  "hrApprovalsNoBulkNote": "There is no “Approve all” for probation decisions.",
+  "hrProbationTitle": "Probation review #PB-238",
+  "hrProbationChecklist": "Checklist 12/13 items",
+  "hrProbationTraining": "Mandatory training: confirmed",
+  "hrProbationManagerOpinion": "Manager opinion: needs more input",
+  "hrProbationMissingEvidence": "Evidence is missing. Request more information before deciding.",
+  "hrProbationCommentHint": "Reviewer comments & rationale",
+  "hrProbationRequestMore": "Request more information",
+  "hrProbationEscalate": "Escalate to HR/Legal",
+  "hrProbationDecisionNote": "Decision options appear only once conditions are met, rights are correct and you confirm again.",
+  "hrQueueOverdue": "Overdue {count}",
+  "hrQueuePending": "Pending {count}",
+  "hrQueueCase1Title": "Case #HR-1051",
+  "hrQueueCase1Meta": "Complaint · confidential routing · due today",
+  "hrQueueCase2Title": "Case #ON-320",
+  "hrQueueCase2Meta": "Missing onboarding documents · owner: HR A",
+  "hrQueueCase3Title": "Case #TR-102",
+  "hrQueueCase3Meta": "Course has no approved content version",
+  "hrQueueOpenWeb": "View queue on Web",
+  "hrQueueMobileNote": "Mobile is for receiving and tracking; routing setup, KB approval and complex investigations use the Web Workspace.",
+  "@hrQueueOverdue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@hrQueuePending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "learningMyTitle": "My learning",
+  "learningMandatorySummary": "{count, plural, =1{1 mandatory course} other{{count} mandatory courses}} · due {date}",
+  "@learningMandatorySummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "learningNoMandatory": "No mandatory courses pending.",
+  "learningMandatoryBadge": "Mandatory",
+  "learningModuleBadge": "A7",
+  "learningVideoMinutes": "Video {minutes} min",
+  "@learningVideoMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "learningDocMinutes": "Reading {minutes} min",
+  "@learningDocMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "learningQuizQuestions": "quiz {count} questions",
+  "@learningQuizQuestions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "learningDue": "due {date}",
+  "@learningDue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "learningNotStarted": "not started",
+  "learningCompletedStatus": "completed",
+  "learningProgress": "Progress {percent}%",
+  "@learningProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "learningContinue": "Continue learning",
+  "learningStart": "Start learning",
+  "learningPolicyNote": "Pass marks, retake limits and certificate validity are approved by the content owner before release.",
+  "learningEmptyCourses": "You have no assigned courses yet.",
+  "profileNewsTitle": "Company news",
+  "profileNewsAll": "All",
+  "profileNewsViewFull": "View full content",
+  "profileNewsAckNote": "Announcements that need acknowledgement have an “I've read this” button.",
+  "profileNotificationsTitle": "My notifications",
+  "profileAccountSection": "ACCOUNT",
+  "profileEmployeeMeta": "Employee ID: {id} · view permitted info",
+  "@profileEmployeeMeta": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "profileAccountActions": "Language / security / sign out",
+  "profilePushNote": "Push only says “New update”; open the app and authenticate to see sensitive data.",
+  "profileLanguageSettings": "Language & settings",
+  "profileSecurity": "Security",
+  "commonComingSoon": "Coming soon",
+  "notificationOpenHint": "Tap to view details",
+  "chatAttachMedia": "Photos & videos",
+  "chatAttachFile": "File",
+  "chatFileTypeTitle": "Choose file type",
+  "chatFileTypePdf": "PDF",
+  "chatFileTypeWord": "Word",
+  "chatFileTypeExcel": "Excel",
+  "chatFileTypePowerPoint": "PowerPoint",
+  "chatFileTypeText": "Text (TXT, CSV)",
+  "chatFileTypeAll": "All files",
+  "chatOpenWith": "Open with another app",
+  "chatFileOpenFailed": "Couldn't open this file",
+  "chatMediaUnavailable": "Couldn't load this content",
+  "chatMicPermissionTitle": "Microphone access needed",
+  "chatMicPermissionMessage": "Allow microphone access in Settings to record voice messages.",
+  "chatOpenSettings": "Open settings",
+  "chatMicPermissionDenied": "Microphone permission denied",
+  "chatRecording": "Recording · {duration}",
+  "@chatRecording": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "chatVoiceRecord": "Record voice",
+  "chatStopRecording": "Stop and send",
+  "chatCancelRecording": "Cancel recording",
+  "chatPlay": "Play",
+  "chatPause": "Pause",
+  "chatVoiceNote": "Voice message"
 }

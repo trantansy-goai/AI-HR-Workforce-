@@ -208,7 +208,7 @@ class _CompactQuotaBar extends ConsumerWidget {
         final color = quota.isExceeded
             ? theme.colorScheme.error
             : quota.isWarning
-            ? AppBrandColors.secondaryGold
+            ? AppHrPalette.amberInk
             : theme.colorScheme.primary;
 
         final numberFormat = NumberFormat.decimalPattern();

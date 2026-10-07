@@ -10,6 +10,13 @@ abstract final class AppRoutes {
   static const myWork = '/home/my-work';
   static const learning = '/home/learning';
   static const account = '/home/account';
+
+  /// Chat list parked under Account until it gets a permanent home.
+  static const chats = '$account/chats';
+  static const askHrAnswer = '$askHr/answer';
+
+  /// Việc tab with the "Gửi yêu cầu HR" dialog opened.
+  static const myWorkNewRequest = '$myWork?newRequest=1';
   static const profile = account;
   static const settings = '/home/settings';
   static const showcase = '/home/showcase';
@@ -19,9 +26,12 @@ abstract final class AppRoutes {
   static const approvals = '/home/approvals';
   static const notifications = '/home/notifications';
 
-  static String conversation(String id) => '$askHr/${Uri.encodeComponent(id)}';
+  static String conversation(String id, {String? initialMessage}) => Uri(
+    path: '$chats/${Uri.encodeComponent(id)}',
+    queryParameters: initialMessage == null ? null : {'q': initialMessage},
+  ).toString();
   static String agentHistory(String agentId) =>
-      '$askHr/agent/${Uri.encodeComponent(agentId)}';
+      '$chats/agent/${Uri.encodeComponent(agentId)}';
   static String document(String id) => '$documents/${Uri.encodeComponent(id)}';
   static String course(String id) => '$learning/${Uri.encodeComponent(id)}';
   static String test(String id) => '$tests/${Uri.encodeComponent(id)}';

@@ -6,10 +6,17 @@ import '../domain/voice_recorder.dart';
 class FakeVoiceRecorder implements VoiceRecorder {
   FakeVoiceRecorder({
     this.grantPermission = true,
+    this.permanentlyDenied = false,
     this.simulatedOutputPath = '/tmp/fake_voice_recording.m4a',
   });
 
   final bool grantPermission;
+
+  /// When permission isn't granted, report it as blocked by the system.
+  final bool permanentlyDenied;
+
+  /// How many times [openPermissionSettings] was called (for tests).
+  int settingsOpened = 0;
   final String simulatedOutputPath;
 
   RecordingStatus _status = RecordingStatus.idle;
@@ -25,6 +32,16 @@ class FakeVoiceRecorder implements VoiceRecorder {
 
   @override
   Future<bool> hasPermission() async => grantPermission;
+
+  @override
+  Future<MicPermission> requestPermission() async => grantPermission
+      ? MicPermission.granted
+      : permanentlyDenied
+      ? MicPermission.permanentlyDenied
+      : MicPermission.denied;
+
+  @override
+  Future<void> openPermissionSettings() async => settingsOpened++;
 
   @override
   Future<void> start({String? customPath}) async {

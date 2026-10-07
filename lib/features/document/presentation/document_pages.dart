@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_tokens.dart';
+import '../../../shared/widgets/app_feedback.dart';
 import '../../../shared/widgets/responsive.dart';
-import '../../../shared/widgets/shared_workspace_header.dart';
 import '../../../shared/widgets/state_views.dart';
 import '../application/document_providers.dart';
 import '../domain/document_item.dart';
@@ -17,24 +17,14 @@ class DocumentListPage extends ConsumerWidget {
     final documentsAsync = ref.watch(documentsProvider);
 
     return Scaffold(
+      appBar: AppBar(title: const Text('Knowledge Documents')),
       body: SafeArea(
+        top: false,
         child: ResponsiveCenter(
           maxWidth: ContentConstraints.dashboard,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SharedWorkspaceHeader(),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.lg,
-                  vertical: AppSpacing.xs,
-                ),
-                child: Text(
-                  'Knowledge Documents',
-                  style: Theme.of(context).textTheme.titleMedium
-                      ?.copyWith(fontWeight: FontWeight.bold),
-                ),
-              ),
               Expanded(
                 child: documentsAsync.when(
                   loading: () =>
@@ -172,13 +162,7 @@ class DocumentDetailPage extends ConsumerWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Downloading ${doc.title}...'),
-                          ),
-                        );
-                      },
+                      onPressed: context.showComingSoon,
                       icon: const Icon(Icons.download),
                       label: const Text('Download Document'),
                     ),

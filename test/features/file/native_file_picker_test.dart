@@ -45,7 +45,7 @@ void main() {
   group('NativeFilePicker', () {
     test('returns empty list when user cancels picker', () async {
       final picker = NativeFilePicker(
-        pickerDelegate: ({type = FileType.any}) async => [],
+        pickerDelegate: ({type = FileType.any, allowedExtensions}) async => [],
       );
 
       final files = await picker.pick();
@@ -60,7 +60,9 @@ void main() {
       );
 
       final picker = NativeFilePicker(
-        pickerDelegate: ({type = FileType.any}) async => [testFile],
+        pickerDelegate: ({type = FileType.any, allowedExtensions}) async => [
+          testFile,
+        ],
       );
 
       final files = await picker.pick();

@@ -73,5 +73,9 @@
 	</array>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>GOAI requires microphone access to record voice messages for chat.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>GOAI needs access to your photos and videos so you can send them in chat.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>GOAI needs the camera so you can capture photos and videos for chat.</string>
 </dict>
 </plist>

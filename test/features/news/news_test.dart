@@ -11,14 +11,16 @@ void main() {
 
     test('fetches news articles', () async {
       final news = await repo.getNews();
-      expect(news.length, equals(2));
-      expect(news.first.title, contains('Phase 1'));
+      expect(news.length, equals(3));
+      expect(news.first.title, contains('Ban điều hành'));
+      expect(news.first.tags, isEmpty);
     });
 
     test('fetches news detail', () async {
       final item = await repo.getNewsDetail('news-2');
       expect(item.id, equals('news-2'));
-      expect(item.title, contains('Model Upgrade'));
+      expect(item.title, contains('khám sức khỏe'));
+      expect(item.tags, containsAll(['Nhà máy A', 'HR']));
     });
   });
 }

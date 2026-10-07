@@ -31,14 +31,8 @@ void main() {
       await tester.pumpWidget(buildSubject(locale: const Locale('vi')));
       await tester.pumpAndSettle();
 
-      // 1. Official GoAI logo renders
-      final logoFinder = find.byWidgetPredicate(
-        (w) =>
-            w is Image &&
-            w.image is AssetImage &&
-            (w.image as AssetImage).assetName == 'assets/images/goai_logo.png',
-      );
-      expect(logoFinder, findsOneWidget);
+      // 1. Header title
+      expect(find.text('GO AI HR'), findsOneWidget);
 
       // 2. BẢO MẬT badge
       expect(find.text('BẢO MẬT'), findsOneWidget);
@@ -59,7 +53,10 @@ void main() {
       expect(find.text('Gửi mã xác thực'), findsOneWidget);
 
       // 6. Enterprise SSO
-      expect(find.text('Doanh nghiệp có SSO?'), findsOneWidget);
+      expect(
+        find.text('Doanh nghiệp có SSO? Chọn "Đăng nhập công ty".'),
+        findsOneWidget,
+      );
       expect(find.text('Đăng nhập công ty'), findsOneWidget);
 
       // 7. First-time user informational card
@@ -117,7 +114,7 @@ void main() {
     expect(find.byType(AlertDialog), findsNothing);
   });
 
-  testWidgets('tapping SSO button shows blocked feedback', (tester) async {
+  testWidgets('tapping SSO button shows coming soon toast', (tester) async {
     await tester.pumpWidget(buildSubject(locale: const Locale('vi')));
     await tester.pumpAndSettle();
 
@@ -125,7 +122,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(SnackBar), findsOneWidget);
-    expect(find.textContaining('BLOCKED'), findsOneWidget);
+    expect(find.text('Tính năng sắp ra mắt'), findsOneWidget);
   });
 
   testWidgets('submitting empty inputs triggers validation errors', (
@@ -191,15 +188,14 @@ void main() {
       await tester.pumpWidget(buildSubject(locale: const Locale('vi')));
       await tester.pumpAndSettle();
 
-      // In wide tablet layout, left branding panel appears
-      expect(
-        find.text('Nền tảng Trợ lý AI & Không gian làm việc Nhân sự'),
-        findsOneWidget,
-      );
-      expect(find.text('Tiêu chuẩn bảo mật doanh nghiệp'), findsOneWidget);
+      expect(tester.takeException(), isNull);
 
-      // Right login form remains active
-      expect(find.text('Gửi mã xác thực'), findsOneWidget);
+      // Welcome copy sits left of the verification form.
+      final titleX = tester.getCenter(find.text('Chào mừng trở lại')).dx;
+      final ctaX = tester.getCenter(find.text('Gửi mã xác thực')).dx;
+      expect(titleX, lessThan(640));
+      expect(ctaX, greaterThan(640));
+      expect(find.text('Lần đầu sử dụng'), findsOneWidget);
     },
   );
 
@@ -215,5 +211,21 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.byType(SingleChildScrollView), findsOneWidget);
+  });
+
+  testWidgets('portrait tablet (800x1280) keeps a centered capped column', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1600, 2560);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(buildSubject(locale: const Locale('vi')));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    final cta = tester.getRect(find.byType(FilledButton).first);
+    expect(cta.width, lessThanOrEqualTo(480));
+    expect(cta.center.dx, closeTo(400, 1));
   });
 }

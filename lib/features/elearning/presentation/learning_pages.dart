@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/theme/app_tokens.dart';
+import '../../../shared/widgets/app_feedback.dart';
 import '../../../shared/widgets/responsive.dart';
 import '../../../shared/widgets/state_views.dart';
 import '../application/learning_providers.dart';
@@ -42,7 +44,7 @@ class LearningListPage extends ConsumerWidget {
                             if (course.isCompleted)
                               const Icon(
                                 Icons.check_circle,
-                                color: Colors.green,
+                                color: AppHrPalette.accent,
                               )
                             else
                               Text(
@@ -136,6 +138,7 @@ class LearningDetailPage extends ConsumerWidget {
                           title: Text('Lesson ${i + 1}: Core Concepts'),
                           subtitle: const Text('10 mins • Video & Quiz'),
                           trailing: const Icon(Icons.play_arrow),
+                          onTap: context.showComingSoon,
                         );
                       },
                     ),

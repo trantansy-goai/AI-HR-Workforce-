@@ -8,6 +8,8 @@ class NewsItem extends Equatable {
     required this.content,
     required this.publishedAt,
     this.imageUrl,
+    this.tags = const [],
+    this.byline,
   });
 
   final String id;
@@ -17,6 +19,13 @@ class NewsItem extends Equatable {
   final DateTime publishedAt;
   final String? imageUrl;
 
+  /// Audience/owner tags used to filter (e.g. a site or department).
+  /// Empty means the item is for everyone.
+  final List<String> tags;
+
+  /// Who approved/owns the item, shown before the date.
+  final String? byline;
+
   @override
   List<Object?> get props => [
     id,
@@ -25,6 +34,8 @@ class NewsItem extends Equatable {
     content,
     publishedAt,
     imageUrl,
+    tags,
+    byline,
   ];
 }
 

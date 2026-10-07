@@ -16,4 +16,12 @@ abstract interface class FileUploader {
 /// native plugin setup that not every app needs.
 abstract interface class AttachmentPicker {
   Future<List<Attachment>> pick({Set<AttachmentKind>? kinds});
+
+  /// Photos and videos via the platform's own media picker (Android Photo
+  /// Picker / iOS PHPicker). Empty when the user cancels.
+  Future<List<Attachment>> pickMedia();
+
+  /// Documents via the platform file picker, limited to [extensions]
+  /// (without dots, e.g. `['pdf']`); null allows any file.
+  Future<List<Attachment>> pickFiles({List<String>? extensions});
 }

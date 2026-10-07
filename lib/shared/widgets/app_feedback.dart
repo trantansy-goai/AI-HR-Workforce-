@@ -20,6 +20,10 @@ extension AppFeedbackX on BuildContext {
     );
   }
 
+  /// Toast for actions that exist in the UI but aren't implemented yet.
+  void showComingSoon() =>
+      showAppSnackBar(l10n.commonComingSoon, type: AppSnackType.info);
+
   /// Returns true when the user confirmed.
   Future<bool> showConfirmDialog({
     required String title,
@@ -30,6 +34,7 @@ extension AppFeedbackX on BuildContext {
     final l10n = this.l10n;
     final result = await showDialog<bool>(
       context: this,
+      barrierDismissible: false,
       builder: (context) {
         final scheme = Theme.of(context).colorScheme;
         return AlertDialog(

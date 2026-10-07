@@ -5,7 +5,7 @@ import '../../../../core/theme/app_tokens.dart';
 import '../../domain/entities/message.dart';
 import '../../domain/entities/participant.dart';
 import '../../domain/extensions/ai_extensions.dart';
-import 'attachment_chip.dart';
+import 'message_attachments.dart';
 
 /// Renders one message. Pure widget: all actions are callbacks so it works
 /// with any state management and is easy to test.
@@ -42,6 +42,7 @@ class MessageBubble extends StatelessWidget {
     final background = isMine ? scheme.primary : scheme.surfaceContainerHigh;
     final foreground = isMine ? scheme.onPrimary : scheme.onSurface;
     final citations = message.metadata.get<Citations>();
+    final maxWidth = MediaQuery.sizeOf(context).width * 2 / 3;
 
     final bubble = Container(
       padding: const EdgeInsets.symmetric(
@@ -64,16 +65,11 @@ class MessageBubble extends StatelessWidget {
           if (message.replyTo != null)
             _ReplyQuote(reply: message.replyTo!, color: foreground),
           if (message.attachments.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-              child: Wrap(
-                spacing: AppSpacing.xs,
-                runSpacing: AppSpacing.xs,
-                children: [
-                  for (final a in message.attachments)
-                    AttachmentChip(attachment: a),
-                ],
-              ),
+            MessageAttachments(
+              attachments: message.attachments,
+              foreground: message.isFailed
+                  ? scheme.onErrorContainer
+                  : foreground,
             ),
           if (message.content.isNotEmpty || message.isStreaming)
             Text.rich(
@@ -113,12 +109,11 @@ class MessageBubble extends StatelessWidget {
               ),
             ),
           ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: (MediaQuery.sizeOf(context).width * 0.78).clamp(
-                240.0,
-                560.0,
-              ),
-            ),
+            // A message is at most 2/3 of the screen; messages with
+            // attachments use that full width so media/file cards line up.
+            constraints: message.attachments.isEmpty
+                ? BoxConstraints(maxWidth: maxWidth)
+                : BoxConstraints.tightFor(width: maxWidth),
             child: GestureDetector(
               onTap: message.isFailed ? onRetry : null,
               onLongPress: onReply,

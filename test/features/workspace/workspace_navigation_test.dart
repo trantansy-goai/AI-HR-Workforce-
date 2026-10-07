@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_base/app/app.dart';
-import 'package:flutter_project_base/features/approval/application/approval_providers.dart';
 import 'package:flutter_project_base/features/chat/application/chat_providers.dart';
 import 'package:flutter_project_base/features/chat/data/providers/mock_chat_provider.dart';
 import 'package:flutter_project_base/features/chat/domain/chat_provider.dart';
@@ -46,6 +45,17 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  Future<void> openChatList(WidgetTester tester) async {
+    await tester.tap(find.widgetWithText(NavigationDestination, 'Account'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Language / security / sign out'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Language / security / sign out'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Chat list'));
+    await tester.pumpAndSettle();
+  }
+
   group('Workspace 5-Tab Navigation & Trang chủ default', () {
     testWidgets(
       'all five main tabs exist and Home / Trang chủ is the default landing tab',
@@ -60,10 +70,7 @@ void main() {
         expect(find.text('Account'), findsWidgets);
 
         // Verify Trang chủ Dashboard content is active by default
-        expect(
-          find.text('GOAI Mobile Phase 1 Milestone Reached'),
-          findsOneWidget,
-        );
+        expect(find.text('Thông điệp từ Ban điều hành'), findsOneWidget);
         expect(find.text('Upcoming Work'), findsOneWidget);
         expect(find.text('My Courses'), findsOneWidget);
       },
@@ -77,14 +84,14 @@ void main() {
       // 1. Switch to Ask HR tab
       await tester.tap(find.widgetWithText(NavigationDestination, 'Ask HR'));
       await tester.pumpAndSettle();
-      expect(find.text('AI & HR AGENTS'), findsOneWidget);
-      expect(find.text('OTHER'), findsOneWidget);
+      expect(find.text('How can HR help?'), findsOneWidget);
+      expect(find.text('View policy & sources'), findsOneWidget);
 
       // 2. Switch to My Work tab
       await tester.tap(find.widgetWithText(NavigationDestination, 'My Work'));
       await tester.pumpAndSettle();
-      expect(find.text('A3 · HỘI NHẬP'), findsOneWidget);
-      expect(find.text('Nhân viên vận hành · Nhà máy A'), findsOneWidget);
+      expect(find.text('Xác nhận thông tin cá nhân'), findsOneWidget);
+      expect(find.text('Operations staff · Plant A'), findsOneWidget);
       expect(find.text('Xác minh hồ sơ cá nhân'), findsOneWidget);
 
       // 3. Switch to Learning tab
@@ -96,24 +103,63 @@ void main() {
       // 4. Switch to Account tab
       await tester.tap(find.widgetWithText(NavigationDestination, 'Account'));
       await tester.pumpAndSettle();
-      expect(find.text('Internal News & Bulletins'), findsOneWidget);
-      expect(find.text('Settings'), findsOneWidget);
+      expect(find.text('Company news'), findsOneWidget);
+      expect(find.text('Thông điệp từ Ban điều hành'), findsOneWidget);
 
       // 5. Switch back to Home
       await tester.tap(find.widgetWithText(NavigationDestination, 'Home'));
       await tester.pumpAndSettle();
+      expect(find.text('Thông điệp từ Ban điều hành'), findsOneWidget);
+    });
+  });
+
+  group('Hỏi HR (M03/M04)', () {
+    testWidgets('policy sources -> "Create HR request" opens request dialog', (
+      tester,
+    ) async {
+      await signInAsGuest(tester);
+      await tester.tap(find.widgetWithText(NavigationDestination, 'Ask HR'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('I need to see the leave policy.'), findsOneWidget);
+      await tester.tap(find.text('View policy & sources'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Annual leave policy'), findsOneWidget);
+      expect(find.text('APPROVED SOURCE'), findsOneWidget);
+      expect(find.text('Leave policy • version 2.1'), findsOneWidget);
+
+      await tester.tap(find.text('Create HR request'));
+      await tester.pumpAndSettle();
+
+      // Lands on the Việc tab with the M05 request dialog open.
+      expect(find.byType(Dialog), findsOneWidget);
+      expect(find.text('Send HR request'), findsOneWidget);
+      expect(find.text('Operations staff · Plant A'), findsOneWidget);
+    });
+
+    testWidgets('typing a question opens an HR conversation with it', (
+      tester,
+    ) async {
+      await signInAsGuest(tester);
+      await tester.tap(find.widgetWithText(NavigationDestination, 'Ask HR'));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), 'How many leave days?');
+      await tester.testTextInput.receiveAction(TextInputAction.send);
+      await tester.pumpAndSettle();
+
       expect(
-        find.text('GOAI Mobile Phase 1 Milestone Reached'),
-        findsOneWidget,
+        find.textContaining('How many leave days?', findRichText: true),
+        findsWidgets,
       );
     });
   });
 
-  group('Ask HR, Agents & History', () {
-    testWidgets('Ask HR root presents AI & HR agents', (tester) async {
+  group('Chat list (Account), Agents & History', () {
+    testWidgets('chat list presents AI & HR agents', (tester) async {
       await signInAsGuest(tester);
-      await tester.tap(find.widgetWithText(NavigationDestination, 'Ask HR'));
-      await tester.pumpAndSettle();
+      await openChatList(tester);
 
       expect(find.text('AI & HR AGENTS'), findsOneWidget);
       expect(find.text('Mock Assistant'), findsOneWidget);
@@ -126,8 +172,7 @@ void main() {
 
     testWidgets('Agent -> History -> Start new conversation', (tester) async {
       await signInAsGuest(tester);
-      await tester.tap(find.widgetWithText(NavigationDestination, 'Ask HR'));
-      await tester.pumpAndSettle();
+      await openChatList(tester);
 
       // Tap HR Assistant
       await tester.tap(find.text('HR Assistant'));
@@ -149,8 +194,7 @@ void main() {
       tester,
     ) async {
       await signInAsGuest(tester);
-      await tester.tap(find.widgetWithText(NavigationDestination, 'Ask HR'));
-      await tester.pumpAndSettle();
+      await openChatList(tester);
 
       await tester.tap(find.text('HR Assistant'));
       await tester.pumpAndSettle();
@@ -166,47 +210,106 @@ void main() {
     });
   });
 
-  group('Việc của tôi & Permission-Aware Approvals', () {
-    testWidgets('renders Checklist and Cases with approval permission', (
-      tester,
-    ) async {
+  group('Việc của tôi by role', () {
+    Future<void> openMyWork(WidgetTester tester) async {
       await signInAsGuest(tester);
       await tester.tap(find.widgetWithText(NavigationDestination, 'My Work'));
       await tester.pumpAndSettle();
+    }
 
-      expect(find.text('A3 · HỘI NHẬP'), findsOneWidget);
-      expect(find.text('3/5 mục đã xác nhận'), findsOneWidget);
-      expect(find.text('A0 + A4 · CASE & YÊU CẦU'), findsOneWidget);
-      expect(find.text('#HR-1042'), findsOneWidget);
-
-      // With default approval permission true:
-      expect(find.text('DÀNH CHO NGƯỜI CÓ QUYỀN'), findsOneWidget);
-      expect(find.text('Chờ tôi phê duyệt'), findsOneWidget);
-      expect(
-        find.text('Quota Expansion Request (100k Tokens)'),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('hides approval inbox when user lacks approval permission', (
+    testWidgets('employee sees case tracking (M06) and onboarding (M07)', (
       tester,
     ) async {
-      await signInAsGuest(
-        tester,
-        extraOverrides: [
-          hasApprovalPermissionProvider.overrideWithValue(false),
-        ],
-      );
-      await tester.tap(find.widgetWithText(NavigationDestination, 'My Work'));
+      await openMyWork(tester);
+
+      expect(find.text('#HR-1042'), findsOneWidget);
+      expect(find.text('Đang chờ HR xác minh'), findsOneWidget);
+      expect(find.text('Secure exchange'), findsOneWidget);
+      expect(find.text('Add documents'), findsOneWidget);
+
+      expect(find.text('ONBOARDING'), findsOneWidget);
+      expect(find.text('2/5 items confirmed'), findsOneWidget);
+      expect(find.text('Đăng ký tuyến xe đưa đón'), findsNothing);
+      await tester.ensureVisible(find.text('Show remaining items'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Show remaining items'));
+      await tester.pumpAndSettle();
+      expect(find.text('Đăng ký tuyến xe đưa đón'), findsOneWidget);
+
+      // HR/Admin blocks are not part of the employee view.
+      expect(find.text('Awaiting my approval'), findsNothing);
+    });
+
+    testWidgets('M05 dialog ignores taps outside; close button dismisses', (
+      tester,
+    ) async {
+      await openMyWork(tester);
+      await tester.tap(find.text('New HR request'));
       await tester.pumpAndSettle();
 
-      // Checklist and Cases are visible
-      expect(find.text('A3 · HỘI NHẬP'), findsOneWidget);
-      expect(find.text('A0 + A4 · CASE & YÊU CẦU'), findsOneWidget);
+      await tester.tapAt(const Offset(5, 5));
+      await tester.pumpAndSettle();
+      expect(find.byType(Dialog), findsOneWidget);
 
-      // Approval section is NOT visible
-      expect(find.text('DÀNH CHO NGƯỜI CÓ QUYỀN'), findsNothing);
-      expect(find.text('Chờ tôi phê duyệt'), findsNothing);
+      await tester.tap(find.byTooltip('Close'));
+      await tester.pumpAndSettle();
+      expect(find.byType(Dialog), findsNothing);
+    });
+
+    testWidgets('submitting the M05 dialog opens a new case', (tester) async {
+      await openMyWork(tester);
+
+      await tester.tap(find.text('New HR request'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Submit request'));
+      await tester.pumpAndSettle();
+      expect(find.text('Please choose a request type'), findsOneWidget);
+
+      await tester.tap(
+        find.text('Request type: personal information confirmation'),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Leave').last);
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.descendant(
+          of: find.byType(Dialog),
+          matching: find.byType(TextFormField),
+        ),
+        'Xin nghỉ phép 2 ngày',
+      );
+      await tester.tap(find.text('Submit request'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(Dialog), findsNothing);
+      expect(find.text('Request sent · #HR-1043'), findsOneWidget);
+      expect(find.text('#HR-1043'), findsOneWidget);
+      expect(find.text('Xin nghỉ phép 2 ngày'), findsOneWidget);
+    });
+
+    testWidgets('HR/Admin sees approvals (M11), probation (M12), queue (M13)', (
+      tester,
+    ) async {
+      await openMyWork(tester);
+      await tester.tap(find.text('HR / Admin'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Awaiting my approval'), findsOneWidget);
+      expect(find.text('Probation review file'), findsOneWidget);
+      expect(find.text('Probation review #PB-238'), findsOneWidget);
+      expect(find.text('Case #HR-1051'), findsOneWidget);
+      expect(find.text('View queue on Web'), findsOneWidget);
+
+      // Employee blocks are hidden.
+      expect(find.text('ONBOARDING'), findsNothing);
+      expect(find.text('New HR request'), findsNothing);
+
+      // Decisions aren't wired to a backend yet.
+      await tester.ensureVisible(find.text('Escalate to HR/Legal'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Escalate to HR/Legal'));
+      await tester.pumpAndSettle();
+      expect(find.text('Coming soon'), findsOneWidget);
     });
   });
 
@@ -216,11 +319,19 @@ void main() {
       await tester.tap(find.widgetWithText(NavigationDestination, 'Learning'));
       await tester.pumpAndSettle();
 
-      // Courses tab active by default
+      // Courses tab active by default: "My learning" (M08)
+      expect(find.text('My learning'), findsOneWidget);
+      expect(find.text('1 mandatory course · due 12/10'), findsOneWidget);
+      expect(find.text('An toàn lao động cơ bản'), findsOneWidget);
+      expect(find.text('Mandatory'), findsOneWidget);
       expect(
-        find.text('Enterprise AI & Security Compliance 101'),
+        find.text('Video 12 min · quiz 8 questions · due 12/10'),
         findsOneWidget,
       );
+      expect(find.text('Progress 40%'), findsOneWidget);
+      expect(find.text('Continue learning'), findsOneWidget);
+      expect(find.text('Quy tắc ứng xử tại nhà máy'), findsOneWidget);
+      expect(find.text('Reading 6 min · not started'), findsOneWidget);
 
       // Switch to Certification Tests tab
       await tester.tap(find.text('Certification Tests'));
@@ -241,27 +352,74 @@ void main() {
       await signInAsGuest(tester);
 
       // Tap notification bell in header
-      await tester.tap(find.byIcon(Icons.notifications_outlined).first);
+      await tester.tap(find.byTooltip('Notifications').first);
       await tester.pumpAndSettle();
 
       expect(find.text('Notifications'), findsOneWidget);
-      expect(find.text('Pending Approval Request'), findsOneWidget);
+      expect(find.text('Checklist sắp đến hạn'), findsOneWidget);
+
+      // Regression: opening a tab route from the notification list used to
+      // push it onto the root navigator and crash with duplicate page keys.
+      await tester.tap(find.text('Checklist sắp đến hạn'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Notifications'), findsNothing);
+      expect(find.text('Operations staff · Plant A'), findsOneWidget);
     });
 
-    testWidgets('Account tab navigates to Bản tin (News list)', (tester) async {
+    testWidgets('Account tab lists news (M09) and notifications (M10)', (
+      tester,
+    ) async {
       await signInAsGuest(tester);
-      await tester.tap(find.text('Account'));
+      await tester.tap(find.widgetWithText(NavigationDestination, 'Account'));
       await tester.pumpAndSettle();
 
-      // Tap Internal News & Bulletins
-      await tester.tap(find.text('Internal News & Bulletins'));
-      await tester.pumpAndSettle();
+      expect(find.text('Company news'), findsOneWidget);
+      expect(find.text('Thông điệp từ Ban điều hành'), findsOneWidget);
+      expect(find.text('Lịch khám sức khỏe định kỳ'), findsOneWidget);
+      expect(find.text('Chủ sở hữu: HR · 06/10'), findsOneWidget);
 
+      // Filter by the "HR" audience tag.
+      await tester.tap(find.text('HR'));
+      await tester.pumpAndSettle();
+      expect(find.text('Thông điệp từ Ban điều hành'), findsNothing);
+      expect(find.text('Lịch khám sức khỏe định kỳ'), findsOneWidget);
+      expect(find.text('Cập nhật tuyến xe đưa đón'), findsNothing);
+
+      await tester.ensureVisible(find.text('My notifications'));
+      await tester.pumpAndSettle();
+      expect(find.text('Khóa học được giao'), findsOneWidget);
+      expect(find.text('ACCOUNT'), findsOneWidget);
+
+      // "View full content" opens the news list.
+      await tester.ensureVisible(find.text('View full content'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('View full content'));
+      await tester.pumpAndSettle();
       expect(find.text('Company News & Updates'), findsOneWidget);
-      expect(
-        find.text('GOAI Mobile Phase 1 Milestone Reached'),
-        findsOneWidget,
-      );
+    });
+
+    testWidgets('account menu offers settings, security and sign out', (
+      tester,
+    ) async {
+      await signInAsGuest(tester);
+      await tester.tap(find.widgetWithText(NavigationDestination, 'Account'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Language / security / sign out'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Language / security / sign out'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(Dialog), findsOneWidget);
+      expect(find.text('Language & settings'), findsOneWidget);
+      expect(find.text('Security'), findsOneWidget);
+      expect(find.text('Chat list'), findsOneWidget);
+
+      await tester.tap(find.text('Sign out'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(FilledButton, 'Sign out'));
+      await tester.pumpAndSettle();
+      expect(find.text('Welcome back'), findsOneWidget);
     });
   });
 

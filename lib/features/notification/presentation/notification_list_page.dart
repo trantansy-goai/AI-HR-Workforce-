@@ -36,7 +36,7 @@ class NotificationListPage extends ConsumerWidget {
                     clipBehavior: Clip.antiAlias,
                     child: InkWell(
                       onTap: notif.deepLink != null
-                          ? () => context.push(notif.deepLink!)
+                          ? () => context.go(notif.deepLink!)
                           : null,
                       child: Padding(
                         padding: const EdgeInsets.all(AppSpacing.md),
@@ -72,7 +72,7 @@ class NotificationListPage extends ConsumerWidget {
                                   if (notif.deepLink != null) ...[
                                     const SizedBox(height: AppSpacing.xs),
                                     Text(
-                                      'Tap to view details',
+                                      l10n.notificationOpenHint,
                                       style: theme.textTheme.labelSmall
                                           ?.copyWith(
                                             color: theme.colorScheme.primary,

@@ -212,6 +212,12 @@ abstract class AppLocalizations {
   /// **'Please verify your account to view your information.'**
   String get authSignInSubtitle;
 
+  /// No description provided for @authHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'GO AI HR'**
+  String get authHeaderTitle;
+
   /// No description provided for @authSecurityBadge.
   ///
   /// In en, this message translates to:
@@ -257,7 +263,7 @@ abstract class AppLocalizations {
   /// No description provided for @authSsoPrompt.
   ///
   /// In en, this message translates to:
-  /// **'Enterprise has SSO?'**
+  /// **'Enterprise has SSO? Choose \"Company sign-in\".'**
   String get authSsoPrompt;
 
   /// No description provided for @authSsoButton.
@@ -265,12 +271,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Company sign-in'**
   String get authSsoButton;
-
-  /// No description provided for @authSsoBlockedMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Enterprise SSO login is awaiting backend infrastructure connection (BLOCKED).'**
-  String get authSsoBlockedMessage;
 
   /// No description provided for @authFirstTimeTitle.
   ///
@@ -950,12 +950,6 @@ abstract class AppLocalizations {
   /// **'HR Request #HR-1042'**
   String get homePendingCase;
 
-  /// No description provided for @homePendingTasksStrip.
-  ///
-  /// In en, this message translates to:
-  /// **'You have {count} tasks to complete this week.'**
-  String homePendingTasksStrip(int count);
-
   /// No description provided for @accountNews.
   ///
   /// In en, this message translates to:
@@ -985,6 +979,924 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'My Requests'**
   String get askHrMyRequestsChip;
+
+  /// No description provided for @homeAppBarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'GO AI · HR'**
+  String get homeAppBarTitle;
+
+  /// No description provided for @homeHeroGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi {name} 👋'**
+  String homeHeroGreeting(String name);
+
+  /// No description provided for @homePendingTasksLead.
+  ///
+  /// In en, this message translates to:
+  /// **'You have '**
+  String get homePendingTasksLead;
+
+  /// No description provided for @homePendingTasksCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 task} other{{count} tasks}}'**
+  String homePendingTasksCount(int count);
+
+  /// No description provided for @homePendingTasksTail.
+  ///
+  /// In en, this message translates to:
+  /// **' to finish this week.'**
+  String get homePendingTasksTail;
+
+  /// No description provided for @homeAskPolicyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask policy'**
+  String get homeAskPolicyAction;
+
+  /// No description provided for @homeSendRequestAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Send request'**
+  String get homeSendRequestAction;
+
+  /// No description provided for @homeUpcomingWorkDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish onboarding checklist · due 10/10'**
+  String get homeUpcomingWorkDetail;
+
+  /// No description provided for @homeMyCoursesDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic workplace safety · 12 min left'**
+  String get homeMyCoursesDetail;
+
+  /// No description provided for @homePendingCaseDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for HR · expected 09/10'**
+  String get homePendingCaseDetail;
+
+  /// No description provided for @homeQuotaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI token quota'**
+  String get homeQuotaTitle;
+
+  /// No description provided for @homeNewsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No news yet.'**
+  String get homeNewsEmpty;
+
+  /// No description provided for @homeNewsLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading news...'**
+  String get homeNewsLoading;
+
+  /// No description provided for @askHrTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How can HR help?'**
+  String get askHrTitle;
+
+  /// No description provided for @askHrSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send question'**
+  String get askHrSend;
+
+  /// No description provided for @askHrSampleQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'I need to see the leave policy.'**
+  String get askHrSampleQuestion;
+
+  /// No description provided for @askHrSampleAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'I can summarise the current policy and link the approved version. Do you want the eligibility rules or how to submit a request?'**
+  String get askHrSampleAnswer;
+
+  /// No description provided for @askHrPrivacyNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal information needs extra verification. Complaints open a confidential case for HR.'**
+  String get askHrPrivacyNotice;
+
+  /// No description provided for @askHrViewPolicySources.
+  ///
+  /// In en, this message translates to:
+  /// **'View policy & sources'**
+  String get askHrViewPolicySources;
+
+  /// No description provided for @askHrAnswerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Annual leave policy'**
+  String get askHrAnswerTitle;
+
+  /// No description provided for @askHrAnswerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Under the approved policy, you send a request to your manager following the company process. Exact eligibility depends on your contract type and remaining leave balance.'**
+  String get askHrAnswerBody;
+
+  /// No description provided for @askHrSourceEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'APPROVED SOURCE'**
+  String get askHrSourceEyebrow;
+
+  /// No description provided for @askHrSourceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave policy • version 2.1'**
+  String get askHrSourceTitle;
+
+  /// No description provided for @askHrSourceMeta.
+  ///
+  /// In en, this message translates to:
+  /// **'Effective: 01/09/2026 · Owner: HR'**
+  String get askHrSourceMeta;
+
+  /// No description provided for @askHrSourcePath.
+  ///
+  /// In en, this message translates to:
+  /// **'Company document library → accessible version → section 3.2'**
+  String get askHrSourcePath;
+
+  /// No description provided for @askHrSourceWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'No effective version found or conflicting info? Escalate to HR; don\'t treat the answer as definitive policy.'**
+  String get askHrSourceWarning;
+
+  /// No description provided for @askHrOpenSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Open original document'**
+  String get askHrOpenSource;
+
+  /// No description provided for @askHrCreateRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Create HR request'**
+  String get askHrCreateRequest;
+
+  /// No description provided for @chatHubTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat list'**
+  String get chatHubTitle;
+
+  /// No description provided for @profileChatList.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat list'**
+  String get profileChatList;
+
+  /// No description provided for @profileChatListSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI assistants & conversation history (temporary)'**
+  String get profileChatListSubtitle;
+
+  /// No description provided for @myWorkOnboardingEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'ONBOARDING'**
+  String get myWorkOnboardingEyebrow;
+
+  /// No description provided for @myWorkOnboardingRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Operations staff · Plant A'**
+  String get myWorkOnboardingRole;
+
+  /// No description provided for @myWorkOnboardingTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Template: role + location + contract type · approved by HR'**
+  String get myWorkOnboardingTemplate;
+
+  /// No description provided for @myWorkOnboardingProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{done}/{total} items confirmed'**
+  String myWorkOnboardingProgress(int done, int total);
+
+  /// No description provided for @myWorkOnboardingShowRest.
+  ///
+  /// In en, this message translates to:
+  /// **'Show remaining items'**
+  String get myWorkOnboardingShowRest;
+
+  /// No description provided for @myWorkOnboardingCollapse.
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get myWorkOnboardingCollapse;
+
+  /// No description provided for @myWorkOnboardingEvidenceNote.
+  ///
+  /// In en, this message translates to:
+  /// **'“Checklist complete” records evidence; the official record is updated by the source system after review.'**
+  String get myWorkOnboardingEvidenceNote;
+
+  /// No description provided for @myWorkCasesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no cases yet.'**
+  String get myWorkCasesEmpty;
+
+  /// No description provided for @myWorkCaseUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated {date}'**
+  String myWorkCaseUpdated(String date);
+
+  /// No description provided for @myWorkStepReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Received'**
+  String get myWorkStepReceived;
+
+  /// No description provided for @myWorkStepAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned'**
+  String get myWorkStepAssigned;
+
+  /// No description provided for @myWorkStepInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get myWorkStepInProgress;
+
+  /// No description provided for @myWorkStepDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get myWorkStepDone;
+
+  /// No description provided for @myWorkCaseStatusBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected response {date}. You\'ll be notified if more information is needed.'**
+  String myWorkCaseStatusBody(String date);
+
+  /// No description provided for @myWorkCaseSecureTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure exchange'**
+  String get myWorkCaseSecureTitle;
+
+  /// No description provided for @myWorkCaseSecureBody.
+  ///
+  /// In en, this message translates to:
+  /// **'View and add details within your own case only.'**
+  String get myWorkCaseSecureBody;
+
+  /// No description provided for @myWorkCaseAddDocs.
+  ///
+  /// In en, this message translates to:
+  /// **'Add documents'**
+  String get myWorkCaseAddDocs;
+
+  /// No description provided for @myWorkCaseDocsAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Attached 1 file to the case} other{Attached {count} files to the case}}'**
+  String myWorkCaseDocsAdded(int count);
+
+  /// No description provided for @myWorkCaseEscalationNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue → A0 reminds and escalates to the owner.'**
+  String get myWorkCaseEscalationNote;
+
+  /// No description provided for @myWorkNewRequestButton.
+  ///
+  /// In en, this message translates to:
+  /// **'New HR request'**
+  String get myWorkNewRequestButton;
+
+  /// No description provided for @myWorkNewRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Send HR request'**
+  String get myWorkNewRequest;
+
+  /// No description provided for @myWorkRequestTypeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Request type: personal information confirmation'**
+  String get myWorkRequestTypeHint;
+
+  /// No description provided for @myWorkRequestTypePersonalInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal information confirmation'**
+  String get myWorkRequestTypePersonalInfo;
+
+  /// No description provided for @myWorkRequestTypeLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get myWorkRequestTypeLeave;
+
+  /// No description provided for @myWorkRequestTypePolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy & benefits'**
+  String get myWorkRequestTypePolicy;
+
+  /// No description provided for @myWorkRequestTypeComplaint.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaint (confidential)'**
+  String get myWorkRequestTypeComplaint;
+
+  /// No description provided for @myWorkRequestTypeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose a request type'**
+  String get myWorkRequestTypeRequired;
+
+  /// No description provided for @myWorkRequestDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Briefly describe what you need'**
+  String get myWorkRequestDescriptionHint;
+
+  /// No description provided for @myWorkRequestDescriptionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please describe your request'**
+  String get myWorkRequestDescriptionRequired;
+
+  /// No description provided for @myWorkRequestAttachHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach documents (if needed)'**
+  String get myWorkRequestAttachHint;
+
+  /// No description provided for @myWorkRequestAttached.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 file attached} other{{count} files attached}}'**
+  String myWorkRequestAttached(int count);
+
+  /// No description provided for @myWorkRequestPrivacyNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Share only what\'s needed. Sensitive information is routed to HR by permission.'**
+  String get myWorkRequestPrivacyNotice;
+
+  /// No description provided for @myWorkRequestSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit request'**
+  String get myWorkRequestSubmit;
+
+  /// No description provided for @myWorkRequestAfterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'After you submit'**
+  String get myWorkRequestAfterTitle;
+
+  /// No description provided for @myWorkRequestAfterBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You get a case code (e.g. #HR-1042) · expected response: 2 working days · handler: assigned HR.'**
+  String get myWorkRequestAfterBody;
+
+  /// No description provided for @myWorkRequestUrgentNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaints/urgent: routed straight to the authorised handler, not via your direct manager.'**
+  String get myWorkRequestUrgentNote;
+
+  /// No description provided for @myWorkRequestSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent · {id}'**
+  String myWorkRequestSubmitted(String id);
+
+  /// No description provided for @myWorkRoleEmployee.
+  ///
+  /// In en, this message translates to:
+  /// **'Employee'**
+  String get myWorkRoleEmployee;
+
+  /// No description provided for @myWorkRoleHrAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'HR / Admin'**
+  String get myWorkRoleHrAdmin;
+
+  /// No description provided for @myWorkRoleDemoHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo mode: choose a role to preview the Work tab'**
+  String get myWorkRoleDemoHint;
+
+  /// No description provided for @hrApprovalsEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'FOR AUTHORISED APPROVERS'**
+  String get hrApprovalsEyebrow;
+
+  /// No description provided for @hrApprovalsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting my approval'**
+  String get hrApprovalsTitle;
+
+  /// No description provided for @hrApprovalProbationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Probation review file'**
+  String get hrApprovalProbationTitle;
+
+  /// No description provided for @hrApprovalProbationMeta.
+  ///
+  /// In en, this message translates to:
+  /// **'#PB-238 · Nguyen A · due 11/10'**
+  String get hrApprovalProbationMeta;
+
+  /// No description provided for @hrApprovalProbationBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get hrApprovalProbationBadge;
+
+  /// No description provided for @hrApprovalChecklistTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Checklist with exceptions'**
+  String get hrApprovalChecklistTitle;
+
+  /// No description provided for @hrApprovalChecklistMeta.
+  ///
+  /// In en, this message translates to:
+  /// **'#ON-320 · missing documents · due 09/10'**
+  String get hrApprovalChecklistMeta;
+
+  /// No description provided for @hrApprovalChecklistBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get hrApprovalChecklistBadge;
+
+  /// No description provided for @hrApprovalsScopeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'2 items · rights follow position, unit, reporting line and authority level.'**
+  String get hrApprovalsScopeNote;
+
+  /// No description provided for @hrApprovalsOpenReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Open review file'**
+  String get hrApprovalsOpenReview;
+
+  /// No description provided for @hrApprovalsNoBulkNote.
+  ///
+  /// In en, this message translates to:
+  /// **'There is no “Approve all” for probation decisions.'**
+  String get hrApprovalsNoBulkNote;
+
+  /// No description provided for @hrProbationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Probation review #PB-238'**
+  String get hrProbationTitle;
+
+  /// No description provided for @hrProbationChecklist.
+  ///
+  /// In en, this message translates to:
+  /// **'Checklist 12/13 items'**
+  String get hrProbationChecklist;
+
+  /// No description provided for @hrProbationTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'Mandatory training: confirmed'**
+  String get hrProbationTraining;
+
+  /// No description provided for @hrProbationManagerOpinion.
+  ///
+  /// In en, this message translates to:
+  /// **'Manager opinion: needs more input'**
+  String get hrProbationManagerOpinion;
+
+  /// No description provided for @hrProbationMissingEvidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Evidence is missing. Request more information before deciding.'**
+  String get hrProbationMissingEvidence;
+
+  /// No description provided for @hrProbationCommentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviewer comments & rationale'**
+  String get hrProbationCommentHint;
+
+  /// No description provided for @hrProbationRequestMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Request more information'**
+  String get hrProbationRequestMore;
+
+  /// No description provided for @hrProbationEscalate.
+  ///
+  /// In en, this message translates to:
+  /// **'Escalate to HR/Legal'**
+  String get hrProbationEscalate;
+
+  /// No description provided for @hrProbationDecisionNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Decision options appear only once conditions are met, rights are correct and you confirm again.'**
+  String get hrProbationDecisionNote;
+
+  /// No description provided for @hrQueueOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue {count}'**
+  String hrQueueOverdue(int count);
+
+  /// No description provided for @hrQueuePending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending {count}'**
+  String hrQueuePending(int count);
+
+  /// No description provided for @hrQueueCase1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Case #HR-1051'**
+  String get hrQueueCase1Title;
+
+  /// No description provided for @hrQueueCase1Meta.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaint · confidential routing · due today'**
+  String get hrQueueCase1Meta;
+
+  /// No description provided for @hrQueueCase2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Case #ON-320'**
+  String get hrQueueCase2Title;
+
+  /// No description provided for @hrQueueCase2Meta.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing onboarding documents · owner: HR A'**
+  String get hrQueueCase2Meta;
+
+  /// No description provided for @hrQueueCase3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Case #TR-102'**
+  String get hrQueueCase3Title;
+
+  /// No description provided for @hrQueueCase3Meta.
+  ///
+  /// In en, this message translates to:
+  /// **'Course has no approved content version'**
+  String get hrQueueCase3Meta;
+
+  /// No description provided for @hrQueueOpenWeb.
+  ///
+  /// In en, this message translates to:
+  /// **'View queue on Web'**
+  String get hrQueueOpenWeb;
+
+  /// No description provided for @hrQueueMobileNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile is for receiving and tracking; routing setup, KB approval and complex investigations use the Web Workspace.'**
+  String get hrQueueMobileNote;
+
+  /// No description provided for @learningMyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My learning'**
+  String get learningMyTitle;
+
+  /// No description provided for @learningMandatorySummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 mandatory course} other{{count} mandatory courses}} · due {date}'**
+  String learningMandatorySummary(int count, String date);
+
+  /// No description provided for @learningNoMandatory.
+  ///
+  /// In en, this message translates to:
+  /// **'No mandatory courses pending.'**
+  String get learningNoMandatory;
+
+  /// No description provided for @learningMandatoryBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Mandatory'**
+  String get learningMandatoryBadge;
+
+  /// No description provided for @learningModuleBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'A7'**
+  String get learningModuleBadge;
+
+  /// No description provided for @learningVideoMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Video {minutes} min'**
+  String learningVideoMinutes(int minutes);
+
+  /// No description provided for @learningDocMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading {minutes} min'**
+  String learningDocMinutes(int minutes);
+
+  /// No description provided for @learningQuizQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'quiz {count} questions'**
+  String learningQuizQuestions(int count);
+
+  /// No description provided for @learningDue.
+  ///
+  /// In en, this message translates to:
+  /// **'due {date}'**
+  String learningDue(String date);
+
+  /// No description provided for @learningNotStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'not started'**
+  String get learningNotStarted;
+
+  /// No description provided for @learningCompletedStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'completed'**
+  String get learningCompletedStatus;
+
+  /// No description provided for @learningProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress {percent}%'**
+  String learningProgress(int percent);
+
+  /// No description provided for @learningContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue learning'**
+  String get learningContinue;
+
+  /// No description provided for @learningStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start learning'**
+  String get learningStart;
+
+  /// No description provided for @learningPolicyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Pass marks, retake limits and certificate validity are approved by the content owner before release.'**
+  String get learningPolicyNote;
+
+  /// No description provided for @learningEmptyCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no assigned courses yet.'**
+  String get learningEmptyCourses;
+
+  /// No description provided for @profileNewsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Company news'**
+  String get profileNewsTitle;
+
+  /// No description provided for @profileNewsAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get profileNewsAll;
+
+  /// No description provided for @profileNewsViewFull.
+  ///
+  /// In en, this message translates to:
+  /// **'View full content'**
+  String get profileNewsViewFull;
+
+  /// No description provided for @profileNewsAckNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcements that need acknowledgement have an “I\'ve read this” button.'**
+  String get profileNewsAckNote;
+
+  /// No description provided for @profileNotificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My notifications'**
+  String get profileNotificationsTitle;
+
+  /// No description provided for @profileAccountSection.
+  ///
+  /// In en, this message translates to:
+  /// **'ACCOUNT'**
+  String get profileAccountSection;
+
+  /// No description provided for @profileEmployeeMeta.
+  ///
+  /// In en, this message translates to:
+  /// **'Employee ID: {id} · view permitted info'**
+  String profileEmployeeMeta(String id);
+
+  /// No description provided for @profileAccountActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Language / security / sign out'**
+  String get profileAccountActions;
+
+  /// No description provided for @profilePushNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Push only says “New update”; open the app and authenticate to see sensitive data.'**
+  String get profilePushNote;
+
+  /// No description provided for @profileLanguageSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Language & settings'**
+  String get profileLanguageSettings;
+
+  /// No description provided for @profileSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get profileSecurity;
+
+  /// No description provided for @commonComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get commonComingSoon;
+
+  /// No description provided for @notificationOpenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to view details'**
+  String get notificationOpenHint;
+
+  /// No description provided for @chatAttachMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos & videos'**
+  String get chatAttachMedia;
+
+  /// No description provided for @chatAttachFile.
+  ///
+  /// In en, this message translates to:
+  /// **'File'**
+  String get chatAttachFile;
+
+  /// No description provided for @chatFileTypeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose file type'**
+  String get chatFileTypeTitle;
+
+  /// No description provided for @chatFileTypePdf.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF'**
+  String get chatFileTypePdf;
+
+  /// No description provided for @chatFileTypeWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Word'**
+  String get chatFileTypeWord;
+
+  /// No description provided for @chatFileTypeExcel.
+  ///
+  /// In en, this message translates to:
+  /// **'Excel'**
+  String get chatFileTypeExcel;
+
+  /// No description provided for @chatFileTypePowerPoint.
+  ///
+  /// In en, this message translates to:
+  /// **'PowerPoint'**
+  String get chatFileTypePowerPoint;
+
+  /// No description provided for @chatFileTypeText.
+  ///
+  /// In en, this message translates to:
+  /// **'Text (TXT, CSV)'**
+  String get chatFileTypeText;
+
+  /// No description provided for @chatFileTypeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All files'**
+  String get chatFileTypeAll;
+
+  /// No description provided for @chatOpenWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Open with another app'**
+  String get chatOpenWith;
+
+  /// No description provided for @chatFileOpenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open this file'**
+  String get chatFileOpenFailed;
+
+  /// No description provided for @chatMediaUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this content'**
+  String get chatMediaUnavailable;
+
+  /// No description provided for @chatMicPermissionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone access needed'**
+  String get chatMicPermissionTitle;
+
+  /// No description provided for @chatMicPermissionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow microphone access in Settings to record voice messages.'**
+  String get chatMicPermissionMessage;
+
+  /// No description provided for @chatOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get chatOpenSettings;
+
+  /// No description provided for @chatMicPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone permission denied'**
+  String get chatMicPermissionDenied;
+
+  /// No description provided for @chatRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording · {duration}'**
+  String chatRecording(String duration);
+
+  /// No description provided for @chatVoiceRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Record voice'**
+  String get chatVoiceRecord;
+
+  /// No description provided for @chatStopRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop and send'**
+  String get chatStopRecording;
+
+  /// No description provided for @chatCancelRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel recording'**
+  String get chatCancelRecording;
+
+  /// No description provided for @chatPlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get chatPlay;
+
+  /// No description provided for @chatPause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get chatPause;
+
+  /// No description provided for @chatVoiceNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice message'**
+  String get chatVoiceNote;
 }
 
 class _AppLocalizationsDelegate

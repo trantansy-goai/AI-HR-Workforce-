@@ -96,3 +96,33 @@ abstract final class AppBrandColors {
   /// Used sparingly for branding highlights, badges, and warning accents.
   static const Color secondaryGold = Color(0xFFD99F37);
 }
+
+/// GO AI HR palette: the mockups' layout (light canvas, white bordered
+/// cards, tinted notice boxes) in the official brand colors — primary blue
+/// [AppBrandColors.primaryBlue] and secondary gold
+/// [AppBrandColors.secondaryGold]. Every screen reads colors from here so a
+/// re-brand is a one-place change.
+abstract final class AppHrPalette {
+  static const Color accent = AppBrandColors.primaryBlue;
+  static const Color accentSoft = Color(0xFFE8EDF9);
+  static const Color background = Color(0xFFF4F6FA);
+  static const Color surface = Color(0xFFFFFFFF);
+  static const Color border = Color(0xFFD6DCE8);
+  static const Color divider = Color(0xFFE4E8F0);
+  static const Color ink = Color(0xFF14213D);
+  static const Color inkMuted = Color(0xFF5B6475);
+
+  /// Caution boxes, tinted from the brand gold.
+  static const Color warningSoft = Color(0xFFFDF5E6);
+  static const Color warningBorder = Color(0xFFF0D9AE);
+  static const Color warningInk = Color(0xFF6B4A10);
+  static const Color infoSoft = Color(0xFFE6F0FB);
+  static const Color infoInk = Color(0xFF1F5C99);
+
+  /// Gold badges/progress; [amberInk] darkens the brand gold for text contrast.
+  static const Color amberSoft = Color(0xFFFBEFD8);
+  static const Color amberInk = Color(0xFF8F6114);
+  static const Color violetSoft = Color(0xFFF0EAFB);
+  static const Color violetInk = Color(0xFF6B4BB8);
+  static const Color danger = Color(0xFFC0392B);
+}

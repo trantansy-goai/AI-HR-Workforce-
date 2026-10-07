@@ -9,7 +9,9 @@ import '../../features/approval/presentation/approval_pages.dart';
 import '../../features/auth/application/auth_providers.dart';
 import '../../features/auth/presentation/sign_in_page.dart';
 import '../../features/chat/presentation/agent_conversation_list_page.dart';
+import '../../features/chat/presentation/ask_hr_answer_page.dart';
 import '../../features/chat/presentation/ask_hr_page.dart';
+import '../../features/chat/presentation/chat_hub_page.dart';
 import '../../features/chat/presentation/conversation_page.dart';
 import '../../features/document/presentation/document_pages.dart';
 import '../../features/elearning/presentation/elearning_hub_page.dart';
@@ -90,17 +92,8 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => const AskHrPage(),
                 routes: [
                   GoRoute(
-                    path: 'agent/:agentId',
-                    builder: (context, state) => AgentConversationListPage(
-                      agentId: state.pathParameters['agentId']!,
-                    ),
-                  ),
-                  GoRoute(
-                    parentNavigatorKey: rootNavigatorKey,
-                    path: ':conversationId',
-                    builder: (context, state) => ConversationPage(
-                      conversationId: state.pathParameters['conversationId']!,
-                    ),
+                    path: 'answer',
+                    builder: (context, state) => const AskHrAnswerPage(),
                   ),
                 ],
               ),
@@ -111,7 +104,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.myWork,
-                builder: (context, state) => const MyWorkPage(),
+                builder: (context, state) => MyWorkPage(
+                  openNewRequest:
+                      state.uri.queryParameters['newRequest'] == '1',
+                ),
               ),
             ],
           ),
@@ -139,6 +135,29 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: AppRoutes.account,
                 builder: (context, state) => const ProfilePage(),
+                routes: [
+                  GoRoute(
+                    path: 'chats',
+                    builder: (context, state) => const ChatHubPage(),
+                    routes: [
+                      GoRoute(
+                        path: 'agent/:agentId',
+                        builder: (context, state) => AgentConversationListPage(
+                          agentId: state.pathParameters['agentId']!,
+                        ),
+                      ),
+                      GoRoute(
+                        parentNavigatorKey: rootNavigatorKey,
+                        path: ':conversationId',
+                        builder: (context, state) => ConversationPage(
+                          conversationId:
+                              state.pathParameters['conversationId']!,
+                          initialMessage: state.uri.queryParameters['q'],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),

@@ -10,12 +10,15 @@ import '../../../voice/domain/voice_recorder.dart';
 import '../../domain/entities/message.dart';
 import 'attachment_chip.dart';
 
-/// Message input with send / stop / attach / voice recording and reply preview.
+/// Message input with send / stop, photo-video and file attach buttons,
+/// voice recording and reply preview.
 class ChatComposer extends StatefulWidget {
   const ChatComposer({
     super.key,
     required this.onSend,
-    this.onAttach,
+    this.onAttachMedia,
+    this.onAttachFile,
+    this.onVoiceRecorded,
     this.onStop,
     this.isGenerating = false,
     this.replyTo,
@@ -26,7 +29,15 @@ class ChatComposer extends StatefulWidget {
   });
 
   final ValueChanged<String> onSend;
-  final VoidCallback? onAttach;
+
+  /// Opens the system photo/video picker.
+  final VoidCallback? onAttachMedia;
+
+  /// Opens the file-type sheet / document picker.
+  final VoidCallback? onAttachFile;
+
+  /// A finished voice note; the mic button is hidden when null.
+  final void Function(String path, Duration duration)? onVoiceRecorded;
   final VoidCallback? onStop;
   final bool isGenerating;
   final ReplyReference? replyTo;
@@ -77,25 +88,59 @@ class _ChatComposerState extends State<ChatComposer> {
   }
 
   Future<void> _toggleVoiceRecording() async {
-    if (!_isRecording) {
-      final hasPerm = await _recorder.hasPermission();
-      if (!hasPerm) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Microphone permission denied')),
-          );
-        }
-        return;
-      }
-      await _recorder.start();
-      setState(() => _isRecording = true);
-    } else {
+    if (_isRecording) {
+      final duration = _recordDuration;
       final audioPath = await _recorder.stop();
+      if (!mounted) return;
       setState(() => _isRecording = false);
-      if (audioPath != null && mounted) {
-        widget.onSend('[Voice Note Recorded: $audioPath]');
-      }
+      if (audioPath != null) widget.onVoiceRecorded?.call(audioPath, duration);
+      return;
     }
+
+    final permission = await _recorder.requestPermission();
+    if (!mounted) return;
+    switch (permission) {
+      case MicPermission.granted:
+        try {
+          await _recorder.start();
+          if (mounted) setState(() => _isRecording = true);
+        } catch (_) {
+          if (mounted) _showSnack(context.l10n.chatMicPermissionDenied);
+        }
+      // Android can report a blocked mic as plain "denied" (seen on
+      // Android 16), so always offer the settings shortcut.
+      case MicPermission.denied || MicPermission.permanentlyDenied:
+        await _askToOpenSettings();
+    }
+  }
+
+  void _showSnack(String text) =>
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+
+  /// The system may not prompt again (e.g. denied twice on Android 11+), so
+  /// point the user to the app settings instead of failing silently.
+  Future<void> _askToOpenSettings() async {
+    final l10n = context.l10n;
+    final open = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        icon: const Icon(Icons.mic_off_outlined),
+        title: Text(l10n.chatMicPermissionTitle),
+        content: Text(l10n.chatMicPermissionMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.chatOpenSettings),
+          ),
+        ],
+      ),
+    );
+    if (open ?? false) await _recorder.openPermissionSettings();
   }
 
   Future<void> _cancelVoiceRecording() async {
@@ -130,10 +175,10 @@ class _ChatComposerState extends State<ChatComposer> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.mic, color: Colors.red),
+                      const Icon(Icons.mic, color: AppHrPalette.danger),
                       const SizedBox(width: AppSpacing.xs),
                       Text(
-                        'Recording: ${_recordDuration.inSeconds}s',
+                        l10n.chatRecording(_formatDuration(_recordDuration)),
                         style: TextStyle(
                           color: theme.colorScheme.onErrorContainer,
                           fontWeight: FontWeight.bold,
@@ -141,9 +186,12 @@ class _ChatComposerState extends State<ChatComposer> {
                       ),
                       const Spacer(),
                       IconButton(
-                        icon: const Icon(Icons.close, color: Colors.red),
+                        icon: const Icon(
+                          Icons.close,
+                          color: AppHrPalette.danger,
+                        ),
                         onPressed: _cancelVoiceRecording,
-                        tooltip: 'Cancel Recording',
+                        tooltip: l10n.chatCancelRecording,
                       ),
                     ],
                   ),
@@ -176,18 +224,27 @@ class _ChatComposerState extends State<ChatComposer> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  if (widget.onAttach != null)
+                  if (widget.onAttachMedia != null)
                     IconButton(
-                      tooltip: l10n.chatAttach,
-                      icon: const Icon(Icons.attach_file),
-                      onPressed: widget.onAttach,
+                      tooltip: l10n.chatAttachMedia,
+                      icon: const Icon(Icons.photo_library_outlined),
+                      onPressed: _isRecording ? null : widget.onAttachMedia,
                     ),
-                  IconButton(
-                    tooltip: _isRecording ? 'Stop Recording' : 'Voice Record',
-                    icon: Icon(_isRecording ? Icons.stop_circle : Icons.mic),
-                    color: _isRecording ? Colors.red : null,
-                    onPressed: _toggleVoiceRecording,
-                  ),
+                  if (widget.onAttachFile != null)
+                    IconButton(
+                      tooltip: l10n.chatAttachFile,
+                      icon: const Icon(Icons.attach_file),
+                      onPressed: _isRecording ? null : widget.onAttachFile,
+                    ),
+                  if (widget.onVoiceRecorded != null)
+                    IconButton(
+                      tooltip: _isRecording
+                          ? l10n.chatStopRecording
+                          : l10n.chatVoiceRecord,
+                      icon: Icon(_isRecording ? Icons.stop_circle : Icons.mic),
+                      color: _isRecording ? AppHrPalette.danger : null,
+                      onPressed: _toggleVoiceRecording,
+                    ),
                   Expanded(
                     child: TextField(
                       controller: _controller,
@@ -272,4 +329,10 @@ class _ReplyBanner extends StatelessWidget {
       ),
     );
   }
+}
+
+String _formatDuration(Duration d) {
+  final m = d.inMinutes;
+  final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+  return '$m:$s';
 }
