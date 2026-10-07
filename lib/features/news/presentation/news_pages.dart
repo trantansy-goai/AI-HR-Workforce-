@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/theme/app_tokens.dart';
 import '../../../shared/widgets/responsive.dart';
 import '../../../shared/widgets/state_views.dart';
 import '../application/news_providers.dart';
@@ -16,6 +17,7 @@ class NewsListPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Company News & Updates')),
       body: ResponsiveCenter(
+        maxWidth: ContentConstraints.dashboard,
         child: newsAsync.when(
           loading: () => const LoadingView(label: 'Loading news...'),
           error: (err, stack) => ErrorView(
@@ -29,25 +31,68 @@ class NewsListPage extends ConsumerWidget {
                 message: 'Check back later for company announcements.',
               );
             }
-            return ListView.separated(
-              padding: const EdgeInsets.all(16),
-              itemCount: newsList.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 12),
-              itemBuilder: (context, index) {
-                final item = newsList[index];
-                return Card(
-                  child: ListTile(
-                    title: Text(
-                      item.title,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(
-                      '${item.summary}\n${item.publishedAt.toString().split('.').first}',
-                    ),
-                    isThreeLine: true,
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () => context.push('/home/news/${item.id}'),
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                final isTablet = constraints.maxWidth >= 600;
+
+                if (!isTablet) {
+                  return ListView.separated(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: newsList.length,
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      final item = newsList[index];
+                      return Card(
+                        child: ListTile(
+                          title: Text(
+                            item.title,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(
+                            '${item.summary}\n${item.publishedAt.toString().split('.').first}',
+                          ),
+                          isThreeLine: true,
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () => context.push('/home/news/${item.id}'),
+                        ),
+                      );
+                    },
+                  );
+                }
+
+                return GridView.builder(
+                  padding: const EdgeInsets.all(24),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    mainAxisExtent: 110,
                   ),
+                  itemCount: newsList.length,
+                  itemBuilder: (context, index) {
+                    final item = newsList[index];
+                    return Card(
+                      child: Center(
+                        child: ListTile(
+                          title: Text(
+                            item.title,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          subtitle: Text(
+                            '${item.summary}\n${item.publishedAt.toString().split('.').first}',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          isThreeLine: true,
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () => context.push('/home/news/${item.id}'),
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
             );

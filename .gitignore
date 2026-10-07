@@ -69,3 +69,4 @@ GoogleService-Info.plist
 .claude/
 .fvm/
 *.log
+test/reports/

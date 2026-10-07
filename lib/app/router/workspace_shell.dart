@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/localization/l10n.dart';
+import '../../core/theme/app_tokens.dart';
+import '../../shared/widgets/responsive.dart';
 
-/// Shell Scaffold providing persistent Material 3 bottom navigation across
-/// the 5 main workspace branches: Timeline, Chat, E-learning, Document, My Profile.
+/// Shell Scaffold providing adaptive navigation across the 5 approved
+/// workspace destinations:
+/// - Compact/phone (< 600dp): Material 3 Bottom NavigationBar
+/// - Tablet (>= 600dp): Side NavigationRail with GoAI brand header
 class WorkspaceShell extends StatelessWidget {
   const WorkspaceShell({required this.navigationShell, super.key});
 
@@ -13,6 +17,62 @@ class WorkspaceShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+
+    if (context.isTablet) {
+      return Scaffold(
+        body: Row(
+          children: [
+            NavigationRail(
+              selectedIndex: navigationShell.currentIndex,
+              onDestinationSelected: (index) {
+                navigationShell.goBranch(
+                  index,
+                  initialLocation: index == navigationShell.currentIndex,
+                );
+              },
+              labelType: NavigationRailLabelType.all,
+              leading: Padding(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                child: Image.asset(
+                  'assets/images/goai_logo.png',
+                  height: 28,
+                  fit: BoxFit.contain,
+                ),
+              ),
+              destinations: [
+                NavigationRailDestination(
+                  icon: const Icon(Icons.home_outlined),
+                  selectedIcon: const Icon(Icons.home),
+                  label: Text(l10n.mainNavHome),
+                ),
+                NavigationRailDestination(
+                  icon: const Icon(Icons.forum_outlined),
+                  selectedIcon: const Icon(Icons.forum),
+                  label: Text(l10n.mainNavAskHr),
+                ),
+                NavigationRailDestination(
+                  icon: const Icon(Icons.checklist_outlined),
+                  selectedIcon: const Icon(Icons.checklist),
+                  label: Text(l10n.mainNavMyWork),
+                ),
+                NavigationRailDestination(
+                  icon: const Icon(Icons.school_outlined),
+                  selectedIcon: const Icon(Icons.school),
+                  label: Text(l10n.mainNavLearning),
+                ),
+                NavigationRailDestination(
+                  icon: const Icon(Icons.person_outline),
+                  selectedIcon: const Icon(Icons.person),
+                  label: Text(l10n.mainNavAccount),
+                ),
+              ],
+            ),
+            const VerticalDivider(thickness: 1, width: 1),
+            Expanded(child: navigationShell),
+          ],
+        ),
+      );
+    }
 
     return Scaffold(
       body: navigationShell,

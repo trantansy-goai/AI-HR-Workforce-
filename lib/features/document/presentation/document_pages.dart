@@ -7,6 +7,7 @@ import '../../../shared/widgets/responsive.dart';
 import '../../../shared/widgets/shared_workspace_header.dart';
 import '../../../shared/widgets/state_views.dart';
 import '../application/document_providers.dart';
+import '../domain/document_item.dart';
 
 class DocumentListPage extends ConsumerWidget {
   const DocumentListPage({super.key});
@@ -18,6 +19,7 @@ class DocumentListPage extends ConsumerWidget {
     return Scaffold(
       body: SafeArea(
         child: ResponsiveCenter(
+          maxWidth: ContentConstraints.dashboard,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -49,31 +51,33 @@ class DocumentListPage extends ConsumerWidget {
                             'No company documents have been published yet.',
                       );
                     }
-                    return ListView.separated(
-                      padding: const EdgeInsets.all(AppSpacing.lg),
-                      itemCount: documents.length,
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 8),
-                      itemBuilder: (context, index) {
-                        final doc = documents[index];
-                        return Card(
-                          child: ListTile(
-                            leading: CircleAvatar(child: Text(doc.fileType)),
-                            title: Text(
-                              doc.title,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
+                    return LayoutBuilder(
+                      builder: (context, constraints) {
+                        final isTablet = constraints.maxWidth >= 600;
+
+                        if (!isTablet) {
+                          return ListView.separated(
+                            padding: const EdgeInsets.all(AppSpacing.lg),
+                            itemCount: documents.length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 8),
+                            itemBuilder: (context, index) =>
+                                _DocumentCard(doc: documents[index]),
+                          );
+                        }
+
+                        return GridView.builder(
+                          padding: const EdgeInsets.all(AppSpacing.lg),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: AppSpacing.md,
+                                mainAxisSpacing: AppSpacing.md,
+                                mainAxisExtent: 96,
                               ),
-                            ),
-                            subtitle: Text(
-                              doc.description,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            trailing: const Icon(Icons.chevron_right),
-                            onTap: () =>
-                                context.push('/home/documents/${doc.id}'),
-                          ),
+                          itemCount: documents.length,
+                          itemBuilder: (context, index) =>
+                              _DocumentCard(doc: documents[index]),
                         );
                       },
                     );
@@ -82,6 +86,37 @@ class DocumentListPage extends ConsumerWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DocumentCard extends StatelessWidget {
+  const _DocumentCard({required this.doc});
+
+  final DocumentItem doc;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: Center(
+        child: ListTile(
+          leading: CircleAvatar(child: Text(doc.fileType)),
+          title: Text(
+            doc.title,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitle: Text(
+            doc.description,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => context.push('/home/documents/${doc.id}'),
         ),
       ),
     );

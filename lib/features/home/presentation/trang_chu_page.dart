@@ -9,6 +9,7 @@ import '../../../shared/widgets/responsive.dart';
 import '../../../shared/widgets/shared_workspace_header.dart';
 import '../../../shared/widgets/state_views.dart';
 import '../../news/application/news_providers.dart';
+import '../../news/domain/news_item.dart';
 
 /// Tab 1: Trang chủ (Workspace Dashboard)
 /// Provides employee greeting, enterprise workspace identity, quota status,
@@ -26,175 +27,341 @@ class TrangChuPage extends ConsumerWidget {
     return Scaffold(
       body: SafeArea(
         child: ResponsiveCenter(
+          maxWidth: ContentConstraints.dashboard,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SharedWorkspaceHeader(),
               Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  children: [
-                    // Pending tasks strip
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.md,
-                        vertical: AppSpacing.sm,
-                      ),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primaryContainer.withValues(
-                          alpha: 0.4,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.info_outline,
-                            size: 18,
-                            color: theme.colorScheme.primary,
-                          ),
-                          const SizedBox(width: AppSpacing.sm),
-                          Expanded(
-                            child: Text(
-                              l10n.homePendingTasksStrip(2),
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: theme.colorScheme.onPrimaryContainer,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isTablet = constraints.maxWidth >= 600;
 
-                    // Quick action shortcut chips
-                    Wrap(
-                      spacing: AppSpacing.xs,
-                      children: [
-                        ActionChip(
-                          avatar: const Icon(
-                            Icons.question_answer_outlined,
-                            size: 16,
-                          ),
-                          label: Text(l10n.askHrPolicyChip),
-                          onPressed: () => context.go(AppRoutes.askHr),
-                        ),
-                        ActionChip(
-                          avatar: const Icon(Icons.add_task_outlined, size: 16),
-                          label: Text(l10n.myWorkTitle),
-                          onPressed: () => context.go(AppRoutes.myWork),
-                        ),
-                        ActionChip(
-                          avatar: const Icon(Icons.school_outlined, size: 16),
-                          label: Text(l10n.mainNavLearning),
-                          onPressed: () => context.go(AppRoutes.learning),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.md),
+                    if (isTablet) {
+                      return _buildTabletDashboard(
+                        context,
+                        ref,
+                        theme,
+                        l10n,
+                        newsAsync,
+                        constraints.maxWidth,
+                      );
+                    }
 
-                    // Card 1: Việc sắp đến hạn (A3)
-                    _DashboardCard(
-                      title: l10n.homeUpcomingWork,
-                      subtitle: 'Hoàn tất checklist nhận việc · hạn 10/10',
-                      badge: 'A3',
-                      badgeColor: Colors.amber.shade100,
-                      badgeTextColor: Colors.brown.shade900,
-                      onTap: () => context.go(AppRoutes.myWork),
-                    ),
-
-                    // Card 2: Khóa học của tôi (A7)
-                    _DashboardCard(
-                      title: l10n.homeMyCourses,
-                      subtitle: 'An toàn lao động cơ bản · còn 12 phút',
-                      badge: 'A7',
-                      badgeColor: Colors.purple.shade100,
-                      badgeTextColor: Colors.purple.shade900,
-                      onTap: () => context.go(AppRoutes.learning),
-                    ),
-
-                    // Card 3: Yêu cầu HR #HR-1042 (A0)
-                    _DashboardCard(
-                      title: l10n.homePendingCase,
-                      subtitle: 'Đang chờ HR phản hồi · dự kiến 09/10',
-                      badge: 'A0',
-                      badgeColor: theme.colorScheme.primaryContainer,
-                      badgeTextColor: theme.colorScheme.onPrimaryContainer,
-                      onTap: () => context.go(AppRoutes.myWork),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-
-                    // Section: BẢN TIN MỚI
-                    Row(
-                      children: [
-                        Text(
-                          l10n.homeNewsSection,
-                          style: theme.textTheme.labelLarge?.copyWith(
-                            letterSpacing: 1.1,
-                            fontWeight: FontWeight.bold,
-                            color: theme.colorScheme.primary,
-                          ),
-                        ),
-                        const Spacer(),
-                        TextButton(
-                          onPressed: () => context.push(AppRoutes.news),
-                          child: Text(l10n.homeViewAllNews),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-
-                    newsAsync.when(
-                      loading: () =>
-                          const LoadingView(label: 'Đang tải bản tin...'),
-                      error: (err, _) => ErrorView(
-                        message: err.toString(),
-                        onRetry: () => ref.refresh(newsListProvider),
-                      ),
-                      data: (newsItems) {
-                        if (newsItems.isEmpty) {
-                          return const Text('Chưa có bản tin nào.');
-                        }
-                        return Column(
-                          children: [
-                            for (final item in newsItems.take(2))
-                              Card(
-                                margin: const EdgeInsets.only(
-                                  bottom: AppSpacing.sm,
-                                ),
-                                child: ListTile(
-                                  title: Text(
-                                    item.title,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    '${item.summary}\n${item.publishedAt.toString().split(' ').first}',
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  trailing: const Icon(
-                                    Icons.chevron_right,
-                                    size: 20,
-                                  ),
-                                  onTap: () =>
-                                      context.push(AppRoutes.article(item.id)),
-                                ),
-                              ),
-                          ],
-                        );
-                      },
-                    ),
-                  ],
+                    return _buildCompactDashboard(
+                      context,
+                      ref,
+                      theme,
+                      l10n,
+                      newsAsync,
+                    );
+                  },
                 ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildCompactDashboard(
+    BuildContext context,
+    WidgetRef ref,
+    ThemeData theme,
+    AppLocalizations l10n,
+    AsyncValue<List<NewsItem>> newsAsync,
+  ) {
+    return ListView(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      children: [
+        // Pending tasks strip
+        _buildPendingTasksStrip(theme, l10n),
+        const SizedBox(height: AppSpacing.sm),
+
+        // Quick action shortcut chips
+        _buildQuickActionChips(context, l10n),
+        const SizedBox(height: AppSpacing.md),
+
+        // Card 1: Việc sắp đến hạn (A3)
+        _DashboardCard(
+          title: l10n.homeUpcomingWork,
+          subtitle: 'Hoàn tất checklist nhận việc · hạn 10/10',
+          badge: 'A3',
+          badgeColor: Colors.amber.shade100,
+          badgeTextColor: Colors.brown.shade900,
+          onTap: () => context.go(AppRoutes.myWork),
+        ),
+
+        // Card 2: Khóa học của tôi (A7)
+        _DashboardCard(
+          title: l10n.homeMyCourses,
+          subtitle: 'An toàn lao động cơ bản · còn 12 phút',
+          badge: 'A7',
+          badgeColor: Colors.purple.shade100,
+          badgeTextColor: Colors.purple.shade900,
+          onTap: () => context.go(AppRoutes.learning),
+        ),
+
+        // Card 3: Yêu cầu HR #HR-1042 (A0)
+        _DashboardCard(
+          title: l10n.homePendingCase,
+          subtitle: 'Đang chờ HR phản hồi · dự kiến 09/10',
+          badge: 'A0',
+          badgeColor: theme.colorScheme.primaryContainer,
+          badgeTextColor: theme.colorScheme.onPrimaryContainer,
+          onTap: () => context.go(AppRoutes.myWork),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+
+        // Section: BẢN TIN MỚI
+        _buildNewsHeader(context, theme, l10n),
+        const SizedBox(height: AppSpacing.xs),
+        _buildNewsList(context, ref, newsAsync, isMultiColumn: false),
+      ],
+    );
+  }
+
+  Widget _buildTabletDashboard(
+    BuildContext context,
+    WidgetRef ref,
+    ThemeData theme,
+    AppLocalizations l10n,
+    AsyncValue<List<NewsItem>> newsAsync,
+    double maxWidth,
+  ) {
+    return ListView(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      children: [
+        // Row: Pending tasks strip + Quick action chips
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(flex: 4, child: _buildPendingTasksStrip(theme, l10n)),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(flex: 5, child: _buildQuickActionChips(context, l10n)),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.lg),
+
+        // Main 2-Column Dashboard Grid
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Left Column: Upcoming Work & HR Requests
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _DashboardCard(
+                    title: l10n.homeUpcomingWork,
+                    subtitle: 'Hoàn tất checklist nhận việc · hạn 10/10',
+                    badge: 'A3',
+                    badgeColor: Colors.amber.shade100,
+                    badgeTextColor: Colors.brown.shade900,
+                    onTap: () => context.go(AppRoutes.myWork),
+                  ),
+                  _DashboardCard(
+                    title: l10n.homePendingCase,
+                    subtitle: 'Đang chờ HR phản hồi · dự kiến 09/10',
+                    badge: 'A0',
+                    badgeColor: theme.colorScheme.primaryContainer,
+                    badgeTextColor: theme.colorScheme.onPrimaryContainer,
+                    onTap: () => context.go(AppRoutes.myWork),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            // Right Column: My Courses & Learning Progress
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _DashboardCard(
+                    title: l10n.homeMyCourses,
+                    subtitle: 'An toàn lao động cơ bản · còn 12 phút',
+                    badge: 'A7',
+                    badgeColor: Colors.purple.shade100,
+                    badgeTextColor: Colors.purple.shade900,
+                    onTap: () => context.go(AppRoutes.learning),
+                  ),
+                  _DashboardCard(
+                    title: l10n.elearningTests,
+                    subtitle: '1 bài kiểm tra chứng chỉ định kỳ sẵn sàng',
+                    badge: 'A4',
+                    badgeColor: Colors.teal.shade100,
+                    badgeTextColor: Colors.teal.shade900,
+                    onTap: () => context.go(AppRoutes.learning),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.xl),
+
+        // Section: BẢN TIN MỚI
+        _buildNewsHeader(context, theme, l10n),
+        const SizedBox(height: AppSpacing.sm),
+        _buildNewsList(context, ref, newsAsync, isMultiColumn: maxWidth >= 760),
+      ],
+    );
+  }
+
+  Widget _buildPendingTasksStrip(ThemeData theme, AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline, size: 18, color: theme.colorScheme.primary),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Text(
+              l10n.homePendingTasksStrip(2),
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: theme.colorScheme.onPrimaryContainer,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickActionChips(BuildContext context, AppLocalizations l10n) {
+    return Wrap(
+      spacing: AppSpacing.xs,
+      runSpacing: AppSpacing.xs,
+      children: [
+        ActionChip(
+          avatar: const Icon(Icons.question_answer_outlined, size: 16),
+          label: Text(l10n.askHrPolicyChip),
+          onPressed: () => context.go(AppRoutes.askHr),
+        ),
+        ActionChip(
+          avatar: const Icon(Icons.add_task_outlined, size: 16),
+          label: Text(l10n.myWorkTitle),
+          onPressed: () => context.go(AppRoutes.myWork),
+        ),
+        ActionChip(
+          avatar: const Icon(Icons.school_outlined, size: 16),
+          label: Text(l10n.mainNavLearning),
+          onPressed: () => context.go(AppRoutes.learning),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNewsHeader(
+    BuildContext context,
+    ThemeData theme,
+    AppLocalizations l10n,
+  ) {
+    return Row(
+      children: [
+        Text(
+          l10n.homeNewsSection,
+          style: theme.textTheme.labelLarge?.copyWith(
+            letterSpacing: 1.1,
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.primary,
+          ),
+        ),
+        const Spacer(),
+        TextButton(
+          onPressed: () => context.push(AppRoutes.news),
+          child: Text(l10n.homeViewAllNews),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNewsList(
+    BuildContext context,
+    WidgetRef ref,
+    AsyncValue<List<NewsItem>> newsAsync, {
+    required bool isMultiColumn,
+  }) {
+    return newsAsync.when(
+      loading: () => const LoadingView(label: 'Đang tải bản tin...'),
+      error: (err, _) => ErrorView(
+        message: err.toString(),
+        onRetry: () => ref.refresh(newsListProvider),
+      ),
+      data: (newsItems) {
+        if (newsItems.isEmpty) {
+          return const Text('Chưa có bản tin nào.');
+        }
+
+        final items = newsItems.take(2).toList();
+        if (isMultiColumn && items.length > 1) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (final item in items)
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: AppSpacing.sm),
+                    child: Card(
+                      child: ListTile(
+                        title: Text(
+                          item.title,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: Text(
+                          '${item.summary}\n${item.publishedAt.toString().split(' ').first}',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: const Icon(Icons.chevron_right, size: 20),
+                        onTap: () => context.push(AppRoutes.article(item.id)),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        }
+
+        return Column(
+          children: [
+            for (final item in items)
+              Card(
+                margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+                child: ListTile(
+                  title: Text(
+                    item.title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  subtitle: Text(
+                    '${item.summary}\n${item.publishedAt.toString().split(' ').first}',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  trailing: const Icon(Icons.chevron_right, size: 20),
+                  onTap: () => context.push(AppRoutes.article(item.id)),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }

@@ -114,7 +114,10 @@ class MessageBubble extends StatelessWidget {
             ),
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: MediaQuery.sizeOf(context).width * 0.78,
+              maxWidth: (MediaQuery.sizeOf(context).width * 0.78).clamp(
+                240.0,
+                560.0,
+              ),
             ),
             child: GestureDetector(
               onTap: message.isFailed ? onRetry : null,

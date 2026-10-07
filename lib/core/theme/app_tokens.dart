@@ -33,15 +33,55 @@ enum WindowSize {
   expanded;
 
   static WindowSize fromWidth(double width) {
-    if (width < 600) return WindowSize.compact;
-    if (width < 1024) return WindowSize.medium;
+    if (width < ResponsiveBreakpoints.tablet) return WindowSize.compact;
+    if (width < ResponsiveBreakpoints.desktop) return WindowSize.medium;
     return WindowSize.expanded;
   }
 }
 
+/// Centralized responsive breakpoints based on logical width constraints.
+abstract final class ResponsiveBreakpoints {
+  /// Handset breakpoint (phones < 600dp).
+  static const double compact = 0;
+
+  /// Tablet breakpoint (portrait tablets, foldables >= 600dp).
+  static const double tablet = 600;
+
+  /// Wide tablet breakpoint (landscape tablets, split views >= 840dp).
+  static const double wideTablet = 840;
+
+  /// Large desktop / expanded screen threshold (>= 1200dp).
+  static const double desktop = 1200;
+}
+
+/// Centralized content width constraints preventing stretched layouts.
+abstract final class ContentConstraints {
+  /// Standard max width for reading text, articles, settings, and forms (720-760dp).
+  static const double reading = 760;
+
+  /// Max width for multi-column dashboards and workspaces (1000-1140dp).
+  static const double dashboard = 1100;
+
+  /// Max width for chat conversation container (760-840dp).
+  static const double chat = 800;
+
+  /// Max width for focused dialogs and cards.
+  static const double dialog = 560;
+}
+
+/// Centralized responsive padding tokens.
+abstract final class ResponsivePadding {
+  static const EdgeInsets compact = EdgeInsets.all(AppSpacing.md);
+  static const EdgeInsets tablet = EdgeInsets.all(AppSpacing.xl);
+  static const EdgeInsets wideTablet = EdgeInsets.symmetric(
+    horizontal: AppSpacing.xxl,
+    vertical: AppSpacing.xl,
+  );
+}
+
 abstract final class AppLayout {
   /// Max width for reading/form content on large screens.
-  static const double maxContentWidth = 720;
+  static const double maxContentWidth = ContentConstraints.reading;
 }
 
 /// Centralized brand colors derived directly from the official GoAI logo.

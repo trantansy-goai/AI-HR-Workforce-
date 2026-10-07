@@ -9,7 +9,9 @@ import '../../../shared/widgets/responsive.dart';
 import '../../../shared/widgets/shared_workspace_header.dart';
 import '../../../shared/widgets/state_views.dart';
 import '../../online_test/application/test_providers.dart';
+import '../../online_test/domain/test_models.dart';
 import '../application/learning_providers.dart';
+import '../domain/learning_course.dart';
 
 /// Tab 3: Unified E-learning Hub providing entry to both Courses and Certification Tests.
 class ELearningHubPage extends ConsumerStatefulWidget {
@@ -48,6 +50,7 @@ class _ELearningHubPageState extends ConsumerState<ELearningHubPage>
     return Scaffold(
       body: SafeArea(
         child: ResponsiveCenter(
+          maxWidth: ContentConstraints.dashboard,
           child: Column(
             children: [
               const SharedWorkspaceHeader(),
@@ -100,66 +103,103 @@ class _CoursesTabView extends ConsumerWidget {
           );
         }
 
-        return ListView.separated(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          itemCount: courses.length,
-          separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
-          itemBuilder: (context, index) {
-            final course = courses[index];
-            return Card(
-              clipBehavior: Clip.antiAlias,
-              child: InkWell(
-                onTap: () => context.push(AppRoutes.course(course.id)),
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.lg),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Chip(
-                            label: Text(course.category),
-                            visualDensity: VisualDensity.compact,
-                          ),
-                          const Spacer(),
-                          if (course.isCompleted)
-                            const Icon(Icons.check_circle, color: Colors.green)
-                          else
-                            Text(
-                              '${(course.completionPercentage * 100).toInt()}% Done',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text(
-                        course.title,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: AppSpacing.xs),
-                      Text(
-                        course.description,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      LinearProgressIndicator(
-                        value: course.completionPercentage,
-                        borderRadius: AppRadius.smAll,
-                      ),
-                    ],
-                  ),
-                ),
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final crossAxisCount = constraints.maxWidth >= 960
+                ? 3
+                : constraints.maxWidth >= 600
+                ? 2
+                : 1;
+
+            if (crossAxisCount == 1) {
+              return ListView.separated(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                itemCount: courses.length,
+                separatorBuilder: (_, _) =>
+                    const SizedBox(height: AppSpacing.md),
+                itemBuilder: (context, index) =>
+                    _CourseCard(course: courses[index]),
+              );
+            }
+
+            return GridView.builder(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: AppSpacing.md,
+                mainAxisSpacing: AppSpacing.md,
+                mainAxisExtent: 190,
               ),
+              itemCount: courses.length,
+              itemBuilder: (context, index) =>
+                  _CourseCard(course: courses[index]),
             );
           },
         );
       },
+    );
+  }
+}
+
+class _CourseCard extends StatelessWidget {
+  const _CourseCard({required this.course});
+
+  final LearningCourse course;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => context.push(AppRoutes.course(course.id)),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Chip(
+                    label: Text(course.category),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  const Spacer(),
+                  if (course.isCompleted)
+                    const Icon(Icons.check_circle, color: Colors.green)
+                  else
+                    Text(
+                      '${(course.completionPercentage * 100).toInt()}% Done',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                course.title,
+                style: Theme.of(context).textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                course.description,
+                style: Theme.of(context).textTheme.bodyMedium,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              LinearProgressIndicator(
+                value: course.completionPercentage,
+                borderRadius: AppRadius.smAll,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -186,41 +226,74 @@ class _TestsTabView extends ConsumerWidget {
           );
         }
 
-        return ListView.separated(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          itemCount: tests.length,
-          separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
-          itemBuilder: (context, index) {
-            final test = tests[index];
-            return Card(
-              clipBehavior: Clip.antiAlias,
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Theme.of(context)
-                      .colorScheme
-                      .secondaryContainer,
-                  foregroundColor: Theme.of(context)
-                      .colorScheme
-                      .onSecondaryContainer,
-                  child: const Icon(Icons.assignment_outlined),
-                ),
-                title: Text(
-                  test.title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                  '${test.totalQuestions} questions • ${test.timeLimitMinutes} mins\n${test.description}',
-                ),
-                isThreeLine: true,
-                trailing: ElevatedButton(
-                  onPressed: () => context.push(AppRoutes.test(test.id)),
-                  child: const Text('Start'),
-                ),
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final isMultiColumn = constraints.maxWidth >= 600;
+
+            if (!isMultiColumn) {
+              return ListView.separated(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                itemCount: tests.length,
+                separatorBuilder: (_, _) =>
+                    const SizedBox(height: AppSpacing.md),
+                itemBuilder: (context, index) => _TestCard(test: tests[index]),
+              );
+            }
+
+            return GridView.builder(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: AppSpacing.md,
+                mainAxisSpacing: AppSpacing.md,
+                mainAxisExtent: 130,
               ),
+              itemCount: tests.length,
+              itemBuilder: (context, index) => _TestCard(test: tests[index]),
             );
           },
         );
       },
+    );
+  }
+}
+
+class _TestCard extends StatelessWidget {
+  const _TestCard({required this.test});
+
+  final OnlineTest test;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: Center(
+        child: ListTile(
+          leading: CircleAvatar(
+            backgroundColor: theme.colorScheme.secondaryContainer,
+            foregroundColor: theme.colorScheme.onSecondaryContainer,
+            child: const Icon(Icons.assignment_outlined),
+          ),
+          title: Text(
+            test.title,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitle: Text(
+            '${test.totalQuestions} questions • ${test.timeLimitMinutes} mins\n${test.description}',
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          isThreeLine: true,
+          trailing: ElevatedButton(
+            onPressed: () => context.push(AppRoutes.test(test.id)),
+            child: const Text('Start'),
+          ),
+        ),
+      ),
     );
   }
 }

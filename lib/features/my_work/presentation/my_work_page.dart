@@ -28,28 +28,87 @@ class MyWorkPage extends ConsumerWidget {
     return Scaffold(
       body: SafeArea(
         child: ResponsiveCenter(
+          maxWidth: ContentConstraints.dashboard,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SharedWorkspaceHeader(),
               Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  children: [
-                    // Section 1: Checklist hội nhập
-                    _buildChecklistSection(context, ref, checklistAsync, l10n),
-                    const SizedBox(height: AppSpacing.lg),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isTablet = constraints.maxWidth >= 720;
 
-                    // Section 2: Case & Yêu cầu của tôi
-                    _buildCasesSection(context, ref, casesAsync, l10n),
-                    const SizedBox(height: AppSpacing.lg),
+                    if (isTablet) {
+                      return ListView(
+                        padding: const EdgeInsets.all(AppSpacing.lg),
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Left column: Checklist hội nhập
+                              Expanded(
+                                flex: 5,
+                                child: _buildChecklistSection(
+                                  context,
+                                  ref,
+                                  checklistAsync,
+                                  l10n,
+                                ),
+                              ),
+                              const SizedBox(width: AppSpacing.lg),
+                              // Right column: Cases & Approvals
+                              Expanded(
+                                flex: 6,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildCasesSection(
+                                      context,
+                                      ref,
+                                      casesAsync,
+                                      l10n,
+                                    ),
+                                    if (hasApprovalPermission) ...[
+                                      const SizedBox(height: AppSpacing.lg),
+                                      _buildApprovalsSection(
+                                        context,
+                                        ref,
+                                        l10n,
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    }
 
-                    // Section 3: Chờ tôi phê duyệt (Permission-aware)
-                    if (hasApprovalPermission) ...[
-                      _buildApprovalsSection(context, ref, l10n),
-                      const SizedBox(height: AppSpacing.lg),
-                    ],
-                  ],
+                    return ListView(
+                      padding: const EdgeInsets.all(AppSpacing.md),
+                      children: [
+                        // Section 1: Checklist hội nhập
+                        _buildChecklistSection(
+                          context,
+                          ref,
+                          checklistAsync,
+                          l10n,
+                        ),
+                        const SizedBox(height: AppSpacing.lg),
+
+                        // Section 2: Case & Yêu cầu của tôi
+                        _buildCasesSection(context, ref, casesAsync, l10n),
+                        const SizedBox(height: AppSpacing.lg),
+
+                        // Section 3: Chờ tôi phê duyệt (Permission-aware)
+                        if (hasApprovalPermission) ...[
+                          _buildApprovalsSection(context, ref, l10n),
+                          const SizedBox(height: AppSpacing.lg),
+                        ],
+                      ],
+                    );
+                  },
                 ),
               ),
             ],
@@ -63,7 +122,7 @@ class MyWorkPage extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     AsyncValue<List<OnboardingChecklistItem>> checklistAsync,
-    dynamic l10n,
+    AppLocalizations l10n,
   ) {
     final theme = Theme.of(context);
 
@@ -187,7 +246,7 @@ class MyWorkPage extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     AsyncValue<List<CaseTrackingItem>> casesAsync,
-    dynamic l10n,
+    AppLocalizations l10n,
   ) {
     final theme = Theme.of(context);
 
@@ -280,7 +339,7 @@ class MyWorkPage extends ConsumerWidget {
   Widget _buildApprovalsSection(
     BuildContext context,
     WidgetRef ref,
-    dynamic l10n,
+    AppLocalizations l10n,
   ) {
     final theme = Theme.of(context);
     final approvalsAsync = ref.watch(approvalListProvider);
