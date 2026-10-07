@@ -347,13 +347,19 @@ Files most worth reviewing:
 
 ## 14. Phase 1 Approved Workspace Navigation & Information Architecture
 
-- **5 Persistent Root Tabs (`StatefulShellRoute.indexedStack`)**:
-  1. Timeline (`/home/timeline`) — Default landing tab, presents internal news/announcements.
-  2. Chat (`/home/chat`) — Discovery root with AI AGENTS (agent catalog & conversation history) and OTHER (human chat, marked BLOCKED).
-  3. E-learning (`/home/learning`) — Unified hub for Courses & Training and Certification Tests.
-  4. Document (`/home/documents`) — Knowledge documents list, detail, and download.
-  5. My Profile (`/home/profile`) — Employee identity, secondary Approvals access, Settings, Sign out.
-- **Shared Workspace Header**: Displayed across all 5 root tabs (employee greeting, enterprise subtitle, notification icon, token quota usage bar).
-- **Secondary Access**: Notifications (`/home/notifications`) accessible from the header; Approvals (`/home/approvals`) accessible via Notifications and My Profile.
-- **Verification**: 128 tests green, 0 analysis warnings, debug APK compiles cleanly.
+Reference UI Mockup: https://go-ai-hr-phase1-ui.trantansy.chatgpt.site/
+
+- **5 Persistent Root Destinations (`StatefulShellRoute.indexedStack`)**:
+  1. Trang chủ (`/home/trang-chu`, alias `/home/timeline`) — Workspace dashboard: greeting, identity, token quota status, pending items strip, shortcuts, upcoming work/courses/cases cards, and internal news list ("Bản tin mới").
+  2. Hỏi HR (`/home/ask-hr`, alias `/home/chat`) — Ask HR & AI discovery root: search card, topic chips, AI agents catalog, conversation history per agent, source/citation references to documents, and BLOCKED human chat placeholder.
+  3. Việc của tôi (`/home/my-work`) — Employee workspace: Onboarding checklist (A3), Case / request tracking (A0/A4), and permission-aware Human Approval inbox (M11).
+  4. Học tập (`/home/learning`) — Unified learning hub for Courses & Training and Certification Tests.
+  5. Tài khoản (`/home/account`, alias `/home/profile`) — Employee identity, "Bản tin nội bộ" link, Settings, Sign out.
+- **Shared Workspace Header**: Displayed across all 5 root tabs (employee greeting `Xin chào, {name}`, enterprise subtitle, notification icon, token quota usage bar).
+- **Secondary Access**:
+  - Notifications (`/home/notifications`): accessed from the header bell icon; deep links to Approvals, Learning, and News.
+  - Bản tin (`/home/news`): accessed via Trang chủ and Tài khoản.
+  - Documents (`/home/documents`): accessed via Hỏi HR citations and workspace shortcuts.
+  - Approvals (`/home/approvals`): permission-gated access via Việc của tôi and Notifications.
+- **Verification**: 130 tests green, 0 analysis issues, debug APK compiles cleanly, physical Samsung SM-X510 (Android 16) smoke verified with 0 layout overflows.
 
