@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project_base/app/app.dart';
+import 'package:flutter_project_base/features/approval/application/approval_providers.dart';
 import 'package:flutter_project_base/features/chat/application/chat_providers.dart';
 import 'package:flutter_project_base/features/chat/data/providers/mock_chat_provider.dart';
 import 'package:flutter_project_base/features/chat/domain/chat_provider.dart';
@@ -32,34 +33,39 @@ void main() {
     );
   }
 
-  Future<void> signInAsGuest(WidgetTester tester) async {
+  Future<void> signInAsGuest(
+    WidgetTester tester, {
+    List<Override> extraOverrides = const [],
+  }) async {
     tester.view.physicalSize = const Size(1260, 3600);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
-    await tester.pumpWidget(buildTestApp());
+    await tester.pumpWidget(buildTestApp(extraOverrides: extraOverrides));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Continue as guest'));
     await tester.pumpAndSettle();
   }
 
-  group('Workspace 5-Tab Navigation', () {
+  group('Workspace 5-Tab Navigation & Trang chủ default', () {
     testWidgets(
-      'all five main tabs exist and Timeline is the default landing tab',
+      'all five main tabs exist and Home / Trang chủ is the default landing tab',
       (tester) async {
         await signInAsGuest(tester);
 
         // Verify all 5 tab destinations are present in bottom navigation
-        expect(find.text('Timeline'), findsWidgets);
-        expect(find.text('Chat'), findsWidgets);
-        expect(find.text('E-learning'), findsWidgets);
-        expect(find.text('Document'), findsWidgets);
-        expect(find.text('My Profile'), findsWidgets);
+        expect(find.text('Home'), findsWidgets);
+        expect(find.text('Ask HR'), findsWidgets);
+        expect(find.text('My Work'), findsWidgets);
+        expect(find.text('Learning'), findsWidgets);
+        expect(find.text('Account'), findsWidgets);
 
-        // Verify Timeline is active by default
+        // Verify Trang chủ Dashboard content is active by default
         expect(
           find.text('GOAI Mobile Phase 1 Milestone Reached'),
           findsOneWidget,
         );
+        expect(find.text('Upcoming Work'), findsOneWidget);
+        expect(find.text('My Courses'), findsOneWidget);
       },
     );
 
@@ -68,33 +74,33 @@ void main() {
     ) async {
       await signInAsGuest(tester);
 
-      // 1. Switch to Chat tab
-      await tester.tap(find.text('Chat'));
+      // 1. Switch to Ask HR tab
+      await tester.tap(find.widgetWithText(NavigationDestination, 'Ask HR'));
       await tester.pumpAndSettle();
-      expect(find.text('AI AGENTS'), findsOneWidget);
+      expect(find.text('AI & HR AGENTS'), findsOneWidget);
       expect(find.text('OTHER'), findsOneWidget);
 
-      // 2. Switch to E-learning tab
-      await tester.tap(find.text('E-learning'));
+      // 2. Switch to My Work tab
+      await tester.tap(find.widgetWithText(NavigationDestination, 'My Work'));
+      await tester.pumpAndSettle();
+      expect(find.text('A3 · HỘI NHẬP'), findsOneWidget);
+      expect(find.text('Nhân viên vận hành · Nhà máy A'), findsOneWidget);
+      expect(find.text('Xác minh hồ sơ cá nhân'), findsOneWidget);
+
+      // 3. Switch to Learning tab
+      await tester.tap(find.widgetWithText(NavigationDestination, 'Learning'));
       await tester.pumpAndSettle();
       expect(find.text('Courses & Training'), findsOneWidget);
       expect(find.text('Certification Tests'), findsOneWidget);
 
-      // 3. Switch to Document tab
-      await tester.tap(find.text('Document'));
+      // 4. Switch to Account tab
+      await tester.tap(find.widgetWithText(NavigationDestination, 'Account'));
       await tester.pumpAndSettle();
-      expect(find.text('Knowledge Documents'), findsOneWidget);
-      expect(find.text('Company Security Guidelines 2026'), findsOneWidget);
-
-      // 4. Switch to My Profile tab
-      await tester.tap(find.text('My Profile'));
-      await tester.pumpAndSettle();
-      expect(find.text('Workspace & Actions'), findsOneWidget);
-      expect(find.text('Pending Approvals'), findsOneWidget);
+      expect(find.text('Internal News & Bulletins'), findsOneWidget);
       expect(find.text('Settings'), findsOneWidget);
 
-      // 5. Switch back to Timeline
-      await tester.tap(find.text('Timeline'));
+      // 5. Switch back to Home
+      await tester.tap(find.widgetWithText(NavigationDestination, 'Home'));
       await tester.pumpAndSettle();
       expect(
         find.text('GOAI Mobile Phase 1 Milestone Reached'),
@@ -103,28 +109,24 @@ void main() {
     });
   });
 
-  group('Chat Discovery, Agents & History', () {
-    testWidgets('Chat root presents AI AGENTS and OTHER categories', (
-      tester,
-    ) async {
+  group('Ask HR, Agents & History', () {
+    testWidgets('Ask HR root presents AI & HR agents', (tester) async {
       await signInAsGuest(tester);
-      await tester.tap(find.text('Chat'));
+      await tester.tap(find.widgetWithText(NavigationDestination, 'Ask HR'));
       await tester.pumpAndSettle();
 
-      expect(find.text('AI AGENTS'), findsOneWidget);
+      expect(find.text('AI & HR AGENTS'), findsOneWidget);
       expect(find.text('Mock Assistant'), findsOneWidget);
       expect(find.text('HR Assistant'), findsOneWidget);
       expect(find.text('Legal Assistant'), findsOneWidget);
 
       expect(find.text('OTHER'), findsOneWidget);
       expect(find.text('BLOCKED'), findsOneWidget);
-      expect(find.text('Customer Support'), findsOneWidget);
-      expect(find.text('Product Team'), findsOneWidget);
     });
 
     testWidgets('Agent -> History -> Start new conversation', (tester) async {
       await signInAsGuest(tester);
-      await tester.tap(find.text('Chat'));
+      await tester.tap(find.widgetWithText(NavigationDestination, 'Ask HR'));
       await tester.pumpAndSettle();
 
       // Tap HR Assistant
@@ -147,7 +149,7 @@ void main() {
       tester,
     ) async {
       await signInAsGuest(tester);
-      await tester.tap(find.text('Chat'));
+      await tester.tap(find.widgetWithText(NavigationDestination, 'Ask HR'));
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('HR Assistant'));
@@ -164,10 +166,54 @@ void main() {
     });
   });
 
-  group('E-Learning Hub with Courses and Certification Tests', () {
+  group('Việc của tôi & Permission-Aware Approvals', () {
+    testWidgets('renders Checklist and Cases with approval permission', (
+      tester,
+    ) async {
+      await signInAsGuest(tester);
+      await tester.tap(find.widgetWithText(NavigationDestination, 'My Work'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('A3 · HỘI NHẬP'), findsOneWidget);
+      expect(find.text('3/5 mục đã xác nhận'), findsOneWidget);
+      expect(find.text('A0 + A4 · CASE & YÊU CẦU'), findsOneWidget);
+      expect(find.text('#HR-1042'), findsOneWidget);
+
+      // With default approval permission true:
+      expect(find.text('DÀNH CHO NGƯỜI CÓ QUYỀN'), findsOneWidget);
+      expect(find.text('Chờ tôi phê duyệt'), findsOneWidget);
+      expect(
+        find.text('Quota Expansion Request (100k Tokens)'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('hides approval inbox when user lacks approval permission', (
+      tester,
+    ) async {
+      await signInAsGuest(
+        tester,
+        extraOverrides: [
+          hasApprovalPermissionProvider.overrideWithValue(false),
+        ],
+      );
+      await tester.tap(find.widgetWithText(NavigationDestination, 'My Work'));
+      await tester.pumpAndSettle();
+
+      // Checklist and Cases are visible
+      expect(find.text('A3 · HỘI NHẬP'), findsOneWidget);
+      expect(find.text('A0 + A4 · CASE & YÊU CẦU'), findsOneWidget);
+
+      // Approval section is NOT visible
+      expect(find.text('DÀNH CHO NGƯỜI CÓ QUYỀN'), findsNothing);
+      expect(find.text('Chờ tôi phê duyệt'), findsNothing);
+    });
+  });
+
+  group('Học tập (Courses & Online Tests)', () {
     testWidgets('switches between Courses and Tests tabs', (tester) async {
       await signInAsGuest(tester);
-      await tester.tap(find.text('E-learning'));
+      await tester.tap(find.widgetWithText(NavigationDestination, 'Learning'));
       await tester.pumpAndSettle();
 
       // Courses tab active by default
@@ -188,42 +234,32 @@ void main() {
     });
   });
 
-  group('Notification Navigation & Secondary Approval Access', () {
-    testWidgets(
-      'header notification icon navigates to Notification list and deep links to Approvals',
-      (tester) async {
-        await signInAsGuest(tester);
-
-        // Tap notification bell in header
-        await tester.tap(find.byIcon(Icons.notifications_outlined).first);
-        await tester.pumpAndSettle();
-
-        expect(find.text('Notifications'), findsOneWidget);
-        expect(find.text('Pending Approval Request'), findsOneWidget);
-
-        // Tap approval notification tile (deepLink: /home/approvals)
-        await tester.tap(find.text('Pending Approval Request'));
-        await tester.pumpAndSettle();
-
-        expect(find.text('Pending Approvals'), findsOneWidget);
-        expect(
-          find.text('Quota Expansion Request (100k Tokens)'),
-          findsOneWidget,
-        );
-      },
-    );
-
-    testWidgets('My Profile navigates to Approvals', (tester) async {
+  group('Tài khoản (Account), Bản tin, and Notifications', () {
+    testWidgets('header notification icon navigates to Notification list', (
+      tester,
+    ) async {
       await signInAsGuest(tester);
-      await tester.tap(find.text('My Profile'));
+
+      // Tap notification bell in header
+      await tester.tap(find.byIcon(Icons.notifications_outlined).first);
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Pending Approvals'));
+      expect(find.text('Notifications'), findsOneWidget);
+      expect(find.text('Pending Approval Request'), findsOneWidget);
+    });
+
+    testWidgets('Account tab navigates to Bản tin (News list)', (tester) async {
+      await signInAsGuest(tester);
+      await tester.tap(find.text('Account'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Pending Approvals'), findsOneWidget);
+      // Tap Internal News & Bulletins
+      await tester.tap(find.text('Internal News & Bulletins'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Company News & Updates'), findsOneWidget);
       expect(
-        find.text('Quota Expansion Request (100k Tokens)'),
+        find.text('GOAI Mobile Phase 1 Milestone Reached'),
         findsOneWidget,
       );
     });
@@ -277,7 +313,8 @@ void main() {
         find.textContaining('Token quota: 42,500 / 50,000'),
         findsOneWidget,
       );
-      expect(find.textContaining('85% (Quota warning)'), findsOneWidget);
+      expect(find.textContaining('85%'), findsOneWidget);
+      expect(find.textContaining('Quota warning'), findsOneWidget);
     });
 
     testWidgets('renders exceeded quota state', (tester) async {
@@ -286,7 +323,7 @@ void main() {
           extraOverrides: [
             userQuotaProvider.overrideWith(
               (ref) async => const UserQuota(
-                usedTokens: 55000,
+                usedTokens: 50000,
                 limitTokens: 50000,
                 periodName: 'Monthly',
               ),
@@ -306,7 +343,7 @@ void main() {
         buildTestApp(
           extraOverrides: [
             userQuotaProvider.overrideWith(
-              (ref) async => throw Exception('Network timeout'),
+              (ref) async => throw Exception('Quota server unreachable'),
             ),
           ],
         ),

@@ -11,7 +11,7 @@ import 'helpers/test_helpers.dart';
 
 /// End-to-end smoke tests of the real app widget with in-memory
 /// infrastructure: bootstrap, routing guards, auth, 5-tab workspace shell,
-/// chat agent discovery/history, and settings.
+/// ask HR agent discovery/history, my work, and settings.
 void main() {
   Future<void> pumpApp(WidgetTester tester) async {
     // Phone-sized viewport.
@@ -39,51 +39,52 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('boots to sign-in and enters home as guest on Timeline tab', (
-    tester,
-  ) async {
-    await pumpApp(tester);
-    expect(find.text('Welcome'), findsOneWidget);
+  testWidgets(
+    'boots to sign-in and enters home as guest on Home/Trang chủ dashboard',
+    (tester) async {
+      await pumpApp(tester);
+      expect(find.text('Welcome'), findsOneWidget);
 
-    await tester.tap(find.text('Continue as guest'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Continue as guest'));
+      await tester.pumpAndSettle();
 
-    // Shared Header
-    expect(find.text('Hello, Guest'), findsOneWidget);
-    expect(
-      find.text('Enterprise AI Assistant & Employee Workspace'),
-      findsOneWidget,
-    );
+      // Shared Header
+      expect(find.text('Hello, Guest'), findsOneWidget);
+      expect(
+        find.text('Enterprise AI Assistant & Employee Workspace'),
+        findsOneWidget,
+      );
 
-    // 5 Main Navigation Tabs exist
-    expect(find.text('Timeline'), findsWidgets);
-    expect(find.text('Chat'), findsWidgets);
-    expect(find.text('E-learning'), findsWidgets);
-    expect(find.text('Document'), findsWidgets);
-    expect(find.text('My Profile'), findsWidgets);
+      // 5 Main Navigation Tabs exist
+      expect(find.text('Home'), findsWidgets);
+      expect(find.text('Ask HR'), findsWidgets);
+      expect(find.text('My Work'), findsWidgets);
+      expect(find.text('Learning'), findsWidgets);
+      expect(find.text('Account'), findsWidgets);
 
-    // Default landing tab is Timeline showing internal news/posts
-    expect(find.text('GOAI Mobile Phase 1 Milestone Reached'), findsOneWidget);
-  });
+      // Default landing tab is Home dashboard showing overview & internal news
+      expect(
+        find.text('GOAI Mobile Phase 1 Milestone Reached'),
+        findsOneWidget,
+      );
+    },
+  );
 
   testWidgets(
-    'chat demo: open discovery, agent history, conversation, send & AI reply',
+    'Ask HR demo: open discovery, agent history, conversation, send & AI reply',
     (tester) async {
       await pumpApp(tester);
       await tester.tap(find.text('Continue as guest'));
       await tester.pumpAndSettle();
 
-      // Switch to Chat tab
-      await tester.tap(find.text('Chat'));
+      // Switch to Ask HR tab
+      await tester.tap(find.text('Ask HR'));
       await tester.pumpAndSettle();
 
-      // Categories are visible
-      expect(find.text('AI AGENTS'), findsOneWidget);
-      expect(find.text('OTHER'), findsOneWidget);
+      // Agents are visible
+      expect(find.text('AI & HR AGENTS'), findsOneWidget);
       expect(find.text('Mock Assistant'), findsOneWidget);
       expect(find.text('HR Assistant'), findsOneWidget);
-      expect(find.text('Customer Support'), findsOneWidget);
-      expect(find.text('Product Team'), findsOneWidget);
 
       // Select Agent -> Conversation History
       await tester.tap(find.text('Mock Assistant'));
@@ -114,17 +115,17 @@ void main() {
   );
 
   testWidgets(
-    'settings: access from My Profile, switch theme/locale, then sign out',
+    'settings: access from Account, switch theme/locale, then sign out',
     (tester) async {
       await pumpApp(tester);
       await tester.tap(find.text('Continue as guest'));
       await tester.pumpAndSettle();
 
-      // Switch to My Profile tab
-      await tester.tap(find.text('My Profile'));
+      // Switch to Account tab
+      await tester.tap(find.text('Account'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Pending Approvals'), findsOneWidget);
+      expect(find.text('Internal News & Bulletins'), findsOneWidget);
       expect(find.text('Settings'), findsOneWidget);
 
       // Navigate to Settings
