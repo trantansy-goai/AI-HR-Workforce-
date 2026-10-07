@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'app_tokens.dart';
 
@@ -15,25 +16,18 @@ class AppTheme {
   final Color seedColor;
   final String? fontFamily;
 
-  ThemeData get light => _build(Brightness.light);
-  ThemeData get dark => _build(Brightness.dark);
+  ThemeData get light => _build();
 
-  ThemeData _build(Brightness brightness) {
-    final scheme =
-        ColorScheme.fromSeed(
-          seedColor: seedColor,
-          brightness: brightness,
-        ).copyWith(
-          primary: brightness == Brightness.light ? seedColor : null,
-          secondary: brightness == Brightness.light
-              ? AppBrandColors.secondaryGold
-              : null,
-        );
+  ThemeData _build() {
+    final scheme = ColorScheme.fromSeed(
+      seedColor: seedColor,
+      brightness: Brightness.light,
+    ).copyWith(primary: seedColor, secondary: AppBrandColors.secondaryGold);
     final base = ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
       fontFamily: fontFamily,
-      brightness: brightness,
+      brightness: Brightness.light,
     );
     final textTheme = _textTheme(base.textTheme);
 
@@ -47,6 +41,7 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 1,
         titleTextStyle: textTheme.titleLarge,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       cardTheme: CardThemeData(
         elevation: 0,

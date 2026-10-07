@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project_base/app/app.dart';
 import 'package:flutter_project_base/app/pages.dart';
 import 'package:flutter_project_base/core/theme/app_theme.dart';
 import 'package:flutter_project_base/core/theme/app_tokens.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../helpers/test_helpers.dart';
 
 void main() {
   group('GoAI Brand Colors & Theme', () {
@@ -74,5 +78,62 @@ void main() {
       final assetImage = image.image as AssetImage;
       expect(assetImage.assetName, 'assets/images/goai_logo.png');
     });
+  });
+
+  group('Force Light Mode', () {
+    testWidgets(
+      'renders light theme when platform brightness is Brightness.light',
+      (tester) async {
+        tester.platformDispatcher.platformBrightnessTestValue =
+            Brightness.light;
+        addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
+
+        await tester.pumpWidget(
+          ProviderScope(
+            retry: noRetry,
+            overrides: baseTestOverrides(),
+            child: const App(),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final materialApp = tester.widget<MaterialApp>(
+          find.byType(MaterialApp),
+        );
+        expect(materialApp.themeMode, ThemeMode.light);
+
+        final theme = Theme.of(tester.element(find.byType(Scaffold).first));
+        expect(theme.brightness, Brightness.light);
+        expect(theme.colorScheme.primary, AppBrandColors.primaryBlue);
+        expect(theme.colorScheme.secondary, AppBrandColors.secondaryGold);
+      },
+    );
+
+    testWidgets(
+      'renders light theme when platform brightness is Brightness.dark',
+      (tester) async {
+        tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+        addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
+
+        await tester.pumpWidget(
+          ProviderScope(
+            retry: noRetry,
+            overrides: baseTestOverrides(),
+            child: const App(),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final materialApp = tester.widget<MaterialApp>(
+          find.byType(MaterialApp),
+        );
+        expect(materialApp.themeMode, ThemeMode.light);
+
+        final theme = Theme.of(tester.element(find.byType(Scaffold).first));
+        expect(theme.brightness, Brightness.light);
+        expect(theme.colorScheme.primary, AppBrandColors.primaryBlue);
+        expect(theme.colorScheme.secondary, AppBrandColors.secondaryGold);
+      },
+    );
   });
 }

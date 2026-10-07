@@ -29,8 +29,7 @@ class App extends ConsumerWidget {
       routerConfig: ref.watch(routerProvider),
       scaffoldMessengerKey: rootScaffoldMessengerKey,
       theme: theme.light,
-      darkTheme: theme.dark,
-      themeMode: settings.themeMode,
+      themeMode: ThemeMode.light,
       locale: settings.locale,
       supportedLocales: AppLocales.supported,
       localizationsDelegates: const [

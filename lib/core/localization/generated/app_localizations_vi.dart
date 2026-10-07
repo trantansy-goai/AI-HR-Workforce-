@@ -186,8 +186,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get homeSettingsTitle => 'Cài đặt';
 
   @override
-  String get homeSettingsSubtitle =>
-      'Giao diện, ngôn ngữ và thông tin ứng dụng';
+  String get homeSettingsSubtitle => 'Ngôn ngữ và thông tin ứng dụng';
 
   @override
   String get homeShowcaseTitle => 'Trình diễn nền tảng';
@@ -204,18 +203,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get settingsTitle => 'Cài đặt';
-
-  @override
-  String get settingsAppearance => 'Giao diện';
-
-  @override
-  String get settingsThemeSystem => 'Theo hệ thống';
-
-  @override
-  String get settingsThemeLight => 'Sáng';
-
-  @override
-  String get settingsThemeDark => 'Tối';
 
   @override
   String get settingsLanguage => 'Ngôn ngữ';

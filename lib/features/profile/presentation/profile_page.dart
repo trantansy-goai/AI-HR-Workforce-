@@ -235,7 +235,7 @@ class _ProfileView extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.settings_outlined),
             title: Text(l10n.profileSettings),
-            subtitle: const Text('Theme, language & system information'),
+            subtitle: Text(l10n.homeSettingsSubtitle),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push(AppRoutes.settings),
           ),

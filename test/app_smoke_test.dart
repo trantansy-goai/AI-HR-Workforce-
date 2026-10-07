@@ -115,7 +115,7 @@ void main() {
   );
 
   testWidgets(
-    'settings: access from Account, switch theme/locale, then sign out',
+    'settings: access from Account, verify light-only mode and switch locale, then sign out',
     (tester) async {
       await pumpApp(tester);
       await tester.tap(find.text('Continue as guest'));
@@ -132,10 +132,11 @@ void main() {
       await tester.tap(find.text('Settings'));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Dark'));
-      await tester.pumpAndSettle();
+      // Verify theme switching UI is completely removed and light mode is enforced
+      expect(find.text('Appearance'), findsNothing);
+      expect(find.text('Dark'), findsNothing);
       final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
-      expect(app.themeMode, ThemeMode.dark);
+      expect(app.themeMode, ThemeMode.light);
 
       await tester.tap(find.text('Tiếng Việt'));
       await tester.pumpAndSettle();

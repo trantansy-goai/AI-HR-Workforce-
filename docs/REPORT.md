@@ -94,9 +94,9 @@ Legend: **DONE** = implemented, wired and tested/working ·
 | Storage | DONE | `KeyValueStore` (SharedPreferences), `SecureStore` (flutter_secure_storage), in-memory variants. No DB (by design) |
 | Auth | DONE | guest, email/password, secure persistence, session restore (offline-tolerant), single-flight refresh, logout (best-effort remote). OAuth = credential type + endpoint convention only (no vendor SDK) |
 | Navigation | DONE | go_router, auth guard, guest-only route, deep-link `from=` preservation, open-redirect protection, nested routes, 404 page. Bottom-nav shell not added (not needed by demo) |
-| Design system | DONE | M3 theme from seed, light/dark/system, typography tweaks, spacing/radius/breakpoints, `AppButton`, `AppTextField`, loading/empty/error views, confirm dialog, snackbar helper, `ResponsiveCenter`, responsive home grid |
+| Design system | DONE | M3 light theme from seed, typography tweaks, spacing/radius/breakpoints, `AppButton`, `AppTextField`, loading/empty/error views, confirm dialog, snackbar helper, `ResponsiveCenter`, responsive home grid |
 | Localization | DONE | ARB EN (template) + VI complete (95 keys), iOS `CFBundleLocalizations` set, guide in README |
-| Settings | DONE | theme mode, language (incl. system), app name/version/environment, sign out with confirm; persisted |
+| Settings | DONE | language (incl. system), app name/version/environment, sign out with confirm; persisted (light mode only for Phase 1) |
 | Profile | PARTIAL | `UserProfile` + repository built from the auth session and a profile page. No remote `GET /me` or edit (no backend contract yet) |
 | File / media | PARTIAL | `Attachment` (kind, MIME, size, local/remote source, upload status/progress, media info), MIME helpers, `FileUploader`/`AttachmentPicker` contracts, fake uploader + demo picker, upload pipeline used by chat. No real picker or storage vendor (needs native plugins/backend) |
 | Notification | PARTIAL | Domain (`AppNotification`, channels) + interfaces for local/push/in-app. In-app center **implemented** and shown via snackbar (demo button). Local/push are no-op implementations (need plugins/Firebase credentials) |

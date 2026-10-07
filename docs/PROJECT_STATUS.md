@@ -84,9 +84,13 @@ The top-level navigation structure is organized into exactly 5 persistent bottom
 
 ---
 
-## Official GoAI Brand & Splash Specification
+## Official GoAI Brand & Theme Specification
 
-- **Brand:** GoAI
+- **Theme Mode:** LIGHT ONLY for Phase 1.
+- **Runtime Theme Switching:** NOT SUPPORTED.
+  - The application strictly forces `ThemeMode.light` regardless of Android or iOS system dark mode, device theme changes, or previous preferences.
+  - Appearance / theme selector completely removed from Settings UI.
+  - Android `values-night` and `values-night-v31` resource styles configured with `Theme.Light.NoTitleBar` and white launch backgrounds.
 - **Primary Brand Color:** Deep blue sampled and derived from the "Go" letters in the official logo: `Color(0xFF0E3CAF)` (`#0E3CAF`, RGB 14, 60, 175).
   - Contrast ratio against white: 9.15:1 (exceeds WCAG AAA requirements).
   - Defined centrally in `AppBrandColors.primaryBlue` (`lib/core/theme/app_tokens.dart`) and injected into `AppTheme.seedColor` and `ColorScheme.primary`.
@@ -97,7 +101,7 @@ The top-level navigation structure is organized into exactly 5 persistent bottom
 - **Splash Screen:** Official GoAI logo on a clean white background (`#FFFFFF`).
   - Responsive centering with `BoxFit.contain` preserving 1:1 original logo aspect ratio without distortion or cropping.
   - Native splash updated on Android (including Android 12+ API 31 `windowSplashScreenAnimatedIcon` with `@drawable/splash_icon` on white `windowSplashScreenBackground`).
-  - Seamless visual transition from native launch to Flutter session restoration with 0 white/black flash.
+  - Seamless visual transition from native launch to Flutter session restoration with 0 white/black flash under both light and dark OS modes.
 
 ---
 
@@ -150,6 +154,6 @@ The top-level navigation structure is organized into exactly 5 persistent bottom
 
 - `dart format lib test`: PASS (Clean format)
 - `flutter analyze`: PASS (0 issues found!)
-- `flutter test`: PASS (151/151 tests passing across all suites including auth widget tests)
-- `flutter build apk --debug`: PASS (`app-debug.apk` built with native record, file_picker, responsive layouts, and redesigned auth)
-- Physical Device Baseline: Samsung SM-X510 (Galaxy Tab S9 FE, Android 16); verified both portrait and landscape orientation with 0 layout overflows.
+- `flutter test`: PASS (154/154 tests passing across all suites including force-light and settings tests)
+- `flutter build apk --debug`: PASS (`app-debug.apk` built with light-only theme enforcement)
+- Physical Device Baseline: Samsung SM-A207F (Galaxy A20s, Android 11 / API 30); verified with system dark mode enabled (Splash -> Login -> Trang chủ -> Settings all remain pure light with readable dark status bar and 0 theme toggles).

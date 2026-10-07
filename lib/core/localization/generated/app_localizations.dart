@@ -419,7 +419,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeSettingsSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Theme, language and app info'**
+  /// **'Language and app info'**
   String get homeSettingsSubtitle;
 
   /// No description provided for @homeShowcaseTitle.
@@ -451,30 +451,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Settings'**
   String get settingsTitle;
-
-  /// No description provided for @settingsAppearance.
-  ///
-  /// In en, this message translates to:
-  /// **'Appearance'**
-  String get settingsAppearance;
-
-  /// No description provided for @settingsThemeSystem.
-  ///
-  /// In en, this message translates to:
-  /// **'System'**
-  String get settingsThemeSystem;
-
-  /// No description provided for @settingsThemeLight.
-  ///
-  /// In en, this message translates to:
-  /// **'Light'**
-  String get settingsThemeLight;
-
-  /// No description provided for @settingsThemeDark.
-  ///
-  /// In en, this message translates to:
-  /// **'Dark'**
-  String get settingsThemeDark;
 
   /// No description provided for @settingsLanguage.
   ///

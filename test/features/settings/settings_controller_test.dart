@@ -7,26 +7,22 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../helpers/test_helpers.dart';
 
 void main() {
-  test('defaults to system theme and device locale', () {
+  test('defaults to device locale', () {
     final container = createTestContainer();
     final settings = container.read(settingsControllerProvider);
-    expect(settings.themeMode, ThemeMode.system);
     expect(settings.locale, isNull);
   });
 
-  test('persists theme and locale and restores them on restart', () async {
+  test('persists locale and restores it on restart', () async {
     final store = InMemoryKeyValueStore();
     final first = createTestContainer(keyValueStore: store);
     final controller = first.read(settingsControllerProvider.notifier);
-    await controller.setThemeMode(ThemeMode.dark);
     await controller.setLocale(const Locale('vi'));
 
-    expect(store.getString(SettingsRepository.themeModeKey), 'dark');
     expect(store.getString(SettingsRepository.localeKey), 'vi');
 
     final second = createTestContainer(keyValueStore: store);
     final restored = second.read(settingsControllerProvider);
-    expect(restored.themeMode, ThemeMode.dark);
     expect(restored.locale, const Locale('vi'));
   });
 
@@ -39,12 +35,8 @@ void main() {
   });
 
   test('ignores unknown stored values', () {
-    final store = InMemoryKeyValueStore({
-      SettingsRepository.themeModeKey: 'neon',
-      SettingsRepository.localeKey: 'xx',
-    });
+    final store = InMemoryKeyValueStore({SettingsRepository.localeKey: 'xx'});
     final settings = SettingsRepository(store).load();
-    expect(settings.themeMode, ThemeMode.system);
     expect(settings.locale, isNull);
   });
 }

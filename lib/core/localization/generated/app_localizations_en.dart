@@ -185,7 +185,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeSettingsTitle => 'Settings';
 
   @override
-  String get homeSettingsSubtitle => 'Theme, language and app info';
+  String get homeSettingsSubtitle => 'Language and app info';
 
   @override
   String get homeShowcaseTitle => 'Foundation showcase';
@@ -201,18 +201,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsTitle => 'Settings';
-
-  @override
-  String get settingsAppearance => 'Appearance';
-
-  @override
-  String get settingsThemeSystem => 'System';
-
-  @override
-  String get settingsThemeLight => 'Light';
-
-  @override
-  String get settingsThemeDark => 'Dark';
 
   @override
   String get settingsLanguage => 'Language';

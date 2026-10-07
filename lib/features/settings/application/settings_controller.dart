@@ -16,11 +16,6 @@ class SettingsController extends Notifier<AppSettings> {
   @override
   AppSettings build() => ref.watch(settingsRepositoryProvider).load();
 
-  Future<void> setThemeMode(ThemeMode mode) async {
-    state = state.copyWith(themeMode: mode);
-    await ref.read(settingsRepositoryProvider).saveThemeMode(mode);
-  }
-
   /// Pass null to follow the device language.
   Future<void> setLocale(Locale? locale) async {
     state = state.copyWith(locale: () => locale);

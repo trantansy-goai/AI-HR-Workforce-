@@ -28,34 +28,6 @@ class SettingsPage extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
           children: [
-            _SectionHeader(l10n.settingsAppearance),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg,
-                vertical: AppSpacing.sm,
-              ),
-              child: SegmentedButton<ThemeMode>(
-                segments: [
-                  ButtonSegment(
-                    value: ThemeMode.system,
-                    icon: const Icon(Icons.brightness_auto),
-                    label: Text(l10n.settingsThemeSystem),
-                  ),
-                  ButtonSegment(
-                    value: ThemeMode.light,
-                    icon: const Icon(Icons.light_mode),
-                    label: Text(l10n.settingsThemeLight),
-                  ),
-                  ButtonSegment(
-                    value: ThemeMode.dark,
-                    icon: const Icon(Icons.dark_mode),
-                    label: Text(l10n.settingsThemeDark),
-                  ),
-                ],
-                selected: {settings.themeMode},
-                onSelectionChanged: (s) => controller.setThemeMode(s.first),
-              ),
-            ),
             _SectionHeader(l10n.settingsLanguage),
             RadioGroup<String>(
               groupValue: settings.locale?.languageCode ?? '',

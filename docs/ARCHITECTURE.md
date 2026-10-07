@@ -185,13 +185,13 @@ Domain and UI are unaffected.
 ## Design system
 
 - [`AppTheme`](../lib/core/theme/app_theme.dart): Material 3 from a seed
-  color (light + dark), component themes for buttons, inputs, cards,
+  color (light mode only for Phase 1), component themes for buttons, inputs, cards,
   dialogs, snackbars. Re-brand by overriding `appThemeProvider`.
 - Tokens: `AppSpacing`, `AppRadius`, `WindowSize` breakpoints, `AppLayout`.
 - Widgets in `shared/widgets`: `AppButton` (primary/secondary/text, loading),
   `AppTextField` (password toggle), `LoadingView`, `EmptyView`, `ErrorView`,
   `showAppSnackBar`, `showConfirmDialog`, `ResponsiveCenter`.
-- Theme mode (system/light/dark) and locale are persisted by settings.
+- Light mode is enforced (`ThemeMode.light`). Locale is persisted by settings.
 
 ## Localization
 
