@@ -64,10 +64,67 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorUnknown => 'An unexpected error occurred.';
 
   @override
-  String get authSignInTitle => 'Welcome';
+  String get authSignInTitle => 'Welcome back';
 
   @override
-  String get authSignInSubtitle => 'Sign in to continue';
+  String get authSignInSubtitle =>
+      'Please verify your account to view your information.';
+
+  @override
+  String get authSecurityBadge => 'SECURITY';
+
+  @override
+  String get authBrandEyebrow => 'GO AI · HR WORKFORCE';
+
+  @override
+  String get authEmployeeAccountLabel => 'Employee ID or company account';
+
+  @override
+  String get authEmployeeAccountHint => 'Enter employee ID or company account';
+
+  @override
+  String get authPhoneNumberLabel => 'Registered phone number';
+
+  @override
+  String get authPhoneNumberHint => 'Enter registered phone number';
+
+  @override
+  String get authSendVerificationCode => 'Send verification code';
+
+  @override
+  String get authSsoPrompt => 'Enterprise has SSO?';
+
+  @override
+  String get authSsoButton => 'Company sign-in';
+
+  @override
+  String get authSsoBlockedMessage =>
+      'Enterprise SSO login is awaiting backend infrastructure connection (BLOCKED).';
+
+  @override
+  String get authFirstTimeTitle => 'First-time user';
+
+  @override
+  String get authFirstTimeBody =>
+      'HR issues activation code; verify phone number then set PIN on device.';
+
+  @override
+  String get authSharedDeviceNotice =>
+      'Using a shared phone? Sign out completely after each session.';
+
+  @override
+  String get authAccountRequired =>
+      'Please enter employee ID or company account';
+
+  @override
+  String get authPhoneRequired => 'Please enter registered phone number';
+
+  @override
+  String get authSecurityDialogTitle => 'Enterprise Security';
+
+  @override
+  String get authSecurityDialogMessage =>
+      'Your session and data are protected with end-to-end encryption complying with enterprise HR security policies.';
 
   @override
   String get authEmailLabel => 'Email';
@@ -91,7 +148,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authDemoHint =>
-      'Demo mode: any email and a password of 6+ characters works.';
+      'Demo mode: enter any employee ID/phone or continue as guest.';
 
   @override
   String get authSignOut => 'Sign out';

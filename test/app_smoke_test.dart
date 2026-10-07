@@ -43,7 +43,7 @@ void main() {
     'boots to sign-in and enters home as guest on Home/Trang chủ dashboard',
     (tester) async {
       await pumpApp(tester);
-      expect(find.text('Welcome'), findsOneWidget);
+      expect(find.text('Welcome back'), findsOneWidget);
 
       await tester.tap(find.text('Continue as guest'));
       await tester.pumpAndSettle();
@@ -147,7 +147,7 @@ void main() {
       // Confirm dialog.
       await tester.tap(find.widgetWithText(FilledButton, 'Đăng xuất'));
       await tester.pumpAndSettle();
-      expect(find.text('Chào mừng'), findsOneWidget);
+      expect(find.text('Chào mừng trở lại'), findsOneWidget);
     },
   );
 

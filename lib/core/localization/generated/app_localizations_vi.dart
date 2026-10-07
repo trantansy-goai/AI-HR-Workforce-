@@ -65,10 +65,67 @@ class AppLocalizationsVi extends AppLocalizations {
   String get errorUnknown => 'Đã xảy ra lỗi không mong muốn.';
 
   @override
-  String get authSignInTitle => 'Chào mừng';
+  String get authSignInTitle => 'Chào mừng trở lại';
 
   @override
-  String get authSignInSubtitle => 'Đăng nhập để tiếp tục';
+  String get authSignInSubtitle =>
+      'Vui lòng xác nhận tài khoản để xem thông tin của mình.';
+
+  @override
+  String get authSecurityBadge => 'BẢO MẬT';
+
+  @override
+  String get authBrandEyebrow => 'GO AI · HR WORKFORCE';
+
+  @override
+  String get authEmployeeAccountLabel => 'Mã nhân viên hoặc tài khoản công ty';
+
+  @override
+  String get authEmployeeAccountHint =>
+      'Nhập mã nhân viên hoặc tài khoản công ty';
+
+  @override
+  String get authPhoneNumberLabel => 'Số điện thoại đã đăng ký';
+
+  @override
+  String get authPhoneNumberHint => 'Nhập số điện thoại đã đăng ký';
+
+  @override
+  String get authSendVerificationCode => 'Gửi mã xác thực';
+
+  @override
+  String get authSsoPrompt => 'Doanh nghiệp có SSO?';
+
+  @override
+  String get authSsoButton => 'Đăng nhập công ty';
+
+  @override
+  String get authSsoBlockedMessage =>
+      'Đăng nhập SSO doanh nghiệp đang chờ kết nối hạ tầng hệ thống (BLOCKED).';
+
+  @override
+  String get authFirstTimeTitle => 'Lần đầu sử dụng';
+
+  @override
+  String get authFirstTimeBody =>
+      'HR cấp mã kích hoạt; xác minh số điện thoại rồi đặt PIN trên thiết bị.';
+
+  @override
+  String get authSharedDeviceNotice =>
+      'Dùng chung điện thoại? Đăng xuất hoàn toàn sau mỗi phiên.';
+
+  @override
+  String get authAccountRequired => 'Vui lòng nhập mã nhân viên hoặc tài khoản';
+
+  @override
+  String get authPhoneRequired => 'Vui lòng nhập số điện thoại đã đăng ký';
+
+  @override
+  String get authSecurityDialogTitle => 'Bảo mật doanh nghiệp';
+
+  @override
+  String get authSecurityDialogMessage =>
+      'Phiên làm việc và dữ liệu được bảo vệ bằng mã hóa đầu cuối tuân thủ tiêu chuẩn an toàn thông tin nhân sự doanh nghiệp.';
 
   @override
   String get authEmailLabel => 'Email';
@@ -92,7 +149,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get authDemoHint =>
-      'Chế độ demo: dùng email bất kỳ và mật khẩu từ 6 ký tự.';
+      'Chế độ demo: nhập thông tin bất kỳ hoặc tiếp tục với tư cách khách.';
 
   @override
   String get authSignOut => 'Đăng xuất';

@@ -203,14 +203,116 @@ abstract class AppLocalizations {
   /// No description provided for @authSignInTitle.
   ///
   /// In en, this message translates to:
-  /// **'Welcome'**
+  /// **'Welcome back'**
   String get authSignInTitle;
 
   /// No description provided for @authSignInSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Sign in to continue'**
+  /// **'Please verify your account to view your information.'**
   String get authSignInSubtitle;
+
+  /// No description provided for @authSecurityBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'SECURITY'**
+  String get authSecurityBadge;
+
+  /// No description provided for @authBrandEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'GO AI · HR WORKFORCE'**
+  String get authBrandEyebrow;
+
+  /// No description provided for @authEmployeeAccountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Employee ID or company account'**
+  String get authEmployeeAccountLabel;
+
+  /// No description provided for @authEmployeeAccountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter employee ID or company account'**
+  String get authEmployeeAccountHint;
+
+  /// No description provided for @authPhoneNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Registered phone number'**
+  String get authPhoneNumberLabel;
+
+  /// No description provided for @authPhoneNumberHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter registered phone number'**
+  String get authPhoneNumberHint;
+
+  /// No description provided for @authSendVerificationCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Send verification code'**
+  String get authSendVerificationCode;
+
+  /// No description provided for @authSsoPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Enterprise has SSO?'**
+  String get authSsoPrompt;
+
+  /// No description provided for @authSsoButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Company sign-in'**
+  String get authSsoButton;
+
+  /// No description provided for @authSsoBlockedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Enterprise SSO login is awaiting backend infrastructure connection (BLOCKED).'**
+  String get authSsoBlockedMessage;
+
+  /// No description provided for @authFirstTimeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'First-time user'**
+  String get authFirstTimeTitle;
+
+  /// No description provided for @authFirstTimeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'HR issues activation code; verify phone number then set PIN on device.'**
+  String get authFirstTimeBody;
+
+  /// No description provided for @authSharedDeviceNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Using a shared phone? Sign out completely after each session.'**
+  String get authSharedDeviceNotice;
+
+  /// No description provided for @authAccountRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter employee ID or company account'**
+  String get authAccountRequired;
+
+  /// No description provided for @authPhoneRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter registered phone number'**
+  String get authPhoneRequired;
+
+  /// No description provided for @authSecurityDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enterprise Security'**
+  String get authSecurityDialogTitle;
+
+  /// No description provided for @authSecurityDialogMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session and data are protected with end-to-end encryption complying with enterprise HR security policies.'**
+  String get authSecurityDialogMessage;
 
   /// No description provided for @authEmailLabel.
   ///
@@ -251,7 +353,7 @@ abstract class AppLocalizations {
   /// No description provided for @authDemoHint.
   ///
   /// In en, this message translates to:
-  /// **'Demo mode: any email and a password of 6+ characters works.'**
+  /// **'Demo mode: enter any employee ID/phone or continue as guest.'**
   String get authDemoHint;
 
   /// No description provided for @authSignOut.
