@@ -7,7 +7,10 @@ import 'app_tokens.dart';
 /// Apps re-brand by passing their own [seedColor] (and optionally a font
 /// family) instead of editing component styles one by one.
 class AppTheme {
-  const AppTheme({this.seedColor = const Color(0xFF3557D6), this.fontFamily});
+  const AppTheme({
+    this.seedColor = AppBrandColors.primaryBlue,
+    this.fontFamily,
+  });
 
   final Color seedColor;
   final String? fontFamily;
@@ -16,10 +19,16 @@ class AppTheme {
   ThemeData get dark => _build(Brightness.dark);
 
   ThemeData _build(Brightness brightness) {
-    final scheme = ColorScheme.fromSeed(
-      seedColor: seedColor,
-      brightness: brightness,
-    );
+    final scheme =
+        ColorScheme.fromSeed(
+          seedColor: seedColor,
+          brightness: brightness,
+        ).copyWith(
+          primary: brightness == Brightness.light ? seedColor : null,
+          secondary: brightness == Brightness.light
+              ? AppBrandColors.secondaryGold
+              : null,
+        );
     final base = ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
@@ -45,6 +54,38 @@ class AppTheme {
         shape: const RoundedRectangleBorder(borderRadius: AppRadius.lgAll),
         margin: EdgeInsets.zero,
       ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: scheme.surface,
+        indicatorColor: scheme.primary.withValues(alpha: 0.12),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return IconThemeData(color: scheme.primary);
+          }
+          return IconThemeData(color: scheme.onSurfaceVariant);
+        }),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return textTheme.labelMedium?.copyWith(
+              color: scheme.primary,
+              fontWeight: FontWeight.w600,
+            );
+          }
+          return textTheme.labelMedium?.copyWith(
+            color: scheme.onSurfaceVariant,
+          );
+        }),
+      ),
+      tabBarTheme: TabBarThemeData(
+        labelColor: scheme.primary,
+        unselectedLabelColor: scheme.onSurfaceVariant,
+        indicatorColor: scheme.primary,
+        indicatorSize: TabBarIndicatorSize.tab,
+      ),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: scheme.primary,
+        linearTrackColor: scheme.primary.withValues(alpha: 0.15),
+        circularTrackColor: scheme.primary.withValues(alpha: 0.15),
+      ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: scheme.surfaceContainerHighest.withValues(alpha: 0.5),
@@ -67,6 +108,8 @@ class AppTheme {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
+          backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
           minimumSize: const Size(64, 48),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdAll),
           textStyle: textTheme.labelLarge,
@@ -74,13 +117,16 @@ class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
+          foregroundColor: scheme.primary,
           minimumSize: const Size(64, 48),
+          side: BorderSide(color: scheme.outlineVariant),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdAll),
           textStyle: textTheme.labelLarge,
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
+          foregroundColor: scheme.primary,
           minimumSize: const Size(48, 48),
           textStyle: textTheme.labelLarge,
         ),

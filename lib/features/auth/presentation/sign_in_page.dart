@@ -90,10 +90,12 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Icon(
-                        Icons.lock_outline,
-                        size: 48,
-                        color: theme.colorScheme.primary,
+                      Center(
+                        child: Image.asset(
+                          'assets/images/goai_logo.png',
+                          height: 56,
+                          fit: BoxFit.contain,
+                        ),
                       ),
                       const SizedBox(height: AppSpacing.lg),
                       Text(

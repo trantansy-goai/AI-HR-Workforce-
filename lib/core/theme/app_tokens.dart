@@ -43,3 +43,16 @@ abstract final class AppLayout {
   /// Max width for reading/form content on large screens.
   static const double maxContentWidth = 720;
 }
+
+/// Centralized brand colors derived directly from the official GoAI logo.
+abstract final class AppBrandColors {
+  /// Dominant deep blue sampled from the "Go" letters in the official logo.
+  /// RGB: (14, 60, 175) -> #0E3CAF.
+  /// Contrast ratio on white is 9.15:1 (exceeds WCAG AAA requirement of 7:1).
+  static const Color primaryBlue = Color(0xFF0E3CAF);
+
+  /// Secondary brand accent sampled from the "AI" letters in the official logo.
+  /// RGB: (217, 159, 55) -> #D99F37.
+  /// Used sparingly for branding highlights, badges, and warning accents.
+  static const Color secondaryGold = Color(0xFFD99F37);
+}

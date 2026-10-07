@@ -216,11 +216,11 @@ class MyWorkPage extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(width: AppSpacing.sm),
-                const Text(
+                Text(
                   '#HR-1042',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue,
+                    color: theme.colorScheme.primary,
                   ),
                 ),
               ],

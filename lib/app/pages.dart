@@ -11,22 +11,16 @@ class SplashPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final logoWidth = (screenWidth * 0.6).clamp(200.0, 320.0);
+
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.flutter_dash,
-              size: 72,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(height: 24),
-            const SizedBox.square(
-              dimension: 24,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
-          ],
+        child: Image.asset(
+          'assets/images/goai_logo.png',
+          width: logoWidth,
+          fit: BoxFit.contain,
         ),
       ),
     );

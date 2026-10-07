@@ -83,10 +83,27 @@ The top-level navigation structure is organized into exactly 5 persistent bottom
 
 ---
 
+## Official GoAI Brand & Splash Specification
+
+- **Brand:** GoAI
+- **Primary Brand Color:** Deep blue sampled and derived from the "Go" letters in the official logo: `Color(0xFF0E3CAF)` (`#0E3CAF`, RGB 14, 60, 175).
+  - Contrast ratio against white: 9.15:1 (exceeds WCAG AAA requirements).
+  - Defined centrally in `AppBrandColors.primaryBlue` (`lib/core/theme/app_tokens.dart`) and injected into `AppTheme.seedColor` and `ColorScheme.primary`.
+  - Applied to primary buttons, active bottom navigation destinations, links, focus borders, tabs, and brand accents.
+- **Secondary Accent:** Warm gold sampled from the "AI" letters in the official logo: `Color(0xFFD99F37)` (`#D99F37`, RGB 217, 159, 55).
+  - Defined centrally in `AppBrandColors.secondaryGold`.
+  - Used sparingly for badge highlights, quota warning state, and brand accents. Content text remains readable dark neutral / near-black.
+- **Splash Screen:** Official GoAI logo on a clean white background (`#FFFFFF`).
+  - Responsive centering with `BoxFit.contain` preserving 1:1 original logo aspect ratio without distortion or cropping.
+  - Native splash updated on Android (including Android 12+ API 31 `windowSplashScreenAnimatedIcon` with `@drawable/splash_icon` on white `windowSplashScreenBackground`).
+  - Seamless visual transition from native launch to Flutter session restoration with 0 white/black flash.
+
+---
+
 ## Quality Gates Status
 
 - `dart format lib test`: PASS (Clean format)
 - `flutter analyze`: PASS (0 issues found!)
-- `flutter test`: PASS (130/130 tests passing)
+- `flutter test`: PASS (135/135 tests passing)
 - `flutter build apk --debug`: PASS (`app-debug.apk` built with native record and file_picker plugins)
-- Physical Device Baseline: Samsung SM-X510 (Galaxy Tab S9 FE, Android 16); smoke test suite green, all 5 tabs and secondary flows verified without overflows.
+- Physical Device Baseline: Samsung SM-X510 (Galaxy Tab S9 FE, Android 16); cold launch native splash, Flutter splash, Login branding, and 5-tab workspace verified with 0 layout overflows.
