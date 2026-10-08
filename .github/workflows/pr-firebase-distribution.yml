@@ -8,6 +8,15 @@ on:
     branches: [main]
     types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
+    inputs:
+      build_mode:
+        description: >-
+          release = signed staging build sent to Firebase testers.
+          debug = faster debug-key JIT build for smoke checks, kept as a
+          workflow artifact only (not sent to testers).
+        type: choice
+        options: [release, debug]
+        default: release
 
 # A new push to the same PR cancels the build that is still running.
 concurrency:
@@ -46,10 +55,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
+      # Pull requests always build `release`; only a manual run can pick `debug`.
+      BUILD_MODE: ${{ inputs.build_mode || 'release' }}
       FIREBASE_APP_ID: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
       TESTER_GROUPS: ${{ vars.FIREBASE_TESTER_GROUPS || 'qa' }}
     steps:
       - name: Check required secrets
+        if: env.BUILD_MODE == 'release'
         env:
           SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
         run: |
@@ -70,11 +82,34 @@ jobs:
           channel: stable
           cache: true
 
+      # Caches ~/.gradle/caches and ~/.gradle/wrapper (dependencies, the
+      # Gradle distribution, compiled build scripts, transforms) with the
+      # open-source `basic` provider. Key = hash of the Gradle build files, so
+      # it changes only when the Android build config does. Writes are enabled
+      # on PRs too (default is read-only off `main`): entries are scoped to the
+      # PR, so later pushes to the same PR reuse them. This is the only job that
+      # writes a Gradle cache. Keystore and credentials live in $RUNNER_TEMP /
+      # the workspace, never in Gradle User Home, so they are not cached.
+      - uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: basic
+          cache-read-only: false
+
       - run: flutter pub get
+
+      - name: Record cache state
+        run: |
+          gradle_home="${GRADLE_USER_HOME:-$HOME/.gradle}"
+          if [ -d "$gradle_home/caches/modules-2" ] || [ -d "$gradle_home/wrapper/dists" ]; then
+            echo "GRADLE_CACHE_STATE=hit (restored $(du -sh "$gradle_home" | cut -f1))" >> "$GITHUB_ENV"
+          else
+            echo "GRADLE_CACHE_STATE=miss (cold Gradle User Home)" >> "$GITHUB_ENV"
+          fi
 
       # Optional: with a release keystore QA can install each build over the
       # previous one. Without it the APK is signed with a throwaway debug key.
       - name: Restore release keystore
+        if: env.BUILD_MODE == 'release'
         env:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
@@ -85,15 +120,22 @@ jobs:
             echo "::warning::ANDROID_KEYSTORE_BASE64 not set; signing with a debug key (QA must uninstall before installing a new build)."
           fi
 
+      # Optional repo variable ANDROID_TARGET_PLATFORMS (e.g. `android-arm64`)
+      # skips AOT compiles for other ABIs; unset = all ABIs (current default).
       - name: Build staging APK
         env:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: >-
-          flutter build apk --release
-          --dart-define-from-file=config/staging.json
-          --build-number=${{ github.run_number }}
+          TARGET_PLATFORMS: ${{ vars.ANDROID_TARGET_PLATFORMS }}
+        run: |
+          start=$(date +%s)
+          flutter build apk "--$BUILD_MODE" \
+            --dart-define-from-file=config/staging.json \
+            --build-number=${{ github.run_number }} \
+            ${TARGET_PLATFORMS:+--target-platform="$TARGET_PLATFORMS"}
+          echo "BUILD_SECONDS=$(( $(date +%s) - start ))" >> "$GITHUB_ENV"
+          echo "APK_PATH=build/app/outputs/flutter-apk/app-$BUILD_MODE.apk" >> "$GITHUB_ENV"
 
       # PR title/branch go through env vars, never inline `${{ }}` in the script.
       - name: Write release notes
@@ -108,34 +150,48 @@ jobs:
           {
             if [ -n "$PR_NUMBER" ]; then echo "PR #$PR_NUMBER: $PR_TITLE"; fi
             echo "Branch: $HEAD_REF (${HEAD_SHA:0:7}) by $PR_AUTHOR"
-            echo "Env: staging · build ${{ github.run_number }}"
+            echo "Env: staging ($BUILD_MODE) · build ${{ github.run_number }}"
             echo "CI: $RUN_URL"
           } > "$RUNNER_TEMP/release-notes.txt"
           cat "$RUNNER_TEMP/release-notes.txt"
 
       - uses: google-github-actions/auth@v2
+        if: env.BUILD_MODE == 'release'
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
 
       - name: Upload to Firebase App Distribution
+        if: env.BUILD_MODE == 'release'
         run: >-
           npx --yes firebase-tools@14 appdistribution:distribute
-          build/app/outputs/flutter-apk/app-release.apk
+          "$APK_PATH"
           --app "$FIREBASE_APP_ID"
           --groups "$TESTER_GROUPS"
           --release-notes-file "$RUNNER_TEMP/release-notes.txt"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: goai-staging-apk-${{ github.run_number }}
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: goai-staging-${{ env.BUILD_MODE == 'debug' && 'debug-' || '' }}apk-${{ github.run_number }}
+          path: ${{ env.APK_PATH }}
+          if-no-files-found: error
           retention-days: 7
 
       - name: Summary
         run: |
           {
-            echo "### Android staging build ${{ github.run_number }} distributed"
-            echo "Tester groups: \`$TESTER_GROUPS\`"
+            if [ "$BUILD_MODE" = release ]; then
+              echo "### Android staging build ${{ github.run_number }} distributed"
+              echo "Tester groups: \`$TESTER_GROUPS\`"
+            else
+              echo "### Android staging debug build ${{ github.run_number }} (artifact only, not distributed)"
+            fi
+            echo
+            echo "| Metric | Value |"
+            echo "| --- | --- |"
+            echo "| Build mode | \`$BUILD_MODE\` |"
+            echo "| \`flutter build apk\` duration | $(( BUILD_SECONDS / 60 ))m $(( BUILD_SECONDS % 60 ))s |"
+            echo "| Gradle User Home cache | $GRADLE_CACHE_STATE |"
+            echo "| Target platforms | \`${{ vars.ANDROID_TARGET_PLATFORMS || 'all (default)' }}\` |"
             echo
             cat "$RUNNER_TEMP/release-notes.txt"
           } >> "$GITHUB_STEP_SUMMARY"
