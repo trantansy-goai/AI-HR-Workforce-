@@ -1,11 +1,24 @@
+import java.util.Base64
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// APP_ENV from `--dart-define-from-file=config/<env>.json` (Flutter passes
+// dart-defines to Gradle base64-encoded). Staging gets its own application id
+// so it installs next to production and matches its Firebase app.
+val appEnv: String =
+    (project.findProperty("dart-defines") as String?)
+        ?.split(",")
+        ?.map { String(Base64.getDecoder().decode(it)) }
+        ?.firstOrNull { it.startsWith("APP_ENV=") }
+        ?.substringAfter("=")
+        ?: "development"
+
 android {
-    namespace = "com.example.flutter_project_base"
+    namespace = "com.goaiapp.goai"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -15,8 +28,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.flutter_project_base"
+        applicationId = "com.goaiapp.goai"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -27,13 +39,37 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        if (appEnv == "staging") {
+            applicationIdSuffix = ".staging"
+            manifestPlaceholders["appLabel"] = "goai_mobile staging"
+        } else {
+            manifestPlaceholders["appLabel"] = "goai_mobile"
+        }
+    }
+
+    // Release signing comes from the environment (CI secrets). Without it the
+    // release build falls back to the debug keys so `flutter run --release`
+    // still works locally. Never commit a keystore or its passwords.
+    val releaseKeystore = System.getenv("ANDROID_KEYSTORE_PATH")?.let { file(it) }
+    val hasReleaseKeystore = releaseKeystore?.exists() == true
+
+    signingConfigs {
+        if (hasReleaseKeystore) {
+            create("release") {
+                storeFile = releaseKeystore
+                storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("ANDROID_KEY_ALIAS")
+                keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName(
+                if (hasReleaseKeystore) "release" else "debug",
+            )
         }
     }
 }

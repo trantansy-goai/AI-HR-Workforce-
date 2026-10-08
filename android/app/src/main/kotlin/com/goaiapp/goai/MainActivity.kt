@@ -1,4 +1,4 @@
-package com.example.flutter_project_base
+package com.goaiapp.goai
 
 import io.flutter.embedding.android.FlutterActivity
 
