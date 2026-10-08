@@ -2,7 +2,6 @@
 
 Date: 2026-10-07
 Target Completion: October 8 (Feature Complete) | October 9 (Release/Demo Ready)
-Baseline: flutter_project_base v1.0.0
 Source of Truth: https://go-ai-hr-phase1-ui.trantansy.chatgpt.site/
 
 ---
@@ -54,17 +53,17 @@ The top-level navigation structure is organized into exactly 5 persistent bottom
 | Module | Implementation Status | Live Integration Status | Integrated Component | Notes / Pending Work |
 | :--- | :--- | :--- | :--- | :--- |
 | **Auth (UI/UX)** | IMPLEMENTED | READY | SignInPage, GoAI Branding | Redesigned per approved HR auth mockup (#0E3CAF, #D99F37, GoAI logo) |
-| **Auth (Business)** | IMPLEMENTED | BLOCKED | AuthController, AuthSessionStorage | Domain + Fake DataSource complete; awaiting /api/v1/auth/login |
-| **Session** | REAL | REAL | SecureStore, 401 refresh queue | Production-ready token lifecycle & HTTP refresh interceptor |
-| **RBAC / User Roles** | IMPLEMENTED | BLOCKED | AppRoutes.access, HomePage | Server-driven UI gating ready; awaiting backend permissions array |
-| **Open WebUI Client** | REAL | BLOCKED | OpenWebUiClient | Client & SSE parser complete; awaiting live server host & key |
-| **Agent Catalog** | IMPLEMENTED | PARTIAL | AgentRepository, ModelRepositoryImpl | GET /api/models wired; enterprise agent mapping pending |
-| **AI Chat** | REAL | BLOCKED | OpenWebUiChatProvider, ChatRepositoryImpl | Streaming, retry, cancel, citations wired; awaiting live endpoint |
-| **SSE Streaming** | REAL | BLOCKED | OpenWebUiSseParser | Parses text deltas, citations, [DONE], malformed JSON, server errors |
+| **Auth (Business)** | REAL | VERIFIED_LIVE | OpenWebUiAuthRemoteDataSource | Open WebUI signin / session check / signout verified on workforce.ai-iep.vn (2026-10-08) |
+| **Session** | REAL | REAL | SecureStore, AuthInterceptor | JWT in SecureStore; no refresh token, so 401 ends the session |
+| **RBAC / User Roles** | IMPLEMENTED | VERIFIED_LIVE | AuthUser.role / permissions | Open WebUI role + flattened permissions; attach button gated by `chat.file_upload` |
+| **Open WebUI Client** | REAL | VERIFIED_LIVE | OpenWebUiClient | Host https://workforce.ai-iep.vn, user JWT (no static key), 5 min chunk timeout |
+| **Agent Catalog** | REAL | VERIFIED_LIVE | agentsProvider, ModelRepositoryImpl | Agents = GET /api/models per user; Hỏi HR → employee_service. Server bug: `HR Chief Manager` → 400 Model not found |
+| **AI Chat** | REAL | VERIFIED_LIVE | OpenWebUiChatProvider, ChatRepositoryImpl | Per-agent model, RAG files, streaming/non-streaming, citations |
+| **SSE Streaming** | REAL | VERIFIED_LIVE | OpenWebUiSseParser | Raw live events recorded; tests replay them |
 | **Voice Recording** | IMPLEMENTED | VERIFIED_ON_PHYSICAL_DEVICE | NativeVoiceRecorder, FakeVoiceRecorder | Native recorder (record) verified on Samsung SM-X510 (Android 16). STT is BLOCKED |
 | **Documents** | IMPLEMENTED | BLOCKED | DocumentRepository, UI | Domain, fake repo, list/detail/download UI ready; secondary feature |
 | **File Picker** | IMPLEMENTED | VERIFIED_ON_PHYSICAL_DEVICE | NativeFilePicker, DefaultFilePickerService | Native file picker (file_picker) verified on Samsung SM-X510 (Android 16) |
-| **Remote Upload** | IMPLEMENTED | BLOCKED | FileUploader, FakeFileUploader | Upload abstraction ready; backend multipart upload API is BLOCKED |
+| **Remote Upload** | REAL | VERIFIED_LIVE | OpenWebUiFileUploader | Upload → completed → chat with file verified (text file); images/audio untested |
 | **E-learning** | IMPLEMENTED | BLOCKED | LearningRepository, UI | Domain, fake repo, course list/content UI ready; under Học tập tab |
 | **Online Test** | IMPLEMENTED | BLOCKED | OnlineTestRepository, UI | Domain, fake repo, test/question/result UI ready; under Học tập tab |
 | **News / Bản tin** | IMPLEMENTED | BLOCKED | NewsRepository, UI | Domain, fake repo; accessed via Trang chủ & Tài khoản |
@@ -78,6 +77,7 @@ The top-level navigation structure is organized into exactly 5 persistent bottom
 
 - IMPLEMENTED: Production Domain, Native Adapter, Controller, and UI presentation fully coded and unit/widget tested.
 - REAL: Production-grade infrastructure code implemented with no mock fallbacks.
+- VERIFIED_LIVE: App code exercised against the live Open WebUI server (workforce.ai-iep.vn) with a test account.
 - VERIFIED_ON_PHYSICAL_DEVICE: Native production adapter implemented and verified on physical hardware.
 - PARTIAL: Client adapter or UI ready; backend route mapping pending live verification.
 - BLOCKED: Live endpoint URL, API key, or backend API contract required from client.

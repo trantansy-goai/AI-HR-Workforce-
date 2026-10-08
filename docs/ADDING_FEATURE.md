@@ -1,10 +1,10 @@
 # Adding Features
 
-Checklists and templates for extending the base. Example used throughout: a
-generic `announcements` feature (list of announcements from an API).
+Checklists and templates for adding features to GOAI Mobile. Example used
+throughout: an `announcements` feature (list of announcements from an API).
 
-First ask: **is this generic?** If it only makes sense for one product, build
-it in that product's repository on top of the base, not here.
+Keep backend-specific details (endpoints, response shapes) in the feature's
+`data/` layer so domain and UI stay independent of the API.
 
 ---
 

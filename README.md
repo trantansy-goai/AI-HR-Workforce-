@@ -1,32 +1,26 @@
-# Flutter Project Base
+# GOAI Mobile
 
-A reusable, production-minded **foundation** for Flutter apps — enterprise,
-booking, fintech, SaaS, support desks, AI chat (remote or on-device) and
-user-to-user chat. It is not a product: it is the layer you start every
-product from.
-
-What you get out of the box:
+Mobile app for **GO AI Workforce** (Android + iOS, Flutter): employees sign in,
+ask HR and the GO AI agents (streamed answers with source citations, file
+attachments), and use the workspace tabs — Trang chủ, Hỏi HR, Việc của tôi,
+Học tập, Tài khoản.
 
 | Area | What's included |
 | --- | --- |
+| Backend | Open WebUI: JWT sign-in, session check, agent list (`/api/models`), streamed chat, file upload for RAG — see [docs/OPENWEBUI_API_MAPPING.md](docs/OPENWEBUI_API_MAPPING.md) |
 | Architecture | Feature-first Clean Architecture, Riverpod for state + DI |
-| Environments | development / staging / production via `--dart-define-from-file` |
-| Networking | Dio client, bearer-token injection, refresh-on-401, error normalization, redacted logging |
+| Environments | development (offline fakes) / staging / production via `--dart-define-from-file` |
+| Networking | Dio client, bearer-token injection, 401 → sign-out, error normalization, redacted logging |
 | Errors | Sealed `AppFailure` hierarchy + `Result<T>`; UI never sees library exceptions |
-| Storage | `KeyValueStore` (preferences) and `SecureStore` (tokens) abstractions |
-| Auth | Guest + email/password, session restore, token refresh, OAuth extension point |
-| Navigation | go_router with auth guard, guest-only routes, deep-link preservation, 404 page |
-| Design system | Material 3 theme from a seed color, light/dark/system, tokens, buttons, inputs, states, dialogs, snackbars, responsive helpers |
-| Localization | ARB-based, English + Vietnamese |
-| Settings | Theme, language (persisted), app info, sign out |
-| Profile | Minimal, extensible `UserProfile` |
-| Files | Vendor-neutral `Attachment` model, MIME helpers, uploader/picker interfaces |
-| Notifications | Local / push / in-app abstractions (in-app implemented) |
-| **Chat** | Generic chat engine: conversations, messages, participants, attachments, replies, statuses, typing, pagination, retry, streaming; replaceable providers (Mock, Remote AI, Local AI, Realtime) |
-| Tests | 86 unit, widget and app smoke tests |
+| Storage | `KeyValueStore` (preferences) and `SecureStore` (tokens) |
+| Navigation | go_router, auth guard, 5-tab workspace shell, deep links, 404 page |
+| Localization | ARB-based, Vietnamese + English |
+| Chat | Conversations per agent, streaming, stop/regenerate, retry, citations, attachments, voice notes |
+| CI/CD | Every PR into `main` → checks + staging APK on Firebase App Distribution ([docs/CI_CD.md](docs/CI_CD.md)) |
+| Tests | 219 unit, widget and app smoke tests |
 
-> Status of every module (DONE / PARTIAL / NOT IMPLEMENTED) is tracked in
-> [docs/REPORT.md](docs/REPORT.md).
+> Module status is tracked in [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md)
+> and [docs/REPORT.md](docs/REPORT.md).
 
 ---
 
@@ -43,22 +37,9 @@ flutter run --dart-define-from-file=config/development.json
 ```
 
 The development config uses an **in-process fake backend**
-(`USE_FAKE_BACKEND=true`), so the app runs with no server. Sign in with any
-email + a 6+ character password, or tap **Continue as guest**.
-
-Demo flow: **Splash → Sign in → Home → Chat demo / Foundation showcase /
-Profile / Settings**.
-
-In the chat demo:
-
-- **Mock Assistant** – streamed AI-style answers; stop button while
-  generating; *Regenerate*; end a message with `?` to see citations.
-- **Customer Support** – human-agent style replies with a typing indicator;
-  scroll up to load older pages (45 seeded messages).
-- **Product Team** – group chat.
-- Include `/fail` in a message to simulate a failed send, then tap it to retry.
-- Paperclip attaches a sample PDF (simulated upload with progress).
-- Long-press a message to reply to it.
+(`USE_FAKE_BACKEND=true`), so the app runs with no server and shows demo data.
+Staging/production use the real Open WebUI server and sign in with email +
+password (test accounts come from the backend team; never commit them).
 
 ## Environments
 
@@ -85,8 +66,8 @@ paid services (LLM vendors, payment providers) in these files — call them
 through your backend. For per-developer overrides create
 `config/<env>.local.json` (git-ignored).
 
-When you have a real backend, set `USE_FAKE_BACKEND` to `false` and adjust
-`HttpAuthRemoteDataSource` to your API shape.
+Staging and production talk to Open WebUI (`OPEN_WEBUI_BASE_URL`,
+`USE_FAKE_BACKEND=false`); see `docs/OPENWEBUI_API_MAPPING.md`.
 
 Running without any `--dart-define` uses development defaults.
 
@@ -98,10 +79,6 @@ flutter test
 dart format lib test
 flutter build apk --debug --dart-define-from-file=config/development.json
 ```
-
-> `dart format .` can crash on Windows when the project path is very long,
-> because it walks generated `ios/Flutter/ephemeral` folders. Formatting
-> `lib test` avoids it.
 
 ## Project structure
 
@@ -124,11 +101,13 @@ lib/
 │   └── theme/                # AppTheme, spacing/radius/breakpoint tokens
 ├── shared/                   # reusable widgets, models, utils (no business logic)
 └── features/
-    ├── auth/                 # domain / data / application / presentation
-    ├── chat/                 # generic chat engine (see docs/CHAT_MODULE.md)
-    ├── file/                 # attachments, MIME, uploader & picker contracts
-    ├── home/                 # demo home + foundation showcase (replace in apps)
-    ├── notification/         # local / push / in-app abstractions
+    ├── auth/                 # Open WebUI sign-in, session (domain / data / application / presentation)
+    ├── chat/                 # chat engine + Open WebUI provider (see docs/CHAT_MODULE.md)
+    ├── file/                 # attachments, MIME, Open WebUI uploader, pickers
+    ├── home/                 # workspace shell + Trang chủ
+    ├── my_work/, approval/   # Việc của tôi, approvals
+    ├── elearning/, online_test/  # Học tập
+    ├── news/, document/, quota/, notification/, voice/
     ├── profile/
     └── settings/
 ```
@@ -143,6 +122,7 @@ only created when they contain something.
 - [docs/CHAT_MODULE.md](docs/CHAT_MODULE.md) — chat engine and providers (realtime, remote AI, local AI, RAG)
 - [docs/ADDING_FEATURE.md](docs/ADDING_FEATURE.md) — checklists to add features, APIs, screens, routes, tests
 - [docs/REPORT.md](docs/REPORT.md) — current status, decisions, known issues, review guide
+- [docs/CI_CD.md](docs/CI_CD.md) — PR builds to Firebase App Distribution (setup, secrets, QA flow)
 
 ## Adding a language
 
@@ -152,14 +132,3 @@ only created when they contain something.
    Generated files in `lib/core/localization/generated/` are committed.
 3. Add the language name to `SettingsPage._languageName`.
 4. For iOS, add the locale to `CFBundleLocalizations` in `ios/Runner/Info.plist` (en and vi are already listed).
-
-## Starting a new app from this base
-
-1. Rename the package (`pubspec.yaml` `name`, imports) and the application id
-   (`android/app/build.gradle.kts` `applicationId`/`namespace`, iOS bundle id).
-   The base uses `com.example.flutter_project_base`, which stores reject.
-2. Set your brand seed color in `appThemeProvider` (`lib/app/app.dart`).
-3. Point `config/*.json` at your API and turn off `USE_FAKE_BACKEND`.
-4. Replace `features/home` with your real home; keep or delete demo features.
-5. Override `chatProviderProvider` with your real chat provider.
-6. Configure release signing (keystore **outside** the repo).

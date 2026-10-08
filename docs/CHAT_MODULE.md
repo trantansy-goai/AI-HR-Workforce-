@@ -152,7 +152,7 @@ Owns all chat behavior so providers stay thin:
 
 ## Cache
 
-`ChatCache` stores conversations and messages and exposes streams. The base
+`ChatCache` stores conversations and messages and exposes streams. The app
 ships `InMemoryChatCache` (lost on restart). For offline history implement
 `ChatCache` with Drift/SQLite/Isar and override `chatCacheProvider`. The
 cache is recreated when the signed-in user changes, so data never leaks
@@ -195,7 +195,7 @@ Sending is optimistic (marked `sent` once the frame is written). The server
 can echo the message as `MessageUpserted(replacesId: clientMessageId)` to
 assign its id, and later send `delivered`/`read` updates the same way.
 Typing → `TypingChanged`. Reconnect/backoff and presence belong in your
-transport. No concrete WebSocket transport or JSON codec ships in the base
+transport. No concrete WebSocket transport or JSON codec ships in the app
 (it depends on your backend protocol).
 
 ## Remote AI
@@ -248,8 +248,8 @@ chatProviderProvider.overrideWith((ref) => LocalAIChatProvider(
 ```
 
 The model is loaded lazily on first generation and kept loaded; `dispose`
-unloads it. The base bundles **no** model and **no** native inference
-dependency — add them in the app that needs offline AI. Pair with a
+unloads it. The app bundles **no** model and **no** native inference
+dependency — add them when offline AI is needed. Pair with a
 persistent `ChatCache` for offline history.
 
 ## RAG

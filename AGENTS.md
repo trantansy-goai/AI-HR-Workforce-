@@ -1,16 +1,16 @@
 # AGENTS.md — Instructions for AI coding agents (and humans)
 
-This repository is a **reusable Flutter foundation**, not an app. Every
-change must keep it usable as the starting point for many unrelated products
-(enterprise, booking, fintech, SaaS, support, AI chat, local AI chat,
-user-to-user chat).
+This repository is **GOAI Mobile**, the GO AI Workforce employee app
+(Flutter, Android + iOS). It talks to Open WebUI for auth, AI agents, chat
+and files (`docs/OPENWEBUI_API_MAPPING.md`).
 
-> **Golden rule: the base stays generic. Business-specific code belongs to the
-> application that uses the base, never to the foundation.**
+> **Golden rule: `lib/core` and the generic domains (chat, file, auth) stay
+> product-neutral. GO AI–specific screens, API shapes and wording live in the
+> feature's `data/` and `presentation/` layers.**
 
-If a change only makes sense for one product (a "booking" entity, a specific
-vendor SDK, a company's API shape), it does not belong here. Put an extension
-point here instead and implement it in the app.
+A vendor- or backend-specific detail (an endpoint, a model id, a response
+shape) belongs in a data source or provider implementation, never in core
+or domain entities. Add an extension point instead of special-casing.
 
 ## Before you start
 
