@@ -10,6 +10,7 @@ extension AppFailureMessage on AppFailure {
     ForbiddenFailure() => l10n.errorForbidden,
     NotFoundFailure() => l10n.errorNotFound,
     ValidationFailure() => l10n.errorValidation,
+    RateLimitFailure() => l10n.errorRateLimited,
     ServerFailure() => l10n.errorServer,
     StorageFailure() => l10n.errorStorage,
     CancelledFailure() || UnknownFailure() => l10n.errorUnknown,

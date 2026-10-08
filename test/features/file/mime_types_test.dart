@@ -1,6 +1,6 @@
-import 'package:flutter_project_base/features/file/domain/attachment.dart';
-import 'package:flutter_project_base/features/file/domain/mime_types.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/features/file/domain/attachment.dart';
+import 'package:goai_mobile/features/file/domain/mime_types.dart';
 
 void main() {
   test('detects MIME type from file name', () {

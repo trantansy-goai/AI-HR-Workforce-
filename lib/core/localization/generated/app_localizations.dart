@@ -182,6 +182,12 @@ abstract class AppLocalizations {
   /// **'Some information is invalid. Please check and try again.'**
   String get errorValidation;
 
+  /// No description provided for @errorRateLimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many requests. Please wait a moment and try again.'**
+  String get errorRateLimited;
+
   /// No description provided for @errorServer.
   ///
   /// In en, this message translates to:
@@ -326,6 +332,12 @@ abstract class AppLocalizations {
   /// **'Password'**
   String get authPasswordLabel;
 
+  /// No description provided for @authPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your password'**
+  String get authPasswordRequired;
+
   /// No description provided for @authSignInButton.
   ///
   /// In en, this message translates to:
@@ -395,7 +407,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'This base app demonstrates reusable foundation modules.'**
+  /// **'GO AI Workforce for employees.'**
   String get homeSubtitle;
 
   /// No description provided for @homeChatTitle.

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import '../../../../shared/models/paged.dart';
 import '../../../../shared/utils/id_generator.dart';
+import '../../../file/domain/attachment.dart';
 import '../../domain/ai/text_generation.dart';
 import '../../domain/chat_provider.dart';
 import '../../domain/entities/chat_event.dart';
@@ -164,12 +165,23 @@ abstract class AiChatProviderBase implements GenerativeChatProvider {
     yield MessageUpserted(reply);
   }
 
+  /// Model/agent to answer in [conversationId]; null uses the engine's
+  /// current model.
+  String? modelIdFor(String conversationId) => null;
+
   /// Maps chat history to model turns. Override to customize prompting
   /// (e.g. inject RAG context or trim to the context window).
   GenerationRequest buildRequest(String conversationId, List<Message> history) {
     return GenerationRequest(
       conversationId: conversationId,
       options: options,
+      modelId: modelIdFor(conversationId),
+      fileIds: [
+        for (final m in history)
+          for (final a in m.attachments)
+            if (a.source case RemoteAttachmentSource(:final storageKey?))
+              storageKey,
+      ],
       turns: [
         if (systemPrompt != null) ChatTurn(AiRole.system, systemPrompt!),
         for (final m in history)

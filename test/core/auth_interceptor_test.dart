@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
-import 'package:flutter_project_base/core/auth/access_token_source.dart';
-import 'package:flutter_project_base/core/error/app_failure.dart';
-import 'package:flutter_project_base/core/network/api_client.dart';
-import 'package:flutter_project_base/core/network/interceptors/auth_interceptor.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/core/auth/access_token_source.dart';
+import 'package:goai_mobile/core/error/app_failure.dart';
+import 'package:goai_mobile/core/network/api_client.dart';
+import 'package:goai_mobile/core/network/interceptors/auth_interceptor.dart';
 
 /// Returns 401 unless the request carries `Bearer <validToken>`.
 class _FakeAdapter implements HttpClientAdapter {

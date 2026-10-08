@@ -1,6 +1,6 @@
-import 'package:flutter_project_base/features/approval/data/fake_approval_repository.dart';
-import 'package:flutter_project_base/features/approval/domain/approval_item.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/features/approval/data/fake_approval_repository.dart';
+import 'package:goai_mobile/features/approval/domain/approval_item.dart';
 
 void main() {
   group('FakeApprovalRepository', () {

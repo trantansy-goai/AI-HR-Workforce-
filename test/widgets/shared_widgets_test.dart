@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project_base/core/error/app_failure.dart';
-import 'package:flutter_project_base/shared/widgets/app_button.dart';
-import 'package:flutter_project_base/shared/widgets/app_feedback.dart';
-import 'package:flutter_project_base/shared/widgets/app_text_field.dart';
-import 'package:flutter_project_base/shared/widgets/hr_top_bar.dart';
-import 'package:flutter_project_base/shared/widgets/state_views.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/core/error/app_failure.dart';
+import 'package:goai_mobile/shared/widgets/app_button.dart';
+import 'package:goai_mobile/shared/widgets/app_feedback.dart';
+import 'package:goai_mobile/shared/widgets/app_text_field.dart';
+import 'package:goai_mobile/shared/widgets/hr_top_bar.dart';
+import 'package:goai_mobile/shared/widgets/state_views.dart';
 
 import '../helpers/test_helpers.dart';
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project_base/features/chat/presentation/widgets/file_type_sheet.dart';
-import 'package:flutter_project_base/features/file/domain/attachment.dart';
-import 'package:flutter_project_base/features/file/presentation/attachment_viewers.dart';
-import 'package:flutter_project_base/features/file/presentation/file_type_style.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/features/chat/presentation/widgets/file_type_sheet.dart';
+import 'package:goai_mobile/features/file/domain/attachment.dart';
+import 'package:goai_mobile/features/file/presentation/attachment_viewers.dart';
+import 'package:goai_mobile/features/file/presentation/file_type_style.dart';
 
 import '../../helpers/test_helpers.dart';
 

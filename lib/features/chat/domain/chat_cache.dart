@@ -3,7 +3,7 @@ import 'entities/message.dart';
 
 /// Local store of conversations/messages, the source of truth for the UI.
 ///
-/// The base ships an in-memory implementation. For offline persistence,
+/// The app ships an in-memory implementation. For offline persistence,
 /// implement this with Drift/SQLite/Isar; nothing else changes.
 abstract interface class ChatCache {
   List<Conversation> get conversations;

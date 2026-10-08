@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project_base/features/chat/domain/entities/message.dart';
-import 'package:flutter_project_base/features/chat/domain/entities/message_metadata.dart';
-import 'package:flutter_project_base/features/chat/domain/entities/participant.dart';
-import 'package:flutter_project_base/features/chat/domain/extensions/ai_extensions.dart';
-import 'package:flutter_project_base/features/chat/presentation/widgets/chat_composer.dart';
-import 'package:flutter_project_base/features/chat/presentation/widgets/message_bubble.dart';
-import 'package:flutter_project_base/features/chat/presentation/widgets/typing_indicator.dart';
-import 'package:flutter_project_base/features/file/domain/attachment.dart';
-import 'package:flutter_project_base/features/file/presentation/attachment_viewers.dart';
-import 'package:flutter_project_base/features/voice/data/fake_voice_recorder.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/features/chat/domain/entities/message.dart';
+import 'package:goai_mobile/features/chat/domain/entities/message_metadata.dart';
+import 'package:goai_mobile/features/chat/domain/entities/participant.dart';
+import 'package:goai_mobile/features/chat/domain/extensions/ai_extensions.dart';
+import 'package:goai_mobile/features/chat/presentation/widgets/chat_composer.dart';
+import 'package:goai_mobile/features/chat/presentation/widgets/message_bubble.dart';
+import 'package:goai_mobile/features/chat/presentation/widgets/typing_indicator.dart';
+import 'package:goai_mobile/features/file/domain/attachment.dart';
+import 'package:goai_mobile/features/file/presentation/attachment_viewers.dart';
+import 'package:goai_mobile/features/voice/data/fake_voice_recorder.dart';
 
 import '../helpers/test_helpers.dart';
 

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project_base/app/app.dart';
-import 'package:flutter_project_base/app/pages.dart';
-import 'package:flutter_project_base/core/theme/app_theme.dart';
-import 'package:flutter_project_base/core/theme/app_tokens.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/app/app.dart';
+import 'package:goai_mobile/app/pages.dart';
+import 'package:goai_mobile/core/theme/app_theme.dart';
+import 'package:goai_mobile/core/theme/app_tokens.dart';
 
 import '../helpers/test_helpers.dart';
 

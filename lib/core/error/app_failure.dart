@@ -78,6 +78,21 @@ class ServerFailure extends AppFailure {
   List<Object?> get props => [...super.props, statusCode];
 }
 
+/// HTTP 429: the server asked the client to slow down. Back off before
+/// retrying; [retryAfter] comes from the `Retry-After` header when present.
+class RateLimitFailure extends AppFailure {
+  const RateLimitFailure({
+    String message = 'Too many requests',
+    this.retryAfter,
+    super.cause,
+  }) : super(message);
+
+  final Duration? retryAfter;
+
+  @override
+  List<Object?> get props => [...super.props, retryAfter];
+}
+
 class StorageFailure extends AppFailure {
   const StorageFailure([super.message = 'Storage error', Object? cause])
     : super(cause: cause);

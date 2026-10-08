@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project_base/app/app.dart';
-import 'package:flutter_project_base/features/chat/application/chat_providers.dart';
-import 'package:flutter_project_base/features/chat/data/providers/mock_chat_provider.dart';
-import 'package:flutter_project_base/features/chat/domain/chat_provider.dart';
-import 'package:flutter_project_base/features/chat/presentation/chat_hub_page.dart';
-import 'package:flutter_project_base/features/elearning/presentation/elearning_hub_page.dart';
-import 'package:flutter_project_base/features/home/presentation/trang_chu_page.dart';
-import 'package:flutter_project_base/features/my_work/presentation/my_work_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/app/app.dart';
+import 'package:goai_mobile/features/chat/application/chat_providers.dart';
+import 'package:goai_mobile/features/chat/data/providers/mock_chat_provider.dart';
+import 'package:goai_mobile/features/chat/domain/chat_provider.dart';
+import 'package:goai_mobile/features/chat/presentation/chat_hub_page.dart';
+import 'package:goai_mobile/features/elearning/presentation/elearning_hub_page.dart';
+import 'package:goai_mobile/features/home/presentation/trang_chu_page.dart';
+import 'package:goai_mobile/features/my_work/presentation/my_work_page.dart';
 
 import '../../helpers/test_helpers.dart';
 

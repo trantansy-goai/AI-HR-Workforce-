@@ -57,6 +57,15 @@ class FakeAuthRemoteDataSource implements AuthRemoteDataSource {
   }
 
   @override
+  Future<AuthSession> verify(AuthSession session) async {
+    await Future<void>.delayed(latency);
+    if (!session.accessToken.startsWith('fake-access-')) {
+      throw const UnauthorizedFailure('Invalid access token');
+    }
+    return session;
+  }
+
+  @override
   Future<void> signOut(AuthSession session) async {}
 
   AuthSession _issue(AuthUser user) {

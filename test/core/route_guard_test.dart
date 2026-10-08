@@ -1,7 +1,7 @@
-import 'package:flutter_project_base/app/router/app_routes.dart';
-import 'package:flutter_project_base/core/auth/session_status.dart';
-import 'package:flutter_project_base/core/navigation/route_access.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/app/router/app_routes.dart';
+import 'package:goai_mobile/core/auth/session_status.dart';
+import 'package:goai_mobile/core/navigation/route_access.dart';
 
 void main() {
   const guard = RouteGuard(

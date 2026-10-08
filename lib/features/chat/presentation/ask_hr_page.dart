@@ -8,6 +8,7 @@ import '../../../core/theme/hr_theme.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/hr_top_bar.dart';
 import '../../../shared/widgets/hr_widgets.dart';
+import '../domain/entities/agent_item.dart';
 import 'widgets/hr_answer_widgets.dart';
 
 /// Tab 2: Hỏi HR (M03 · A4) — ask a policy question, jump to common topics,
@@ -37,7 +38,7 @@ class _AskHrPageState extends State<AskHrPage> {
     if (question.isEmpty) return;
     _questionController.clear();
     FocusScope.of(context).unfocus();
-    final id = 'agent-hr-assistant-${DateTime.now().millisecondsSinceEpoch}';
+    final id = AgentItem.newConversationId(AgentItem.hrAssistantId);
     context.push(AppRoutes.conversation(id, initialMessage: question));
   }
 

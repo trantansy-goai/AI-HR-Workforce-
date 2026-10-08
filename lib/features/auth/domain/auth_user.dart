@@ -9,6 +9,8 @@ class AuthUser extends Equatable {
     this.displayName,
     this.avatarUrl,
     this.isAnonymous = false,
+    this.role,
+    this.permissions,
   });
 
   factory AuthUser.fromJson(Map<String, dynamic> json) => AuthUser(
@@ -17,6 +19,10 @@ class AuthUser extends Equatable {
     displayName: json['displayName'] as String?,
     avatarUrl: json['avatarUrl'] as String?,
     isAnonymous: json['isAnonymous'] as bool? ?? false,
+    role: json['role'] as String?,
+    permissions: (json['permissions'] as List<dynamic>?)
+        ?.map((p) => p.toString())
+        .toSet(),
   );
 
   final String id;
@@ -27,14 +33,37 @@ class AuthUser extends Equatable {
   /// True for guest sessions.
   final bool isAnonymous;
 
+  /// Server-assigned role (e.g. `admin`, `user`), when the backend has one.
+  final String? role;
+
+  /// Granted permissions as dotted keys (e.g. `chat.file_upload`), as
+  /// reported by the server. Null when the backend reports none; UI gating
+  /// is a convenience only, the server still enforces access.
+  final Set<String>? permissions;
+
+  /// False only when the server reported permissions and [permission] is not
+  /// among them.
+  bool allows(String permission) =>
+      permissions == null || permissions!.contains(permission);
+
   Map<String, dynamic> toJson() => {
     'id': id,
     'email': email,
     'displayName': displayName,
     'avatarUrl': avatarUrl,
     'isAnonymous': isAnonymous,
+    'role': role,
+    'permissions': permissions?.toList(),
   };
 
   @override
-  List<Object?> get props => [id, email, displayName, avatarUrl, isAnonymous];
+  List<Object?> get props => [
+    id,
+    email,
+    displayName,
+    avatarUrl,
+    isAnonymous,
+    role,
+    permissions,
+  ];
 }

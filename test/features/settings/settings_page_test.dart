@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project_base/features/settings/presentation/settings_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/features/settings/presentation/settings_page.dart';
 
 import '../../helpers/test_helpers.dart';
 

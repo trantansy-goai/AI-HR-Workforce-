@@ -55,6 +55,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Some information is invalid. Please check and try again.';
 
   @override
+  String get errorRateLimited =>
+      'Too many requests. Please wait a moment and try again.';
+
+  @override
   String get errorServer => 'The server had a problem. Please try again later.';
 
   @override
@@ -132,6 +136,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authPasswordLabel => 'Password';
 
   @override
+  String get authPasswordRequired => 'Please enter your password';
+
+  @override
   String get authSignInButton => 'Sign in';
 
   @override
@@ -171,8 +178,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get homeSubtitle =>
-      'This base app demonstrates reusable foundation modules.';
+  String get homeSubtitle => 'GO AI Workforce for employees.';
 
   @override
   String get homeChatTitle => 'Chat demo';

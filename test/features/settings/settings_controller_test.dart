@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project_base/core/storage/key_value_store.dart';
-import 'package:flutter_project_base/features/settings/application/settings_controller.dart';
-import 'package:flutter_project_base/features/settings/data/settings_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/core/storage/key_value_store.dart';
+import 'package:goai_mobile/features/settings/application/settings_controller.dart';
+import 'package:goai_mobile/features/settings/data/settings_repository.dart';
 
 import '../../helpers/test_helpers.dart';
 

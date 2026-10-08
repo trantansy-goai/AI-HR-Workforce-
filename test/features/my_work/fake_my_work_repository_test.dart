@@ -1,6 +1,6 @@
-import 'package:flutter_project_base/features/my_work/data/fake_my_work_repository.dart';
-import 'package:flutter_project_base/features/my_work/domain/my_work_item.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/features/my_work/data/fake_my_work_repository.dart';
+import 'package:goai_mobile/features/my_work/domain/my_work_item.dart';
 
 void main() {
   test('submitRequest opens a received case and lists it first', () async {

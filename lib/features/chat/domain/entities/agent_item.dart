@@ -11,6 +11,19 @@ class AgentItem extends Equatable {
     this.modelId,
   });
 
+  /// Agent behind the Hỏi HR tab. Transports map it to a server model
+  /// (see `OpenWebUiChatProvider.agentModelIds`).
+  static const hrAssistantId = 'hr-assistant';
+
+  /// Conversation id for a new chat with agent [agentId]
+  /// (`agent-<agentId>-<millis>`).
+  static String newConversationId(String agentId, {DateTime? now}) =>
+      'agent-$agentId-${(now ?? DateTime.now()).millisecondsSinceEpoch}';
+
+  /// The agent id encoded by [newConversationId], or null for other ids.
+  static String? agentIdOf(String conversationId) =>
+      RegExp(r'^agent-(.+)-\d+$').firstMatch(conversationId)?.group(1);
+
   final String id;
   final String name;
   final String description;

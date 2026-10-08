@@ -1,11 +1,11 @@
-import 'package:flutter_project_base/core/auth/session_status.dart';
-import 'package:flutter_project_base/core/storage/secure_store.dart';
-import 'package:flutter_project_base/features/auth/application/auth_providers.dart';
-import 'package:flutter_project_base/features/auth/data/auth_session_storage.dart';
-import 'package:flutter_project_base/features/auth/domain/auth_session.dart';
-import 'package:flutter_project_base/features/auth/domain/auth_state.dart';
-import 'package:flutter_project_base/features/auth/domain/auth_user.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/core/auth/session_status.dart';
+import 'package:goai_mobile/core/storage/secure_store.dart';
+import 'package:goai_mobile/features/auth/application/auth_providers.dart';
+import 'package:goai_mobile/features/auth/data/auth_session_storage.dart';
+import 'package:goai_mobile/features/auth/domain/auth_session.dart';
+import 'package:goai_mobile/features/auth/domain/auth_state.dart';
+import 'package:goai_mobile/features/auth/domain/auth_user.dart';
 
 import '../../helpers/test_helpers.dart';
 
@@ -29,7 +29,7 @@ void main() {
     await AuthSessionStorage(secure).write(
       const AuthSession(
         user: AuthUser(id: 'u1', displayName: 'Mai'),
-        accessToken: 'a',
+        accessToken: 'fake-access-1',
       ),
     );
     final container = createTestContainer(secureStore: secure);
@@ -37,6 +37,22 @@ void main() {
     await _settle();
     await _settle();
     expect(container.read(authControllerProvider).user?.displayName, 'Mai');
+  });
+
+  test('drops a stored session the server rejects', () async {
+    final secure = InMemorySecureStore();
+    await AuthSessionStorage(secure).write(
+      const AuthSession(
+        user: AuthUser(id: 'u1'),
+        accessToken: 'revoked',
+      ),
+    );
+    final container = createTestContainer(secureStore: secure);
+    container.read(authControllerProvider);
+    await _settle();
+    await _settle();
+    expect(container.read(authControllerProvider), isA<Unauthenticated>());
+    expect(await AuthSessionStorage(secure).read(), isNull);
   });
 
   test('sign in, guest and sign out update state', () async {

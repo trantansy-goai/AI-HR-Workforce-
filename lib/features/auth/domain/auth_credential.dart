@@ -20,7 +20,7 @@ class EmailPasswordCredential extends AuthCredential {
 
 /// Extension point for Google/Apple/Facebook/etc. The platform SDK obtains
 /// [token] (ID token or auth code); the backend verifies it.
-/// No vendor SDK is bundled in the base.
+/// No vendor SDK is bundled.
 class OAuthCredential extends AuthCredential {
   const OAuthCredential({required this.provider, required this.token});
 

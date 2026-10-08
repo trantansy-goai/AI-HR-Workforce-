@@ -1,5 +1,5 @@
-import 'package:flutter_project_base/features/quota/domain/user_quota.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/features/quota/domain/user_quota.dart';
 
 void main() {
   group('UserQuota Entity Logic', () {

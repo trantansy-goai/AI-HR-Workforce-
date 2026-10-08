@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project_base/features/auth/application/auth_providers.dart';
-import 'package:flutter_project_base/features/auth/domain/auth_state.dart';
-import 'package:flutter_project_base/features/auth/presentation/sign_in_page.dart';
-import 'package:flutter_project_base/shared/widgets/app_text_field.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/core/config/app_config.dart';
+import 'package:goai_mobile/features/auth/application/auth_providers.dart';
+import 'package:goai_mobile/features/auth/domain/auth_state.dart';
+import 'package:goai_mobile/features/auth/presentation/sign_in_page.dart';
+import 'package:goai_mobile/shared/widgets/app_text_field.dart';
 
 import '../../helpers/test_helpers.dart';
 
@@ -13,10 +14,14 @@ void main() {
   Widget buildSubject({
     Locale locale = const Locale('vi'),
     List<Override> overrides = const [],
+    AppConfig config = testConfig,
   }) {
     return ProviderScope(
       retry: noRetry,
-      overrides: [...baseTestOverrides(), ...overrides],
+      overrides: [
+        ...baseTestOverrides(config: config),
+        ...overrides,
+      ],
       child: testApp(const SignInPage(), locale: locale),
     );
   }
@@ -227,5 +232,70 @@ void main() {
     final cta = tester.getRect(find.byType(FilledButton).first);
     expect(cta.width, lessThanOrEqualTo(480));
     expect(cta.center.dx, closeTo(400, 1));
+  });
+
+  group('real backend (Open WebUI)', () {
+    const realConfig = AppConfig(
+      environment: AppEnvironment.staging,
+      appName: 'Test App',
+      apiBaseUrl: 'https://api.test',
+      useFakeNativeAdapters: true,
+    );
+
+    testWidgets('asks for email and password instead of phone', (tester) async {
+      await tester.pumpWidget(
+        buildSubject(locale: const Locale('en'), config: realConfig),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Email'), findsWidgets);
+      expect(find.text('Password'), findsWidgets);
+      expect(find.text('Registered phone number'), findsNothing);
+      expect(find.text('Continue as guest'), findsNothing);
+
+      await tester.tap(find.text('Sign in'));
+      await tester.pumpAndSettle();
+      expect(find.text('Enter a valid email address'), findsOneWidget);
+      expect(find.text('Please enter your password'), findsOneWidget);
+    });
+
+    testWidgets('signs in with the entered credentials', (tester) async {
+      await tester.pumpWidget(
+        buildSubject(locale: const Locale('en'), config: realConfig),
+      );
+      await tester.pumpAndSettle();
+
+      final fields = find.byType(AppTextField);
+      await tester.enterText(fields.at(0), ' hr@company.test ');
+      await tester.enterText(fields.at(1), 'secret1');
+      await tester.tap(find.text('Sign in'));
+      await tester.pumpAndSettle();
+
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(SignInPage)),
+      );
+      expect(
+        container.read(authControllerProvider).user?.email,
+        'hr@company.test',
+      );
+    });
+
+    testWidgets('shows an error when the server rejects the password', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildSubject(locale: const Locale('en'), config: realConfig),
+      );
+      await tester.pumpAndSettle();
+
+      final fields = find.byType(AppTextField);
+      await tester.enterText(fields.at(0), 'hr@company.test');
+      // The fake backend rejects passwords shorter than 6 characters.
+      await tester.enterText(fields.at(1), '123');
+      await tester.tap(find.text('Sign in'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(SnackBar), findsOneWidget);
+    });
   });
 }

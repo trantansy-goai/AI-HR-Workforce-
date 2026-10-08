@@ -1,6 +1,6 @@
-import 'package:flutter_project_base/features/online_test/data/fake_test_repository.dart';
-import 'package:flutter_project_base/features/online_test/domain/test_models.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/features/online_test/data/fake_test_repository.dart';
+import 'package:goai_mobile/features/online_test/domain/test_models.dart';
 
 void main() {
   group('OnlineTestRepository & Models', () {
