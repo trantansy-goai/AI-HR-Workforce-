@@ -94,6 +94,7 @@
   "chatCancelReply": "Hủy trả lời",
   "chatTyping": "{name} đang nhập…",
   "chatSources": "Nguồn tham khảo",
+  "chatTranscribing": "Đang chuyển giọng nói thành chữ…",
   "chatYou": "Bạn",
   "chatDemoHint": "Mẹo: thêm \"/fail\" vào tin nhắn để giả lập gửi thất bại.",
   "chatUploading": "Đang tải lên…",

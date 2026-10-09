@@ -19,6 +19,7 @@ class MessageBubble extends StatelessWidget {
     this.onReply,
     this.onRegenerate,
     this.onOpenSource,
+    this.transcribing = false,
   });
 
   final Message message;
@@ -32,6 +33,10 @@ class MessageBubble extends StatelessWidget {
 
   /// Makes citation chips tappable (e.g. to open the cited document).
   final ValueChanged<SourceReference>? onOpenSource;
+
+  /// The voice note's text is being produced; it replaces this hint in the
+  /// same bubble.
+  final bool transcribing;
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +79,17 @@ class MessageBubble extends StatelessWidget {
               foreground: message.isFailed
                   ? scheme.onErrorContainer
                   : foreground,
+            ),
+          if (transcribing && message.content.isEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: AppSpacing.xxs),
+              child: Text(
+                l10n.chatTranscribing,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: foreground.withValues(alpha: 0.75),
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
             ),
           if (message.content.isNotEmpty || message.isStreaming)
             Text.rich(

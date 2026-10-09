@@ -1,8 +1,12 @@
+import 'dart:ui' show PlatformDispatcher;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/core_providers.dart';
 import '../../auth/application/auth_providers.dart';
 import '../../file/application/file_providers.dart';
+import '../../settings/application/settings_controller.dart';
+import '../../voice/application/voice_providers.dart';
 import '../data/cache/in_memory_chat_cache.dart';
 import '../data/chat_repository_impl.dart';
 import '../data/fixtures/chat_fixtures.dart';
@@ -105,6 +109,12 @@ final chatRepositoryProvider = Provider<ChatRepository>((ref) {
     self: ref.watch(chatSelfProvider),
     uploader: ref.watch(fileUploaderProvider),
     logger: ref.watch(appLoggerProvider),
+    transcriber: ref.watch(speechTranscriberProvider),
+    // The app's language (or the device's when it follows the system).
+    transcriptionLanguage: () =>
+        (ref.read(settingsControllerProvider).locale ??
+                PlatformDispatcher.instance.locale)
+            .languageCode,
   );
   ref.onDispose(repository.dispose);
   return repository;

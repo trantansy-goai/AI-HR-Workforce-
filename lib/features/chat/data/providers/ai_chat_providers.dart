@@ -179,8 +179,11 @@ abstract class AiChatProviderBase implements GenerativeChatProvider {
       fileIds: [
         for (final m in history)
           for (final a in m.attachments)
-            if (a.source case RemoteAttachmentSource(:final storageKey?))
-              storageKey,
+            // A transcribed voice note reaches the model as its text; the
+            // recording itself is no document to search.
+            if (!(a.kind == AttachmentKind.audio && m.content.isNotEmpty))
+              if (a.source case RemoteAttachmentSource(:final storageKey?))
+                storageKey,
       ],
       turns: [
         if (systemPrompt != null) ChatTurn(AiRole.system, systemPrompt!),

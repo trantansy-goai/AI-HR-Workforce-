@@ -122,6 +122,7 @@
     }
   },
   "chatSources": "Sources",
+  "chatTranscribing": "Transcribing your voice note…",
   "chatYou": "You",
   "chatDemoHint": "Tip: include \"/fail\" in a message to simulate a failed send.",
   "chatUploading": "Uploading…",

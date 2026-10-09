@@ -662,6 +662,12 @@ abstract class AppLocalizations {
   /// **'Sources'**
   String get chatSources;
 
+  /// No description provided for @chatTranscribing.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcribing your voice note…'**
+  String get chatTranscribing;
+
   /// No description provided for @chatYou.
   ///
   /// In en, this message translates to:

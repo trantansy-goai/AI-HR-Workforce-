@@ -316,6 +316,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get chatSources => 'Nguồn tham khảo';
 
   @override
+  String get chatTranscribing => 'Đang chuyển giọng nói thành chữ…';
+
+  @override
   String get chatYou => 'Bạn';
 
   @override

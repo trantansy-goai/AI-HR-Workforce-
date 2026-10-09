@@ -6,6 +6,7 @@ import '../../../core/logging/app_logger.dart';
 import '../../../shared/utils/id_generator.dart';
 import '../../file/domain/attachment.dart';
 import '../../file/domain/file_services.dart';
+import '../../voice/domain/speech_transcriber.dart';
 import '../domain/chat_cache.dart';
 import '../domain/chat_provider.dart';
 import '../domain/chat_repository.dart';
@@ -25,7 +26,10 @@ class ChatRepositoryImpl implements ChatRepository {
     DateTime Function()? clock,
     this.pageSize = 30,
     this.historyWindow = 20,
-  }) : _ids = ids ?? RandomIdGenerator(),
+    this._transcriber,
+    String? Function()? transcriptionLanguage,
+  }) : _transcriptionLanguage = transcriptionLanguage ?? (() => null),
+       _ids = ids ?? RandomIdGenerator(),
        _clock = clock ?? DateTime.now {
     _incoming = _provider.incoming.listen(
       _apply,
@@ -38,6 +42,10 @@ class ChatRepositoryImpl implements ChatRepository {
   final ChatCache _cache;
   final IdGenerator _ids;
   final FileUploader? _uploader;
+
+  /// Turns voice notes into the message text; null sends audio only.
+  final SpeechTranscriber? _transcriber;
+  final String? Function() _transcriptionLanguage;
   final AppLogger _logger;
   final DateTime Function() _clock;
 
@@ -168,7 +176,18 @@ class ChatRepositoryImpl implements ChatRepository {
   Future<void> _deliver(Message message) async {
     var current = message;
     try {
+      // The voice note is already on screen; its text arrives while the
+      // audio uploads, and the provider gets the question as text.
+      final transcribing = _transcribe(current);
       current = await _uploadAttachments(current);
+      final transcript = await transcribing;
+      if (transcript.isNotEmpty) {
+        current =
+            (_cache.message(current.conversationId, current.id) ?? current)
+                .copyWith(content: transcript, type: MessageType.text);
+        await _cache.upsertMessages(current.conversationId, [current]);
+        await _touchConversation(current);
+      }
       final outgoing = OutgoingMessage.fromMessage(
         current,
         history: _history(current.conversationId, excludeId: current.id),
@@ -178,6 +197,31 @@ class ChatRepositoryImpl implements ChatRepository {
       final failure = ErrorMapper.map(error, stackTrace);
       _logger.warning('Send failed: ${failure.message}', tag: 'chat');
       await _markFailed(current.conversationId, current.id);
+    }
+  }
+
+  /// Text of a voice-only message; empty when there is nothing to
+  /// transcribe or it fails (the audio is still sent).
+  Future<String> _transcribe(Message message) async {
+    final transcriber = _transcriber;
+    if (transcriber == null || message.content.isNotEmpty) return '';
+    final voice = message.attachments
+        .where((a) => a.kind == AttachmentKind.audio && a.devicePath != null)
+        .firstOrNull;
+    if (voice == null) return '';
+    try {
+      return await transcriber.transcribe(
+        voice.devicePath!,
+        mimeType: voice.mimeType,
+        language: _transcriptionLanguage(),
+      );
+    } on Object catch (error) {
+      _logger.warning(
+        'Voice note transcription failed',
+        tag: 'chat',
+        error: error,
+      );
+      return '';
     }
   }
 

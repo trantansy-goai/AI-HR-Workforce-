@@ -313,6 +313,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatSources => 'Sources';
 
   @override
+  String get chatTranscribing => 'Transcribing your voice note…';
+
+  @override
   String get chatYou => 'You';
 
   @override

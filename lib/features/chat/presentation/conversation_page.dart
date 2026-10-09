@@ -12,6 +12,7 @@ import '../../../shared/widgets/responsive.dart';
 import '../../../shared/widgets/state_views.dart';
 import '../../auth/application/auth_providers.dart';
 import '../../file/application/file_providers.dart';
+import '../../file/domain/attachment.dart';
 import '../../voice/application/voice_providers.dart';
 import '../application/chat_providers.dart';
 import '../application/conversation_controller.dart';
@@ -220,6 +221,7 @@ class _ConversationPageState extends ConsumerState<ConversationPage> {
 
     final messages = state.messages;
     final isGroup = conversation?.kind == ConversationKind.group;
+    final canTranscribe = ref.watch(speechTranscriberProvider) != null;
     final extra = state.isLoadingMore ? 1 : 0;
 
     return ListView.builder(
@@ -248,6 +250,11 @@ class _ConversationPageState extends ConsumerState<ConversationPage> {
               ? _controller.regenerate
               : null,
           onOpenSource: _openSource,
+          transcribing:
+              canTranscribe &&
+              message.isPending &&
+              message.content.isEmpty &&
+              message.attachments.any((a) => a.kind == AttachmentKind.audio),
         );
       },
     );

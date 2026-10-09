@@ -4,7 +4,8 @@ import '../../../core/error/error_mapper.dart';
 import '../domain/speech_transcriber.dart';
 
 /// Open WebUI speech-to-text (`POST /api/v1/audio/transcriptions`, multipart
-/// `file` → `{"text": "..."}`), with the engine the server is configured for.
+/// `file` + optional `language` → `{"text": "..."}`), with the engine the
+/// server is configured for.
 class OpenWebUiSpeechTranscriber implements SpeechTranscriber {
   OpenWebUiSpeechTranscriber({required this._dio, required String baseUrl})
     : _baseUrl = baseUrl.endsWith('/')
@@ -15,7 +16,11 @@ class OpenWebUiSpeechTranscriber implements SpeechTranscriber {
   final String _baseUrl;
 
   @override
-  Future<String> transcribe(String path, {required String mimeType}) async {
+  Future<String> transcribe(
+    String path, {
+    required String mimeType,
+    String? language,
+  }) async {
     try {
       final response = await _dio.post<Map<String, dynamic>>(
         '$_baseUrl/api/v1/audio/transcriptions',
@@ -25,6 +30,7 @@ class OpenWebUiSpeechTranscriber implements SpeechTranscriber {
             filename: path.split('/').last,
             contentType: DioMediaType.parse(mimeType),
           ),
+          'language': ?language,
         }),
       );
       return response.data?['text']?.toString().trim() ?? '';

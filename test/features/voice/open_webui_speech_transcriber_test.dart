@@ -30,6 +30,7 @@ void main() {
     final text = await transcriber.transcribe(
       audio.path,
       mimeType: 'audio/mp4',
+      language: 'vi',
     );
 
     expect(text, 'Tôi muốn xin nghỉ phép.');
@@ -37,6 +38,8 @@ void main() {
     expect(form.files.single.key, 'file');
     expect(form.files.single.value.filename, 'voice_test.m4a');
     expect(form.files.single.value.contentType.toString(), 'audio/mp4');
+    expect(form.fields.single.key, 'language');
+    expect(form.fields.single.value, 'vi');
   });
 
   test('server errors surface as AppFailure', () async {
