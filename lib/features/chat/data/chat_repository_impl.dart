@@ -14,6 +14,7 @@ import '../domain/entities/chat_event.dart';
 import '../domain/entities/conversation.dart';
 import '../domain/entities/message.dart';
 import '../domain/entities/participant.dart';
+import '../domain/extensions/ai_extensions.dart';
 
 class ChatRepositoryImpl implements ChatRepository {
   ChatRepositoryImpl({
@@ -398,6 +399,92 @@ class ChatRepositoryImpl implements ChatRepository {
     AttachmentKind.audio => MessageType.audio,
     AttachmentKind.document || AttachmentKind.other => MessageType.file,
   };
+
+  // ---------------------------------------------------------------------------
+  // Ratings & conversation management
+
+  @override
+  Future<Result<void>> rateMessage(
+    String conversationId,
+    String messageId,
+    UserRating? rating,
+  ) async {
+    final rater = switch (_provider) {
+      final MessageRater r
+          when _provider.info.supports(ChatCapability.rating) =>
+        r,
+      _ => null,
+    };
+    final message = _cache.message(conversationId, messageId);
+    if (rater == null || message == null) return const Ok(null);
+    final rated = message.copyWith(
+      metadata: rating == null
+          ? message.metadata.remove<UserRating>()
+          : message.metadata.put(rating),
+    );
+    await _cache.upsertMessages(conversationId, [rated]);
+    final result = await guard(() => rater.rate(rated, rating));
+    if (!result.isOk) {
+      final latest = _cache.message(conversationId, messageId) ?? rated;
+      await _cache.upsertMessages(conversationId, [
+        latest.copyWith(metadata: message.metadata),
+      ]);
+    }
+    return result;
+  }
+
+  ConversationManager? get _manager => switch (_provider) {
+    final ConversationManager m
+        when _provider.info.supports(ChatCapability.manageConversations) =>
+      m,
+    _ => null,
+  };
+
+  Conversation? _conversation(String id) =>
+      _cache.conversations.where((c) => c.id == id).firstOrNull;
+
+  @override
+  Future<Result<void>> renameConversation(
+    String conversationId,
+    String title,
+  ) async {
+    final manager = _manager;
+    final name = title.trim();
+    if (manager == null || name.isEmpty) return const Ok(null);
+    return guard(() async {
+      await manager.renameConversation(conversationId, name);
+      if (_conversation(conversationId) case final c?) {
+        await _cache.upsertConversation(c.copyWith(title: name));
+      }
+    });
+  }
+
+  @override
+  Future<Result<void>> setPinned(
+    String conversationId, {
+    required bool pinned,
+  }) async {
+    final manager = _manager;
+    if (manager == null) return const Ok(null);
+    return guard(() async {
+      await manager.setPinned(conversationId, pinned: pinned);
+      if (_conversation(conversationId) case final c?) {
+        await _cache.upsertConversation(c.copyWith(isPinned: pinned));
+      }
+    });
+  }
+
+  @override
+  Future<Result<void>> deleteConversation(String conversationId) async {
+    final manager = _manager;
+    if (manager == null) return const Ok(null);
+    return guard(() async {
+      await manager.deleteConversation(conversationId);
+      _loaded.remove(conversationId);
+      _cursors.remove(conversationId);
+      await _cache.removeConversation(conversationId);
+    });
+  }
 
   @override
   Future<void> dispose() async {

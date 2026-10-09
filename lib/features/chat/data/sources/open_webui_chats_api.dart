@@ -11,6 +11,7 @@ class OpenWebUiChatSummary {
     required this.title,
     required this.updatedAt,
     this.modelId,
+    this.pinned = false,
   });
 
   final String id;
@@ -19,6 +20,7 @@ class OpenWebUiChatSummary {
 
   /// Model that answered last, when known (see [OpenWebUiChatsApi.listChats]).
   final String? modelId;
+  final bool pinned;
 }
 
 /// A server chat with its current branch of messages, oldest first.
@@ -64,14 +66,16 @@ class OpenWebUiChatsApi {
   /// The list has no model ids, so they are joined best effort from
   /// `GET /api/v1/chats/stats/usage` (same user, same order).
   Future<List<OpenWebUiChatSummary>> listChats({int page = 1}) async {
-    // Requested together; the stats call never throws.
+    // Requested together; the stats and pinned calls never throw.
     final models = _modelsByChat(page);
+    final pinned = pinnedChatIds();
     final list = await _get('/api/v1/chats/', {
       'page': page,
       'include_pinned': true,
       'include_folders': true,
     });
     final modelIds = await models;
+    final pinnedIds = await pinned;
     if (list is! List) {
       throw const UnknownFailure('Malformed /api/v1/chats/ response');
     }
@@ -83,6 +87,7 @@ class OpenWebUiChatsApi {
             title: _title(item['title']),
             updatedAt: _fromEpochSeconds(item['updated_at']),
             modelId: modelIds[id],
+            pinned: pinnedIds.contains(id),
           ),
     ];
   }
@@ -141,6 +146,94 @@ class OpenWebUiChatsApi {
               .firstOrNull,
       },
     );
+  }
+
+  /// Ids of the user's pinned chats (`GET /api/v1/chats/pinned`); empty
+  /// when they cannot be read (pins only order lists).
+  Future<Set<String>> pinnedChatIds() async {
+    try {
+      final body = await _get('/api/v1/chats/pinned');
+      return {
+        if (body is List)
+          for (final item in body.whereType<Map<String, dynamic>>())
+            if (item['id'] case final String id) id,
+      };
+    } on Object {
+      return const {};
+    }
+  }
+
+  /// Pins or unpins: the server only toggles (`POST /{id}/pin`), so the
+  /// current state is read first (`GET /{id}/pinned`).
+  Future<void> setPinned(String id, {required bool pinned}) async {
+    final path = '/api/v1/chats/${Uri.encodeComponent(id)}';
+    final current = await _get('$path/pinned');
+    if ((current == true) != pinned) await _post('$path/pin', const {});
+  }
+
+  /// `DELETE /api/v1/chats/{id}`. Needs the `chat.delete` permission: the
+  /// server answers 401 without it, so callers check it first.
+  Future<void> deleteChat(String id) async {
+    try {
+      await _dio.delete<Object?>(
+        '$_baseUrl/api/v1/chats/${Uri.encodeComponent(id)}',
+      );
+    } on DioException catch (e) {
+      throw ErrorMapper.fromDio(e);
+    }
+  }
+
+  /// The stored message [messageId] of chat [chatId] and the chat's current
+  /// leaf, for read-modify-write updates of one message.
+  Future<({Map<String, dynamic> message, String? currentId})> storedMessage(
+    String chatId,
+    String messageId,
+  ) async {
+    final body = await _get('/api/v1/chats/${Uri.encodeComponent(chatId)}');
+    if (body
+        case {
+          'chat': {
+            'history': {
+              'messages': final Map<String, dynamic> messages,
+              'currentId': final Object? currentId,
+            },
+          },
+        }
+        when messages[messageId] is Map<String, dynamic>) {
+      return (
+        message: messages[messageId] as Map<String, dynamic>,
+        currentId: currentId?.toString(),
+      );
+    }
+    throw const NotFoundFailure('Message not found in chat');
+  }
+
+  /// Creates or updates a rating (`POST /api/v1/evaluations/feedback[/{id}]`)
+  /// and returns its id.
+  Future<String> saveFeedback(
+    Map<String, Object?> feedback, {
+    String? feedbackId,
+  }) async {
+    final body = await _post(
+      feedbackId == null
+          ? '/api/v1/evaluations/feedback'
+          : '/api/v1/evaluations/feedback/${Uri.encodeComponent(feedbackId)}',
+      feedback,
+    );
+    final id = body is Map ? body['id']?.toString() : null;
+    if (id == null) throw const UnknownFailure('Feedback has no id');
+    return id;
+  }
+
+  /// `DELETE /api/v1/evaluations/feedback/{id}`.
+  Future<void> deleteFeedback(String feedbackId) async {
+    try {
+      await _dio.delete<Object?>(
+        '$_baseUrl/api/v1/evaluations/feedback/${Uri.encodeComponent(feedbackId)}',
+      );
+    } on DioException catch (e) {
+      throw ErrorMapper.fromDio(e);
+    }
   }
 
   /// `POST /api/v1/chats/new`; returns the new chat id.

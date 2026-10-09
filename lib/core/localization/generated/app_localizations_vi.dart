@@ -319,6 +319,46 @@ class AppLocalizationsVi extends AppLocalizations {
   String get chatTranscribing => 'Đang chuyển giọng nói thành chữ…';
 
   @override
+  String get chatRateGood => 'Câu trả lời tốt';
+
+  @override
+  String get chatRateBad => 'Câu trả lời chưa tốt';
+
+  @override
+  String get chatReadAloud => 'Đọc thành tiếng';
+
+  @override
+  String get chatStopReading => 'Dừng đọc';
+
+  @override
+  String get chatActionFailed => 'Không thực hiện được. Vui lòng thử lại.';
+
+  @override
+  String get chatRename => 'Đổi tên';
+
+  @override
+  String get chatRenameTitle => 'Đổi tên cuộc trò chuyện';
+
+  @override
+  String get chatPin => 'Ghim';
+
+  @override
+  String get chatUnpin => 'Bỏ ghim';
+
+  @override
+  String get chatDelete => 'Xoá';
+
+  @override
+  String get chatDeleteConfirmTitle => 'Xoá cuộc trò chuyện này?';
+
+  @override
+  String get chatDeleteConfirmMessage =>
+      'Cuộc trò chuyện sẽ bị xoá trên cả app và website, không thể khôi phục.';
+
+  @override
+  String get chatPinned => 'Đã ghim';
+
+  @override
   String get chatYou => 'Bạn';
 
   @override

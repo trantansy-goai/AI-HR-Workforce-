@@ -316,6 +316,47 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatTranscribing => 'Transcribing your voice note…';
 
   @override
+  String get chatRateGood => 'Good answer';
+
+  @override
+  String get chatRateBad => 'Bad answer';
+
+  @override
+  String get chatReadAloud => 'Read aloud';
+
+  @override
+  String get chatStopReading => 'Stop reading';
+
+  @override
+  String get chatActionFailed =>
+      'Could not complete the action. Please try again.';
+
+  @override
+  String get chatRename => 'Rename';
+
+  @override
+  String get chatRenameTitle => 'Rename conversation';
+
+  @override
+  String get chatPin => 'Pin';
+
+  @override
+  String get chatUnpin => 'Unpin';
+
+  @override
+  String get chatDelete => 'Delete';
+
+  @override
+  String get chatDeleteConfirmTitle => 'Delete this conversation?';
+
+  @override
+  String get chatDeleteConfirmMessage =>
+      'It is deleted for you on the app and the website. This cannot be undone.';
+
+  @override
+  String get chatPinned => 'Pinned';
+
+  @override
   String get chatYou => 'You';
 
   @override

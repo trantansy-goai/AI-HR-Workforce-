@@ -20,6 +20,9 @@ class MessageBubble extends StatelessWidget {
     this.onRegenerate,
     this.onOpenSource,
     this.transcribing = false,
+    this.onRate,
+    this.onSpeak,
+    this.isSpeaking = false,
   });
 
   final Message message;
@@ -37,6 +40,13 @@ class MessageBubble extends StatelessWidget {
   /// The voice note's text is being produced; it replaces this hint in the
   /// same bubble.
   final bool transcribing;
+
+  /// Shows 👍/👎 when non-null; called with the new rating (null clears).
+  final ValueChanged<UserRating?>? onRate;
+
+  /// Shows a "read aloud" button when non-null; it toggles reading.
+  final VoidCallback? onSpeak;
+  final bool isSpeaking;
 
   @override
   Widget build(BuildContext context) {
@@ -149,6 +159,17 @@ class MessageBubble extends StatelessWidget {
             onRegenerate: onRegenerate,
             regenerateLabel: l10n.chatRegenerate,
           ),
+          if (!isMine &&
+              !message.isStreaming &&
+              !message.isFailed &&
+              message.content.isNotEmpty &&
+              (onRate != null || onSpeak != null))
+            _AnswerActions(
+              rating: message.metadata.get<UserRating>(),
+              onRate: onRate,
+              onSpeak: onSpeak,
+              isSpeaking: isSpeaking,
+            ),
         ],
       ),
     );
@@ -226,6 +247,73 @@ class _Footer extends StatelessWidget {
     MessageStatus.delivered || MessageStatus.read => Icons.done_all,
     MessageStatus.failed => Icons.error_outline,
   };
+}
+
+/// 👍 / 👎 (tap again to clear) and read aloud, under an answer.
+class _AnswerActions extends StatelessWidget {
+  const _AnswerActions({
+    required this.rating,
+    required this.onRate,
+    required this.onSpeak,
+    required this.isSpeaking,
+  });
+
+  final UserRating? rating;
+  final ValueChanged<UserRating?>? onRate;
+  final VoidCallback? onSpeak;
+  final bool isSpeaking;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final scheme = Theme.of(context).colorScheme;
+    Widget action({
+      required IconData icon,
+      required String tooltip,
+      required VoidCallback onPressed,
+      bool selected = false,
+    }) => IconButton(
+      icon: Icon(icon, size: 18),
+      tooltip: tooltip,
+      visualDensity: VisualDensity.compact,
+      isSelected: selected,
+      color: selected ? scheme.primary : scheme.onSurfaceVariant,
+      onPressed: onPressed,
+    );
+
+    final rate = onRate;
+    final speak = onSpeak;
+    final liked = rating?.isPositive == true;
+    final disliked = rating != null && !rating!.isPositive;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (rate != null) ...[
+          action(
+            icon: liked ? Icons.thumb_up : Icons.thumb_up_outlined,
+            tooltip: l10n.chatRateGood,
+            selected: liked,
+            onPressed: () => rate(liked ? null : const UserRating(1)),
+          ),
+          action(
+            icon: disliked ? Icons.thumb_down : Icons.thumb_down_outlined,
+            tooltip: l10n.chatRateBad,
+            selected: disliked,
+            onPressed: () => rate(disliked ? null : const UserRating(-1)),
+          ),
+        ],
+        if (speak != null)
+          action(
+            icon: isSpeaking
+                ? Icons.stop_circle_outlined
+                : Icons.volume_up_outlined,
+            tooltip: isSpeaking ? l10n.chatStopReading : l10n.chatReadAloud,
+            selected: isSpeaking,
+            onPressed: speak,
+          ),
+      ],
+    );
+  }
 }
 
 class _ReplyQuote extends StatelessWidget {

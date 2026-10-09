@@ -668,6 +668,84 @@ abstract class AppLocalizations {
   /// **'Transcribing your voice note…'**
   String get chatTranscribing;
 
+  /// No description provided for @chatRateGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good answer'**
+  String get chatRateGood;
+
+  /// No description provided for @chatRateBad.
+  ///
+  /// In en, this message translates to:
+  /// **'Bad answer'**
+  String get chatRateBad;
+
+  /// No description provided for @chatReadAloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Read aloud'**
+  String get chatReadAloud;
+
+  /// No description provided for @chatStopReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop reading'**
+  String get chatStopReading;
+
+  /// No description provided for @chatActionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not complete the action. Please try again.'**
+  String get chatActionFailed;
+
+  /// No description provided for @chatRename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get chatRename;
+
+  /// No description provided for @chatRenameTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename conversation'**
+  String get chatRenameTitle;
+
+  /// No description provided for @chatPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin'**
+  String get chatPin;
+
+  /// No description provided for @chatUnpin.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin'**
+  String get chatUnpin;
+
+  /// No description provided for @chatDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get chatDelete;
+
+  /// No description provided for @chatDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this conversation?'**
+  String get chatDeleteConfirmTitle;
+
+  /// No description provided for @chatDeleteConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'It is deleted for you on the app and the website. This cannot be undone.'**
+  String get chatDeleteConfirmMessage;
+
+  /// No description provided for @chatPinned.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned'**
+  String get chatPinned;
+
   /// No description provided for @chatYou.
   ///
   /// In en, this message translates to:

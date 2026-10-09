@@ -1,3 +1,4 @@
+import '../../../../core/error/app_failure.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../shared/models/paged.dart';
 import '../../../file/domain/attachment.dart';
@@ -26,7 +27,8 @@ import 'ai_chat_providers.dart';
 /// finished answer is saved there (the chat is created on the first one).
 /// Server chats keep their server id as conversation id; a conversation
 /// started in the app keeps its `agent-…` id and is mapped to its server id.
-class OpenWebUiChatProvider extends RemoteAIChatProvider {
+class OpenWebUiChatProvider extends RemoteAIChatProvider
+    implements ConversationManager, MessageRater {
   OpenWebUiChatProvider({
     required OpenWebUiClient client,
     super.assistant = const Participant(
@@ -93,6 +95,8 @@ class OpenWebUiChatProvider extends RemoteAIChatProvider {
       ChatCapability.regenerate,
       ChatCapability.citations,
       ChatCapability.attachments,
+      ChatCapability.rating,
+      ChatCapability.manageConversations,
     },
   );
 
@@ -103,7 +107,9 @@ class OpenWebUiChatProvider extends RemoteAIChatProvider {
     return _models[_serverIdOf(conversationId)];
   }
 
-  /// The server chat behind [conversationId], null when not created yet.
+  /// The server chat behind [conversationId], null when not created yet
+  /// (before the first answer is saved there is nothing to change on the
+  /// server).
   String? _serverIdOf(String conversationId) =>
       _serverIds[conversationId] ??
       (AgentItem.agentIdOf(conversationId) == null ? conversationId : null);
@@ -127,6 +133,7 @@ class OpenWebUiChatProvider extends RemoteAIChatProvider {
       kind: ConversationKind.assistant,
       participants: _participants(chat.modelId),
       updatedAt: chat.updatedAt,
+      isPinned: chat.pinned,
     );
   }
 
@@ -213,6 +220,11 @@ class OpenWebUiChatProvider extends RemoteAIChatProvider {
     ]);
     final sources = _sseParser.parseSources(json['sources']);
     if (sources.isNotEmpty) metadata = metadata.put(Citations(sources));
+    // The website's 👍/👎: `annotation.rating` = 1 / -1.
+    if (json['annotation'] case {'rating': final num rating}
+        when rating == 1 || rating == -1) {
+      metadata = metadata.put(UserRating(rating.toInt()));
+    }
     return metadata;
   }
 
@@ -270,6 +282,80 @@ class OpenWebUiChatProvider extends RemoteAIChatProvider {
         AttachmentKind.audio => MessageType.audio,
         AttachmentKind.document || AttachmentKind.other => MessageType.file,
       };
+
+  // ---------------------------------------------------------------------------
+  // Conversation management & ratings
+
+  @override
+  Future<void> renameConversation(String conversationId, String title) async {
+    final serverId = _serverIdOf(conversationId);
+    if (serverId == null) return;
+    await chats?.updateChat(serverId, {'title': title});
+  }
+
+  @override
+  Future<void> setPinned(String conversationId, {required bool pinned}) async {
+    final serverId = _serverIdOf(conversationId);
+    if (serverId == null) return;
+    await chats?.setPinned(serverId, pinned: pinned);
+  }
+
+  @override
+  Future<void> deleteConversation(String conversationId) async {
+    final serverId = _serverIdOf(conversationId);
+    if (serverId == null) return;
+    await chats?.deleteChat(serverId);
+    _serverIds.remove(conversationId);
+    _conversationIds.remove(serverId);
+    _models.remove(serverId);
+  }
+
+  /// Like the website: a feedback record (for the admin's evaluations) plus
+  /// `annotation.rating` / `feedbackId` on the stored message, so the
+  /// rating shows again when the chat is reopened anywhere.
+  @override
+  Future<void> rate(Message message, UserRating? rating) async {
+    final api = chats;
+    final serverId = _serverIdOf(message.conversationId);
+    if (api == null || serverId == null) {
+      throw const NotFoundFailure('The chat is not saved yet');
+    }
+    final (message: stored, :currentId) = await api.storedMessage(
+      serverId,
+      message.id,
+    );
+    final annotation = {...?(stored['annotation'] as Map<String, dynamic>?)}
+      ..remove('rating');
+    var feedbackId = stored['feedbackId']?.toString();
+    final modelId = stored['model']?.toString();
+    if (rating == null) {
+      if (feedbackId != null) await api.deleteFeedback(feedbackId);
+      feedbackId = null;
+    } else {
+      annotation['rating'] = rating.value;
+      feedbackId = await api.saveFeedback({
+        'type': 'rating',
+        'data': {'rating': rating.value, 'model_id': ?modelId},
+        'meta': {
+          'model_id': ?modelId,
+          'message_id': stored['id'],
+          'chat_id': serverId,
+        },
+      }, feedbackId: feedbackId);
+    }
+    await api.updateChat(serverId, {
+      'history': {
+        'messages': {
+          stored['id'].toString(): {
+            ...stored,
+            'annotation': annotation,
+            'feedbackId': feedbackId,
+          },
+        },
+        'currentId': currentId,
+      },
+    });
+  }
 
   // ---------------------------------------------------------------------------
   // Saving history

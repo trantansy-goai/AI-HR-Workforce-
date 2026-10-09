@@ -1,9 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../core/di/core_providers.dart';
+import '../../auth/application/auth_providers.dart';
 import '../data/fake_voice_recorder.dart';
 import '../data/native_voice_recorder.dart';
+import '../data/open_webui_speech_synthesizer.dart';
 import '../data/open_webui_speech_transcriber.dart';
+import '../domain/speech_synthesizer.dart';
 import '../domain/speech_transcriber.dart';
 import '../domain/voice_recorder.dart';
 
@@ -29,5 +33,21 @@ final speechTranscriberProvider = Provider<SpeechTranscriber?>((ref) {
   return OpenWebUiSpeechTranscriber(
     dio: ref.watch(authenticatedDioProvider),
     baseUrl: config.openWebUiBaseUrl,
+  );
+});
+
+/// Reads answers aloud with the server's text-to-speech; null with the fake
+/// backend or without the `chat.tts` permission.
+final speechSynthesizerProvider = Provider<SpeechSynthesizer?>((ref) {
+  final config = ref.watch(appConfigProvider);
+  if (config.useFakeBackend) return null;
+  final user = ref.watch(authControllerProvider.select((s) => s.user));
+  if (user == null || (user.role != 'admin' && !user.allows('chat.tts'))) {
+    return null;
+  }
+  return OpenWebUiSpeechSynthesizer(
+    dio: ref.watch(authenticatedDioProvider),
+    baseUrl: config.openWebUiBaseUrl,
+    cacheDirectory: getApplicationCacheDirectory,
   );
 });

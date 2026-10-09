@@ -73,6 +73,45 @@ void main() {
       expect(retried, isTrue);
     });
 
+    testWidgets('answers can be rated and read aloud', (tester) async {
+      UserRating? rated = const UserRating(-1);
+      var spoke = false;
+      await tester.pumpWidget(
+        testApp(
+          MessageBubble(
+            message: message(sender: agent)
+                .copyWith(metadata: MessageMetadata.of(const [UserRating(-1)])),
+            isMine: false,
+            onRate: (r) => rated = r,
+            onSpeak: () => spoke = true,
+          ),
+        ),
+      );
+
+      await tester.tap(find.byTooltip('Good answer'));
+      expect(rated, const UserRating(1));
+      // Tapping the current rating clears it.
+      await tester.tap(find.byTooltip('Bad answer'));
+      expect(rated, isNull);
+      await tester.tap(find.byTooltip('Read aloud'));
+      expect(spoke, isTrue);
+    });
+
+    testWidgets('own messages have no answer actions', (tester) async {
+      await tester.pumpWidget(
+        testApp(
+          MessageBubble(
+            message: message(),
+            isMine: true,
+            onRate: (_) {},
+            onSpeak: () {},
+          ),
+        ),
+      );
+      expect(find.byTooltip('Good answer'), findsNothing);
+      expect(find.byTooltip('Read aloud'), findsNothing);
+    });
+
     testWidgets('streaming message shows a caret', (tester) async {
       await tester.pumpWidget(
         testApp(

@@ -89,6 +89,24 @@ class ModelInfo {
   int get hashCode => Object.hash(id, isLocal);
 }
 
+/// The user's rating of a reply: +1 (helpful) or -1 (not helpful).
+class UserRating extends MessageExtension {
+  const UserRating(this.value) : assert(value == 1 || value == -1);
+
+  final int value;
+
+  bool get isPositive => value > 0;
+
+  @override
+  String get key => 'feedback.rating';
+
+  @override
+  Map<String, Object?> toJson() => {'value': value};
+
+  @override
+  List<Object?> get props => [value];
+}
+
 /// A ready-made question the user can ask with one tap.
 class PromptSuggestion {
   const PromptSuggestion({required this.label, required this.text});

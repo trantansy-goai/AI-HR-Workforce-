@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -47,6 +50,11 @@ class ConversationPage extends ConsumerStatefulWidget {
 class _ConversationPageState extends ConsumerState<ConversationPage> {
   final _scrollController = ScrollController();
 
+  /// Reads one answer at a time; created on first use.
+  AudioPlayer? _speech;
+  StreamSubscription<void>? _speechDone;
+  String? _speakingId;
+
   ConversationController get _controller =>
       ref.read(conversationControllerProvider(widget.conversationId).notifier);
 
@@ -65,8 +73,58 @@ class _ConversationPageState extends ConsumerState<ConversationPage> {
   @override
   void dispose() {
     _scrollController.dispose();
+    unawaited(_speechDone?.cancel());
+    unawaited(_speech?.dispose());
     super.dispose();
   }
+
+  Future<void> _rate(Message message, UserRating? rating) async {
+    final result = await _controller.rate(message, rating);
+    if (!result.isOk && mounted) {
+      context.showAppSnackBar(
+        context.l10n.chatActionFailed,
+        type: AppSnackType.error,
+      );
+    }
+  }
+
+  /// Starts reading [message] aloud, or stops when it is already playing.
+  Future<void> _toggleSpeech(Message message) async {
+    final player = _speech ??= AudioPlayer();
+    _speechDone ??= player.onPlayerComplete.listen((_) {
+      if (mounted) setState(() => _speakingId = null);
+    });
+    final wasPlaying = _speakingId == message.id;
+    await player.stop();
+    setState(() => _speakingId = wasPlaying ? null : message.id);
+    if (wasPlaying) return;
+    try {
+      final path = await ref
+          .read(speechSynthesizerProvider)!
+          .synthesize(_spokenText(message.content));
+      // The user may have stopped or picked another answer meanwhile.
+      if (!mounted || _speakingId != message.id) return;
+      await player.play(DeviceFileSource(path));
+    } on Object {
+      if (!mounted) return;
+      setState(() => _speakingId = null);
+      context.showAppSnackBar(
+        context.l10n.chatActionFailed,
+        type: AppSnackType.error,
+      );
+    }
+  }
+
+  /// Markdown marks would be read out loud; keep the words only.
+  static String _spokenText(String markdown) => markdown
+      .replaceAll(RegExp(r'```[\s\S]*?```'), ' ')
+      .replaceAllMapped(RegExp(r'\[([^\]]*)\]\([^)]*\)'), (m) => m[1]!)
+      .replaceAll(
+        RegExp(r'^\s{0,3}(#{1,6}|>|[-*+]|\d+\.)\s+', multiLine: true),
+        '',
+      )
+      .replaceAll(RegExp(r'[*_`~|]'), '')
+      .trim();
 
   void _onScroll() {
     // The list is reversed: the "end" is the oldest message.
@@ -222,6 +280,15 @@ class _ConversationPageState extends ConsumerState<ConversationPage> {
     final messages = state.messages;
     final isGroup = conversation?.kind == ConversationKind.group;
     final canTranscribe = ref.watch(speechTranscriberProvider) != null;
+    final canSpeak = ref.watch(speechSynthesizerProvider) != null;
+    final user = ref.watch(authControllerProvider).user;
+    final canRate =
+        ref
+            .watch(chatRepositoryProvider)
+            .providerInfo
+            .supports(ChatCapability.rating) &&
+        (user?.role == 'admin' ||
+            (user?.allows('chat.rate_response') ?? false));
     final extra = state.isLoadingMore ? 1 : 0;
 
     return ListView.builder(
@@ -250,6 +317,9 @@ class _ConversationPageState extends ConsumerState<ConversationPage> {
               ? _controller.regenerate
               : null,
           onOpenSource: _openSource,
+          onRate: canRate && !isMine ? (r) => _rate(message, r) : null,
+          onSpeak: canSpeak && !isMine ? () => _toggleSpeech(message) : null,
+          isSpeaking: _speakingId == message.id,
           transcribing:
               canTranscribe &&
               message.isPending &&

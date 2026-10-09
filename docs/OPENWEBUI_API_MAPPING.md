@@ -44,6 +44,9 @@ lives only in `SecureStore` (redacted from network logs).
 | POST | `/api/v1/auths/update/password` | Bearer | `OpenWebUiAuthRemoteDataSource.changePassword` (Tài khoản › Bảo mật) | VERIFIED LIVE (wrong password → 400) |
 | GET | `/api/config` (public) | — | `ssoProvidersProvider` (SSO entry on sign-in) | VERIFIED LIVE (no providers → hidden) |
 | GET | `/api/v1/files/{id}/content` (authorized download) | Bearer | `CachingAttachmentDownloader` (chat images, audio, video, files) | unit-tested |
+| POST | `/api/v1/evaluations/feedback` · `/feedback/{id}` · DELETE `/feedback/{id}` | Bearer | `OpenWebUiChatProvider.rate` (👍/👎) | VERIFIED LIVE |
+| POST | `/api/v1/audio/speech` | Bearer | `OpenWebUiSpeechSynthesizer` (read aloud) | VERIFIED LIVE |
+| GET/POST/DELETE | `/api/v1/chats/pinned`, `/{id}/pinned`, `/{id}/pin`, `/{id}` | Bearer | `OpenWebUiChatsApi` (pin, rename, delete) | VERIFIED LIVE |
 
 "VERIFIED LIVE": on 2026-10-08 the app's own Dart classes ran against
 `workforce.ai-iep.vn` with the `hr@` test account: sign-in, session check,
@@ -214,6 +217,9 @@ API is wired; the rest have no Open WebUI equivalent.
 | Tài liệu (list, detail, download) | `/api/v1/knowledge/*`, `/api/v1/files/*` |
 | Bản tin | `/api/v1/configs/banners` + shared `/api/v1/notes/` |
 | Trang chủ "Việc sắp đến hạn", "Bạn có N việc" | `/api/v1/calendars/events` |
+| Rate an answer 👍/👎 (tap again to clear) | `/api/v1/evaluations/feedback[/{id}]` + `annotation.rating`/`feedbackId` on the stored message (as the website) |
+| Read an answer aloud | `/api/v1/audio/speech` (server TTS voice; cached mp3) — needs `chat.tts` |
+| Rename / pin / delete a chat (agent history menu) | `POST /api/v1/chats/{id}` (title), `GET /{id}/pinned` + `POST /{id}/pin`, `GET /pinned`, `DELETE /{id}` (shown only with `chat.delete`: 401 otherwise) |
 
 **No Open WebUI API (stay on demo data or need another backend / WebView)**
 
@@ -230,8 +236,7 @@ API is wired; the rest have no Open WebUI equivalent.
 | Language setting | Stored on the device (the website keeps it in the browser too) |
 
 APIs available but with no matching app feature yet (candidates, not
-gaps): answer rating (`/api/v1/evaluations/feedback`), text-to-speech
-(`/api/v1/audio/speech`), chat delete/rename/pin/share, memories, folders.
+gaps): chat share, archive and folders, memories.
 
 ## 8. Open items
 

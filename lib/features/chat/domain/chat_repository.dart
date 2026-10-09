@@ -4,6 +4,7 @@ import 'chat_provider.dart';
 import 'entities/conversation.dart';
 import 'entities/message.dart';
 import 'entities/participant.dart';
+import 'extensions/ai_extensions.dart';
 
 /// Single entry point for the chat UI. Combines a [ChatProvider] (transport)
 /// with a `ChatCache` (local state) and owns optimistic sending, retry,
@@ -49,6 +50,19 @@ abstract interface class ChatRepository {
 
   /// No-op unless the provider supports [ChatCapability.regenerate].
   Future<void> regenerate(String conversationId);
+
+  /// Rates a reply (+1/-1, null clears). Shown at once; reverted when the
+  /// provider rejects it. No-op without [ChatCapability.rating].
+  Future<Result<void>> rateMessage(
+    String conversationId,
+    String messageId,
+    UserRating? rating,
+  );
+
+  /// No-ops without [ChatCapability.manageConversations].
+  Future<Result<void>> renameConversation(String conversationId, String title);
+  Future<Result<void>> setPinned(String conversationId, {required bool pinned});
+  Future<Result<void>> deleteConversation(String conversationId);
 
   Future<void> dispose();
 }

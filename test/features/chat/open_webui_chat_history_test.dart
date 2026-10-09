@@ -76,6 +76,8 @@ const _storedChat = {
           'model': 'payroll',
           'modelName': 'Payroll',
           'timestamp': 1791400020,
+          'annotation': {'rating': -1},
+          'feedbackId': 'fb-1',
           'usage': {'prompt_tokens': 30, 'completion_tokens': 3},
           'sources': [
             {
@@ -100,6 +102,7 @@ void main() {
   final created = <Map<String, dynamic>>[];
   final updates = <String, List<Map<String, dynamic>>>{};
   final completions = <Map<String, dynamic>>[];
+  final feedbacks = <Map<String, dynamic>>[];
 
   /// Each message is a second younger than the previous one.
   var seconds = 0;
@@ -113,7 +116,9 @@ void main() {
     FakeResponse title = const FakeResponse({
       'detail': 'Title generation is disabled',
     }),
+    FakeResponse pinnedList = const FakeResponse(<Object>[]),
   }) {
+    feedbacks.clear();
     seconds = 0;
     created.clear();
     updates.clear();
@@ -127,6 +132,16 @@ void main() {
       'GET /api/v1/chats/': (_) => list,
       'GET /api/v1/chats/stats/usage': (_) => stats,
       'GET /api/v1/chats/c-1': (_) => const FakeResponse(_storedChat),
+      'GET /api/v1/chats/pinned': (_) => pinnedList,
+      'GET /api/v1/chats/c-1/pinned': (_) => const FakeResponse(false),
+      'POST /api/v1/chats/c-1/pin': (_) => const FakeResponse({'id': 'c-1'}),
+      'DELETE /api/v1/chats/c-1': (_) => const FakeResponse(true),
+      'POST /api/v1/evaluations/feedback/fb-1': (r) {
+        feedbacks.add(r.data as Map<String, dynamic>);
+        return const FakeResponse({'id': 'fb-1'});
+      },
+      'DELETE /api/v1/evaluations/feedback/fb-1': (_) =>
+          const FakeResponse(true),
       'POST /api/v1/tasks/title/completions': (_) => title,
       'POST /api/v1/chats/new': (r) {
         created.add(
@@ -354,6 +369,7 @@ void main() {
       expect(info.model.id, 'payroll');
       expect(info.model.displayName, 'Payroll');
       expect(info.promptTokens, 30);
+      expect(answer.metadata.get<UserRating>(), const UserRating(-1));
       final source = answer.metadata.get<Citations>()!.sources.single;
       expect(source.title, 'policy.pdf');
       expect(source.snippet, 'Leave is 12 days.');
@@ -386,6 +402,120 @@ void main() {
       final messages = history['messages'] as Map;
       expect(messages.keys, ['ai-1']);
       expect((messages['ai-1'] as Map)['parentId'], 'q1');
+    });
+  });
+
+  group('ratings and conversation management', () {
+    test('rating updates the feedback and the stored message', () async {
+      setUpChat();
+      await repository.loadInitial('c-1');
+
+      final result = await repository.rateMessage(
+        'c-1',
+        'a1b',
+        const UserRating(1),
+      );
+
+      expect(result.isOk, isTrue);
+      expect(feedbacks.single, {
+        'type': 'rating',
+        'data': {'rating': 1, 'model_id': 'payroll'},
+        'meta': {'model_id': 'payroll', 'message_id': 'a1b', 'chat_id': 'c-1'},
+      });
+      final history = updates['c-1']!.single['history'] as Map;
+      expect(history['currentId'], 'a1b');
+      final stored = (history['messages'] as Map)['a1b'] as Map;
+      expect(stored['annotation'], {'rating': 1});
+      expect(stored['feedbackId'], 'fb-1');
+      expect(stored['parentId'], 'q1');
+      expect(
+        cache.message('c-1', 'a1b')!.metadata.get<UserRating>(),
+        const UserRating(1),
+      );
+    });
+
+    test('clearing a rating deletes the feedback', () async {
+      setUpChat();
+      await repository.loadInitial('c-1');
+
+      await repository.rateMessage('c-1', 'a1b', null);
+
+      expect(http.calls, contains('DELETE /api/v1/evaluations/feedback/fb-1'));
+      final stored =
+          ((updates['c-1']!.single['history'] as Map)['messages'] as Map)['a1b']
+              as Map;
+      expect(stored['annotation'], isEmpty);
+      expect(stored['feedbackId'], isNull);
+      expect(cache.message('c-1', 'a1b')!.metadata.get<UserRating>(), isNull);
+    });
+
+    test('a failed rating is undone', () async {
+      setUpChat();
+      await repository.loadInitial('c-1');
+      // The stored chat is gone (e.g. deleted on the website).
+      http.routes['GET /api/v1/chats/c-1'] = (_) =>
+          const FakeResponse({'detail': 'Not found'}, status: 404);
+
+      final result = await repository.rateMessage(
+        'c-1',
+        'a1b',
+        const UserRating(1),
+      );
+
+      expect(result.isOk, isFalse);
+      expect(
+        cache.message('c-1', 'a1b')!.metadata.get<UserRating>(),
+        const UserRating(-1),
+      );
+    });
+
+    test('lists pinned chats as pinned', () async {
+      setUpChat(
+        list: const FakeResponse([
+          {'id': 'c-1', 'title': 'Annual leave', 'updated_at': 1791500000},
+          {'id': 'c-2', 'title': 'Payslip', 'updated_at': 1791400000},
+        ]),
+        pinnedList: const FakeResponse([
+          {'id': 'c-2', 'title': 'Payslip', 'updated_at': 1791400000},
+        ]),
+      );
+
+      final conversations = await provider.fetchConversations();
+
+      expect(conversations.map((c) => c.isPinned), [false, true]);
+    });
+
+    test('pin, rename and delete reach the server and the cache', () async {
+      setUpChat(
+        list: const FakeResponse([
+          {'id': 'c-1', 'title': 'Annual leave', 'updated_at': 1791500000},
+        ]),
+      );
+      await repository.refreshConversations();
+
+      expect((await repository.setPinned('c-1', pinned: true)).isOk, isTrue);
+      expect(http.calls, contains('POST /api/v1/chats/c-1/pin'));
+      expect(cache.conversations.single.isPinned, isTrue);
+
+      await repository.renameConversation('c-1', '  Leave 2026 ');
+      expect(updates['c-1']!.single, {'title': 'Leave 2026'});
+      expect(cache.conversations.single.title, 'Leave 2026');
+
+      await repository.loadInitial('c-1');
+      expect((await repository.deleteConversation('c-1')).isOk, isTrue);
+      expect(http.calls, contains('DELETE /api/v1/chats/c-1'));
+      expect(cache.conversations, isEmpty);
+      expect(cache.messages('c-1'), isEmpty);
+    });
+
+    test('a chat not saved yet changes locally only', () async {
+      setUpChat();
+      final id = AgentItem.newConversationId('payroll');
+
+      await provider.setPinned(id, pinned: true);
+      await provider.deleteConversation(id);
+
+      expect(http.calls, isEmpty);
     });
   });
 

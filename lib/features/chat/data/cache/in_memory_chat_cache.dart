@@ -94,6 +94,14 @@ class InMemoryChatCache implements ChatCache {
   }
 
   @override
+  Future<void> removeConversation(String conversationId) async {
+    _conversations.removeWhere((c) => c.id == conversationId);
+    _messages.remove(conversationId);
+    _conversationChanges.add(null);
+    _messageChanges.add(conversationId);
+  }
+
+  @override
   Future<void> clear() async {
     _conversations.clear();
     final ids = _messages.keys.toList();
