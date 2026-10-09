@@ -1,7 +1,7 @@
-import 'package:flutter_project_base/features/voice/data/fake_voice_recorder.dart';
-import 'package:flutter_project_base/features/voice/data/native_voice_recorder.dart';
-import 'package:flutter_project_base/features/voice/domain/voice_recorder.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/features/voice/data/fake_voice_recorder.dart';
+import 'package:goai_mobile/features/voice/data/native_voice_recorder.dart';
+import 'package:goai_mobile/features/voice/domain/voice_recorder.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';

@@ -15,11 +15,13 @@ This document outlines the exact Mobile operations, required backend capabilitie
 - **Mobile Operation**: Sign in with employee credentials & refresh access tokens.
 - **Required Endpoint Capability**: Authenticate employee credentials; issue access & refresh tokens.
 - **Required Request Fields**: email (or username), password.
-- **Required Response Fields**: ccessToken, efreshToken, expiresIn, user (id, displayName, email, oles, permissions).
+- **Required Response Fields**: ccessToken, 
+efreshToken, expiresIn, user (id, displayName, email, 
+oles, permissions).
 - **Domain Model**: UserSession, UserProfile.
 - **Current Repository Interface**: AuthRepository, AuthRemoteDataSource.
 - **Current Fake Implementation**: FakeAuthRemoteDataSource.
-- **Production Adapter Needed**: HttpAuthRemoteDataSource.
+- **Production Adapter**: DONE — `OpenWebUiAuthRemoteDataSource` (see `OPENWEBUI_API_MAPPING.md`).
 
 ---
 
@@ -33,7 +35,7 @@ This document outlines the exact Mobile operations, required backend capabilitie
 - **Domain Model**: UserProfile.
 - **Current Repository Interface**: AuthRepository.getCurrentUser().
 - **Current Fake Implementation**: FakeAuthRemoteDataSource.
-- **Production Adapter Needed**: HttpAuthRemoteDataSource.
+- **Production Adapter**: DONE — Open WebUI `role` + `permissions` from `/api/v1/auths/` → `AuthUser`.
 
 ---
 
@@ -61,7 +63,7 @@ This document outlines the exact Mobile operations, required backend capabilitie
 - **Domain Model**: Attachment, AttachmentSource.
 - **Current Repository Interface**: FileUploader.
 - **Current Fake Implementation**: FakeFileUploader.
-- **Production Adapter Needed**: HttpFileUploader.
+- **Production Adapter**: DONE — `OpenWebUiFileUploader` (Open WebUI files API, for chat RAG).
 
 ---
 
@@ -133,7 +135,8 @@ This document outlines the exact Mobile operations, required backend capabilitie
 - **Mobile Operation**: List pending approvals, view item details, submit action (approve/reject).
 - **Required Endpoint Capability**: List pending approval items & post server-driven action.
 - **Required Request Fields**: Approval ID, ction ("approve" or "reject"), optional comment.
-- **Required Response Fields**: Item id, 	itle, equesterName, status, vailableActions array (["approve", "reject"]), createdAt, detail.
+- **Required Response Fields**: Item id, 	itle, 
+equesterName, status, vailableActions array (["approve", "reject"]), createdAt, detail.
 - **Domain Model**: ApprovalItem.
 - **Current Repository Interface**: ApprovalRepository.
 - **Current Fake Implementation**: FakeApprovalRepository.

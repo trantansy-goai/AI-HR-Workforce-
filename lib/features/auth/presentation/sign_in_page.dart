@@ -30,6 +30,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
   final _formKey = GlobalKey<FormState>();
   final _accountController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _submitting = false;
   bool _guestSubmitting = false;
 
@@ -39,6 +40,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
   void dispose() {
     _accountController.dispose();
     _phoneController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -58,23 +60,29 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     }
   }
 
+  /// Demo backend: the mockup's account + phone verification, mapped to a
+  /// demo session.
   void _submitVerificationCode() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     final account = _accountController.text.trim();
-    final isFake = ref.read(appConfigProvider).useFakeBackend;
+    final email = account.contains('@') ? account : '$account@goai.vn';
+    _run(
+      () => ref
+          .read(authControllerProvider.notifier)
+          .signInWithEmail(email, 'demo123456'),
+      (v) => _submitting = v,
+    );
+  }
 
-    if (isFake) {
-      // In development / demo mode, map entered account to demo session
-      final email = account.contains('@') ? account : '$account@goai.vn';
-      _run(
-        () => ref
-            .read(authControllerProvider.notifier)
-            .signInWithEmail(email, 'demo123456'),
-        (v) => _submitting = v,
-      );
-    } else {
-      context.showComingSoon();
-    }
+  /// Real backend: Open WebUI only supports email + password sign-in.
+  void _submitPassword() {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    _run(
+      () => ref
+          .read(authControllerProvider.notifier)
+          .signInWithEmail(_accountController.text, _passwordController.text),
+      (v) => _submitting = v,
+    );
   }
 
   void _guest() => _run(
@@ -303,7 +311,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     ];
   }
 
-  /// Account + phone inputs, primary CTA and the enterprise SSO entry.
+  /// Credential inputs, primary CTA and the enterprise SSO entry.
   List<Widget> _buildFormFields() {
     final l10n = context.l10n;
     final isFake = ref.watch(appConfigProvider).useFakeBackend;
@@ -312,38 +320,19 @@ class _SignInPageState extends ConsumerState<SignInPage> {
       AutofillGroup(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            AppTextField(
-              controller: _accountController,
-              hint: l10n.authEmployeeAccountLabel,
-              keyboardType: TextInputType.text,
-              textInputAction: TextInputAction.next,
-              autofillHints: const [AutofillHints.username],
-              enabled: !_busy,
-              validator: (v) => (v?.trim().isNotEmpty ?? false)
-                  ? null
-                  : l10n.authAccountRequired,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            AppTextField(
-              controller: _phoneController,
-              hint: l10n.authPhoneNumberLabel,
-              keyboardType: TextInputType.phone,
-              textInputAction: TextInputAction.done,
-              autofillHints: const [AutofillHints.telephoneNumber],
-              enabled: !_busy,
-              onSubmitted: (_) => _submitVerificationCode(),
-              validator: (v) => (v?.trim().isNotEmpty ?? false)
-                  ? null
-                  : l10n.authPhoneRequired,
-            ),
-          ],
+          children: isFake
+              ? _buildVerificationFields()
+              : _buildPasswordFields(),
         ),
       ),
       const SizedBox(height: AppSpacing.md),
       AppButton(
-        label: l10n.authSendVerificationCode,
-        onPressed: _busy ? null : _submitVerificationCode,
+        label: isFake ? l10n.authSendVerificationCode : l10n.authSignInButton,
+        onPressed: _busy
+            ? null
+            : isFake
+            ? _submitVerificationCode
+            : _submitPassword,
         isLoading: _submitting,
         expand: true,
       ),
@@ -377,6 +366,68 @@ class _SignInPageState extends ConsumerState<SignInPage> {
           expand: true,
         ),
       ],
+    ];
+  }
+
+  /// Demo mode: the mockup's employee account + registered phone.
+  List<Widget> _buildVerificationFields() {
+    final l10n = context.l10n;
+    return [
+      AppTextField(
+        controller: _accountController,
+        hint: l10n.authEmployeeAccountLabel,
+        keyboardType: TextInputType.text,
+        textInputAction: TextInputAction.next,
+        autofillHints: const [AutofillHints.username],
+        enabled: !_busy,
+        validator: (v) =>
+            (v?.trim().isNotEmpty ?? false) ? null : l10n.authAccountRequired,
+      ),
+      const SizedBox(height: AppSpacing.md),
+      AppTextField(
+        controller: _phoneController,
+        hint: l10n.authPhoneNumberLabel,
+        keyboardType: TextInputType.phone,
+        textInputAction: TextInputAction.done,
+        autofillHints: const [AutofillHints.telephoneNumber],
+        enabled: !_busy,
+        onSubmitted: (_) => _submitVerificationCode(),
+        validator: (v) =>
+            (v?.trim().isNotEmpty ?? false) ? null : l10n.authPhoneRequired,
+      ),
+    ];
+  }
+
+  /// Open WebUI: company email + password.
+  List<Widget> _buildPasswordFields() {
+    final l10n = context.l10n;
+    return [
+      AppTextField(
+        controller: _accountController,
+        hint: l10n.authEmailLabel,
+        keyboardType: TextInputType.emailAddress,
+        textInputAction: TextInputAction.next,
+        autofillHints: const [AutofillHints.email, AutofillHints.username],
+        enabled: !_busy,
+        validator: (v) {
+          final value = v?.trim() ?? '';
+          return value.contains('@') && !value.startsWith('@')
+              ? null
+              : l10n.authEmailInvalid;
+        },
+      ),
+      const SizedBox(height: AppSpacing.md),
+      AppTextField(
+        controller: _passwordController,
+        hint: l10n.authPasswordLabel,
+        obscure: true,
+        textInputAction: TextInputAction.done,
+        autofillHints: const [AutofillHints.password],
+        enabled: !_busy,
+        onSubmitted: (_) => _submitPassword(),
+        validator: (v) =>
+            (v?.isNotEmpty ?? false) ? null : l10n.authPasswordRequired,
+      ),
     ];
   }
 

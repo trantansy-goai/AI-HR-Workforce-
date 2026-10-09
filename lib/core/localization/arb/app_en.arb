@@ -14,6 +14,7 @@
   "errorForbidden": "You don't have permission to do this.",
   "errorNotFound": "The requested item could not be found.",
   "errorValidation": "Some information is invalid. Please check and try again.",
+  "errorRateLimited": "Too many requests. Please wait a moment and try again.",
   "errorServer": "The server had a problem. Please try again later.",
   "errorStorage": "Could not access device storage.",
   "errorUnknown": "An unexpected error occurred.",
@@ -38,6 +39,7 @@
   "authSecurityDialogMessage": "Your session and data are protected with end-to-end encryption complying with enterprise HR security policies.",
   "authEmailLabel": "Email",
   "authPasswordLabel": "Password",
+  "authPasswordRequired": "Please enter your password",
   "authSignInButton": "Sign in",
   "authContinueAsGuest": "Continue as guest",
   "authEmailInvalid": "Enter a valid email address",
@@ -63,7 +65,7 @@
       }
     }
   },
-  "homeSubtitle": "This base app demonstrates reusable foundation modules.",
+  "homeSubtitle": "GO AI Workforce for employees.",
   "homeChatTitle": "Chat demo",
   "homeChatSubtitle": "Generic chat engine with a mock provider",
   "homeSettingsTitle": "Settings",

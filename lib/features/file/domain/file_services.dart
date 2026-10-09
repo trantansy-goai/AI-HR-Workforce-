@@ -12,8 +12,7 @@ abstract interface class FileUploader {
 }
 
 /// Lets the user choose files. Implement with `file_picker` / `image_picker`
-/// in the consuming app; the base ships only a demo implementation to avoid
-/// native plugin setup that not every app needs.
+/// in the data layer; a demo implementation backs the fake backend.
 abstract interface class AttachmentPicker {
   Future<List<Attachment>> pick({Set<AttachmentKind>? kinds});
 

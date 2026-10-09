@@ -1,15 +1,15 @@
-import 'package:flutter_project_base/core/error/app_failure.dart';
-import 'package:flutter_project_base/core/error/result.dart';
-import 'package:flutter_project_base/core/logging/app_logger.dart';
-import 'package:flutter_project_base/core/storage/secure_store.dart';
-import 'package:flutter_project_base/features/auth/data/auth_remote_data_source.dart';
-import 'package:flutter_project_base/features/auth/data/auth_repository_impl.dart';
-import 'package:flutter_project_base/features/auth/data/auth_session_storage.dart';
-import 'package:flutter_project_base/features/auth/data/fake_auth_remote_data_source.dart';
-import 'package:flutter_project_base/features/auth/domain/auth_credential.dart';
-import 'package:flutter_project_base/features/auth/domain/auth_session.dart';
-import 'package:flutter_project_base/features/auth/domain/auth_user.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/core/error/app_failure.dart';
+import 'package:goai_mobile/core/error/result.dart';
+import 'package:goai_mobile/core/logging/app_logger.dart';
+import 'package:goai_mobile/core/storage/secure_store.dart';
+import 'package:goai_mobile/features/auth/data/auth_remote_data_source.dart';
+import 'package:goai_mobile/features/auth/data/auth_repository_impl.dart';
+import 'package:goai_mobile/features/auth/data/auth_session_storage.dart';
+import 'package:goai_mobile/features/auth/data/fake_auth_remote_data_source.dart';
+import 'package:goai_mobile/features/auth/domain/auth_credential.dart';
+import 'package:goai_mobile/features/auth/domain/auth_session.dart';
+import 'package:goai_mobile/features/auth/domain/auth_user.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _MockRemote extends Mock implements AuthRemoteDataSource {}
@@ -67,11 +67,71 @@ void main() {
     expect(result.valueOrNull?.isGuest, isTrue);
   });
 
-  test('restores a valid stored session without network', () async {
+  group('restoring a valid stored session', () {
+    setUpAll(() => registerFallbackValue(session()));
+
+    test('checks it with the server and keeps fresh user data', () async {
+      final remote = _MockRemote();
+      final stored = session(expiresAt: now.add(const Duration(hours: 1)));
+      final verified = AuthSession(
+        user: const AuthUser(
+          id: 'u1',
+          email: 'a@b.c',
+          role: 'user',
+          permissions: {'chat.file_upload'},
+        ),
+        accessToken: 'a1',
+        expiresAt: stored.expiresAt,
+      );
+      when(() => remote.verify(stored)).thenAnswer((_) async => verified);
+      await storage.write(stored);
+
+      final result = await repo(remote).restoreSession();
+
+      expect(result.valueOrNull, verified);
+      expect((await storage.read())?.user.permissions, {'chat.file_upload'});
+      verifyNever(() => remote.refresh(any()));
+    });
+
+    test('signs out locally when the server rejects the token', () async {
+      final remote = _MockRemote();
+      when(() => remote.verify(any())).thenThrow(const UnauthorizedFailure());
+      await storage.write(
+        session(expiresAt: now.add(const Duration(hours: 1))),
+      );
+      final repository = repo(remote);
+
+      final result = await repository.restoreSession();
+
+      expect(result.valueOrNull, isNull);
+      expect(repository.currentSession, isNull);
+      expect(await storage.read(), isNull);
+    });
+
+    test('keeps the stored session when offline', () async {
+      final remote = _MockRemote();
+      when(() => remote.verify(any())).thenThrow(const NetworkFailure());
+      await storage.write(
+        session(expiresAt: now.add(const Duration(hours: 1))),
+      );
+
+      final result = await repo(remote).restoreSession();
+
+      expect(result.valueOrNull?.accessToken, 'a1');
+    });
+  });
+
+  test('an expired session without refresh token is cleared', () async {
     final remote = _MockRemote();
-    await storage.write(session(expiresAt: now.add(const Duration(hours: 1))));
+    await storage.write(
+      session(
+        expiresAt: now.subtract(const Duration(minutes: 1)),
+        refresh: null,
+      ),
+    );
     final result = await repo(remote).restoreSession();
-    expect(result.valueOrNull?.accessToken, 'a1');
+    expect(result.valueOrNull, isNull);
+    expect(await storage.read(), isNull);
     verifyZeroInteractions(remote);
   });
 

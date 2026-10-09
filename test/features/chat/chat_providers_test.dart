@@ -1,17 +1,17 @@
 import 'dart:async';
 
-import 'package:flutter_project_base/features/chat/data/providers/ai_chat_providers.dart';
-import 'package:flutter_project_base/features/chat/data/providers/realtime_chat_provider.dart';
-import 'package:flutter_project_base/features/chat/domain/ai/text_generation.dart';
-import 'package:flutter_project_base/features/chat/domain/chat_provider.dart';
-import 'package:flutter_project_base/features/chat/domain/entities/chat_event.dart';
-import 'package:flutter_project_base/features/chat/domain/entities/conversation.dart';
-import 'package:flutter_project_base/features/chat/domain/entities/message.dart';
-import 'package:flutter_project_base/features/chat/domain/entities/participant.dart';
-import 'package:flutter_project_base/features/chat/domain/extensions/ai_extensions.dart';
-import 'package:flutter_project_base/shared/models/paged.dart';
-import 'package:flutter_project_base/shared/utils/id_generator.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/features/chat/data/providers/ai_chat_providers.dart';
+import 'package:goai_mobile/features/chat/data/providers/realtime_chat_provider.dart';
+import 'package:goai_mobile/features/chat/domain/ai/text_generation.dart';
+import 'package:goai_mobile/features/chat/domain/chat_provider.dart';
+import 'package:goai_mobile/features/chat/domain/entities/chat_event.dart';
+import 'package:goai_mobile/features/chat/domain/entities/conversation.dart';
+import 'package:goai_mobile/features/chat/domain/entities/message.dart';
+import 'package:goai_mobile/features/chat/domain/entities/participant.dart';
+import 'package:goai_mobile/features/chat/domain/extensions/ai_extensions.dart';
+import 'package:goai_mobile/shared/models/paged.dart';
+import 'package:goai_mobile/shared/utils/id_generator.dart';
 
 const me = Participant(id: 'me', displayName: 'Me', type: SenderType.user);
 const bot = Participant(id: 'bot', displayName: 'Bot', type: SenderType.ai);

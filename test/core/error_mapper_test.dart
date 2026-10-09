@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:flutter_project_base/core/error/app_failure.dart';
-import 'package:flutter_project_base/core/error/error_mapper.dart';
-import 'package:flutter_project_base/core/error/result.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/core/error/app_failure.dart';
+import 'package:goai_mobile/core/error/error_mapper.dart';
+import 'package:goai_mobile/core/error/result.dart';
 
 DioException _response(int status, [Object? data]) {
   final options = RequestOptions(path: '/x');
@@ -121,6 +121,41 @@ void main() {
       final err = await guard<int>(() async => throw const ServerFailure());
       expect(err.failureOrNull, isA<ServerFailure>());
       expect(err.isOk, isFalse);
+    });
+  });
+
+  group('Open WebUI responses', () {
+    test('reads the FastAPI "detail" message', () {
+      final failure = ErrorMapper.fromDio(
+        _response(403, {'detail': 'Access prohibited'}),
+      );
+      expect(failure, isA<ForbiddenFailure>());
+      expect(failure.message, 'Access prohibited');
+    });
+
+    test('maps 429 to RateLimitFailure with Retry-After', () {
+      final options = RequestOptions(path: '/x');
+      final failure = ErrorMapper.fromDio(
+        DioException(
+          requestOptions: options,
+          type: DioExceptionType.badResponse,
+          response: Response<Object?>(
+            requestOptions: options,
+            statusCode: 429,
+            headers: Headers.fromMap({
+              'retry-after': ['30'],
+            }),
+          ),
+        ),
+      );
+      expect(
+        failure,
+        isA<RateLimitFailure>().having(
+          (f) => f.retryAfter,
+          'retryAfter',
+          const Duration(seconds: 30),
+        ),
+      );
     });
   });
 }

@@ -20,7 +20,7 @@ class ChatDiscoveryPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final agents = ref.watch(agentsProvider);
+    final agents = ref.watch(agentsProvider).value ?? const <AgentItem>[];
     final conversationsAsync = ref.watch(conversationsProvider);
 
     return Scaffold(
@@ -240,17 +240,19 @@ class _AgentCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const SizedBox(width: AppSpacing.xs),
-                        Chip(
-                          label: Text(
-                            agent.role,
-                            style: theme.textTheme.labelSmall,
+                        if (agent.role.isNotEmpty) ...[
+                          const SizedBox(width: AppSpacing.xs),
+                          Chip(
+                            label: Text(
+                              agent.role,
+                              style: theme.textTheme.labelSmall,
+                            ),
+                            visualDensity: VisualDensity.compact,
+                            padding: EdgeInsets.zero,
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
                           ),
-                          visualDensity: VisualDensity.compact,
-                          padding: EdgeInsets.zero,
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                        ),
+                        ],
                       ],
                     ),
                     const SizedBox(height: AppSpacing.xs),

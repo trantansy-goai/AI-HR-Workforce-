@@ -1,5 +1,5 @@
-import 'package:flutter_project_base/features/news/data/fake_news_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/features/news/data/fake_news_repository.dart';
 
 void main() {
   group('FakeNewsRepository', () {

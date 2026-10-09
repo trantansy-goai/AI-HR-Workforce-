@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/router/app_routes.dart';
+import '../../../core/error/app_failure.dart';
 import '../../../core/localization/l10n.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../shared/widgets/responsive.dart';
+import '../../../shared/widgets/state_views.dart';
 import '../application/chat_providers.dart';
 import '../domain/entities/agent_item.dart';
 import '../domain/entities/conversation.dart';
@@ -135,8 +137,9 @@ class _ChatHubPageState extends ConsumerState<ChatHubPage> {
               onPressed: () {
                 setState(() {
                   _selectedAgentId = 'hr-assistant';
-                  _selectedConversationId =
-                      'agent-hr-assistant-${DateTime.now().millisecondsSinceEpoch}';
+                  _selectedConversationId = AgentItem.newConversationId(
+                    AgentItem.hrAssistantId,
+                  );
                 });
               },
             ),
@@ -151,7 +154,7 @@ class _ChatHubPageState extends ConsumerState<ChatHubPage> {
     WidgetRef ref,
     ThemeData theme,
     AppLocalizations l10n,
-    List<AgentItem> agents,
+    AsyncValue<List<AgentItem>> agents,
     AsyncValue<List<Conversation>> conversationsAsync, {
     required bool isMasterDetail,
   }) {
@@ -218,7 +221,9 @@ class _ChatHubPageState extends ConsumerState<ChatHubPage> {
                           setState(() {
                             _selectedAgentId = 'hr-assistant';
                             _selectedConversationId =
-                                'agent-hr-assistant-${DateTime.now().millisecondsSinceEpoch}';
+                                AgentItem.newConversationId(
+                                  AgentItem.hrAssistantId,
+                                );
                           });
                         } else {
                           context.push(AppRoutes.agentHistory('hr-assistant'));
@@ -233,7 +238,9 @@ class _ChatHubPageState extends ConsumerState<ChatHubPage> {
                           setState(() {
                             _selectedAgentId = 'hr-assistant';
                             _selectedConversationId =
-                                'agent-hr-assistant-${DateTime.now().millisecondsSinceEpoch}';
+                                AgentItem.newConversationId(
+                                  AgentItem.hrAssistantId,
+                                );
                           });
                         } else {
                           context.push(AppRoutes.agentHistory('hr-assistant'));
@@ -264,7 +271,17 @@ class _ChatHubPageState extends ConsumerState<ChatHubPage> {
         ),
         const SizedBox(height: AppSpacing.sm),
 
-        for (final agent in agents)
+        if (agents case AsyncError(:final error) when !agents.hasValue)
+          ErrorView(
+            failure: error is AppFailure ? error : null,
+            onRetry: () => ref.invalidate(agentsProvider),
+          )
+        else if (!agents.hasValue)
+          const Padding(
+            padding: EdgeInsets.all(AppSpacing.lg),
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        for (final agent in agents.value ?? const <AgentItem>[])
           Card(
             margin: const EdgeInsets.only(bottom: AppSpacing.sm),
             shape: RoundedRectangleBorder(
@@ -282,8 +299,9 @@ class _ChatHubPageState extends ConsumerState<ChatHubPage> {
                 if (isMasterDetail) {
                   setState(() {
                     _selectedAgentId = agent.id;
-                    _selectedConversationId =
-                        'agent-${agent.id}-${DateTime.now().millisecondsSinceEpoch}';
+                    _selectedConversationId = AgentItem.newConversationId(
+                      agent.id,
+                    );
                   });
                 } else {
                   context.push(AppRoutes.agentHistory(agent.id));

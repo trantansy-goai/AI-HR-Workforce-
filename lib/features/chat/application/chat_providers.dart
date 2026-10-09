@@ -31,14 +31,13 @@ final chatSelfProvider = Provider<Participant>((ref) {
   );
 });
 
-/// Open WebUI HTTP & SSE API client.
+/// Open WebUI HTTP & SSE API client, authorized with the user's JWT.
+/// Rebuilt per user so a cached model list never outlives its account.
 final openWebUiClientProvider = Provider<OpenWebUiClient>((ref) {
-  final config = ref.watch(appConfigProvider);
-  final dio = ref.watch(authenticatedDioProvider);
+  ref.watch(chatSelfProvider.select((p) => p.id));
   return OpenWebUiClient(
-    dio: dio,
-    openWebUiBaseUrl: config.openWebUiBaseUrl,
-    apiKey: config.openWebUiApiKey,
+    dio: ref.watch(authenticatedDioProvider),
+    openWebUiBaseUrl: ref.watch(appConfigProvider).openWebUiBaseUrl,
   );
 });
 
@@ -51,6 +50,9 @@ final modelRepositoryProvider = Provider<ModelRepositoryImpl>((ref) {
 final openWebUiChatProvider = Provider<OpenWebUiChatProvider>((ref) {
   final provider = OpenWebUiChatProvider(
     client: ref.watch(openWebUiClientProvider),
+    // Hỏi HR → "GO AI Employee Service" (grounded HR FAQ + routing). Users
+    // without access to it get their default model instead.
+    agentModelIds: const {AgentItem.hrAssistantId: 'employee_service'},
   );
   ref.onDispose(provider.dispose);
   return provider;
@@ -98,7 +100,20 @@ final conversationsProvider = StreamProvider.autoDispose<List<Conversation>>((
   yield* repository.watchConversations();
 });
 
-/// AI Agents list provider backed by centralized development fixtures.
-final agentsProvider = Provider<List<AgentItem>>((ref) {
-  return ChatFixtures.agents;
+/// AI agents the signed-in user may chat with: Open WebUI models from
+/// `GET /api/models` (filtered by the server per user), or fixtures with the
+/// fake backend.
+final agentsProvider = FutureProvider<List<AgentItem>>((ref) async {
+  if (ref.watch(appConfigProvider).useFakeBackend) return ChatFixtures.agents;
+  final models = await ref.watch(modelRepositoryProvider).getAgents();
+  return [
+    for (final model in models)
+      AgentItem(
+        id: model.id,
+        name: model.displayName,
+        description: model.description ?? '',
+        role: '',
+        modelId: model.id,
+      ),
+  ];
 });

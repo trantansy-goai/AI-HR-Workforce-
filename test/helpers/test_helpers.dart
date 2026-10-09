@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_project_base/core/config/app_config.dart';
-import 'package:flutter_project_base/core/di/core_providers.dart';
-import 'package:flutter_project_base/core/localization/l10n.dart';
-import 'package:flutter_project_base/core/logging/app_logger.dart';
-import 'package:flutter_project_base/core/storage/key_value_store.dart';
-import 'package:flutter_project_base/core/storage/secure_store.dart';
-import 'package:flutter_project_base/core/theme/app_theme.dart';
-import 'package:flutter_project_base/features/auth/application/auth_providers.dart';
-import 'package:flutter_project_base/features/auth/data/fake_auth_remote_data_source.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/core/config/app_config.dart';
+import 'package:goai_mobile/core/di/core_providers.dart';
+import 'package:goai_mobile/core/localization/l10n.dart';
+import 'package:goai_mobile/core/logging/app_logger.dart';
+import 'package:goai_mobile/core/storage/key_value_store.dart';
+import 'package:goai_mobile/core/storage/secure_store.dart';
+import 'package:goai_mobile/core/theme/app_theme.dart';
+import 'package:goai_mobile/features/auth/application/auth_providers.dart';
+import 'package:goai_mobile/features/auth/data/fake_auth_remote_data_source.dart';
 
 const testConfig = AppConfig(
   environment: AppEnvironment.development,
@@ -25,8 +25,9 @@ const testConfig = AppConfig(
 List<Override> baseTestOverrides({
   KeyValueStore? keyValueStore,
   SecureStore? secureStore,
+  AppConfig config = testConfig,
 }) => [
-  appConfigProvider.overrideWithValue(testConfig),
+  appConfigProvider.overrideWithValue(config),
   appLoggerProvider.overrideWithValue(const SilentLogger()),
   keyValueStoreProvider.overrideWithValue(
     keyValueStore ?? InMemoryKeyValueStore(),

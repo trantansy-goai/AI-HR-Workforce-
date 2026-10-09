@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project_base/app/app.dart';
-import 'package:flutter_project_base/features/chat/application/chat_providers.dart';
-import 'package:flutter_project_base/features/chat/data/providers/mock_chat_provider.dart';
-import 'package:flutter_project_base/features/chat/domain/chat_provider.dart';
-import 'package:flutter_project_base/features/quota/application/quota_providers.dart';
-import 'package:flutter_project_base/features/quota/domain/user_quota.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/app/app.dart';
+import 'package:goai_mobile/features/chat/application/chat_providers.dart';
+import 'package:goai_mobile/features/chat/data/providers/mock_chat_provider.dart';
+import 'package:goai_mobile/features/chat/domain/chat_provider.dart';
+import 'package:goai_mobile/features/quota/application/quota_providers.dart';
+import 'package:goai_mobile/features/quota/domain/user_quota.dart';
 
 import '../../helpers/test_helpers.dart';
 

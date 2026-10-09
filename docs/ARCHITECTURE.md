@@ -63,7 +63,7 @@ Why:
 - Compile-safe, testable: any dependency can be overridden in
   `ProviderScope`/`ProviderContainer` without global singletons.
 - Providers are lazy, so unused features cost nothing at startup.
-- No build_runner step keeps the base easy to clone and understand.
+- No build_runner step keeps the project easy to clone and understand.
 
 Conventions:
 - Infrastructure → `Provider<T>` (e.g. `apiClientProvider`).
@@ -83,7 +83,7 @@ Conventions:
 [`AppConfig`](../lib/core/config/app_config.dart) is built from
 `--dart-define` values (`config/<env>.json`). `AppEnvironment` = development
 | staging | production. Production forcibly disables network logging.
-`useFakeBackend` switches data sources to in-process fakes so the base runs
+`useFakeBackend` switches data sources to in-process fakes so the app runs
 without a server.
 
 ## Networking
@@ -158,7 +158,8 @@ Domain and UI are unaffected.
   `session.isGuest`), `AuthCredential` (`GuestCredential`,
   `EmailPasswordCredential`, `OAuthCredential` extension point),
   `AuthRepository`.
-- Data: `HttpAuthRemoteDataSource` (REST convention, adapt to backend),
+- Data: `OpenWebUiAuthRemoteDataSource` (Open WebUI JWT sign-in, session
+  check, sign-out; no refresh token),
   `FakeAuthRemoteDataSource` (demo/tests), `AuthSessionStorage` (session JSON
   in `SecureStore` only), `AuthRepositoryImpl` (restore, refresh with
   single-flight, offline-tolerant restore, best-effort remote logout).

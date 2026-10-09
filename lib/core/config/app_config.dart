@@ -26,7 +26,6 @@ class AppConfig {
     this.logNetworkBodies = false,
     this.useFakeBackend = false,
     this.useFakeNativeAdapters = false,
-    this.openWebUiApiKey = '',
   });
 
   /// Reads configuration from compile-time environment declarations.
@@ -47,10 +46,6 @@ class AppConfig {
       'OPEN_WEBUI_BASE_URL',
       defaultValue: 'https://openwebui.example.com',
     );
-    const openWebUiKey = String.fromEnvironment(
-      'OPEN_WEBUI_API_KEY',
-      defaultValue: '',
-    );
 
     return AppConfig(
       environment: environment,
@@ -61,7 +56,6 @@ class AppConfig {
       apiBaseUrl: defaultApiUrl,
       businessApiBaseUrl: businessApiUrl,
       openWebUiBaseUrl: openWebUiUrl,
-      openWebUiApiKey: openWebUiKey,
       connectTimeout: Duration(
         milliseconds: const int.fromEnvironment(
           'CONNECT_TIMEOUT_MS',
@@ -94,8 +88,10 @@ class AppConfig {
   final String appName;
   final String apiBaseUrl;
   final String businessApiBaseUrl;
+
+  /// Open WebUI host (auth, models, chat, files). Requests carry the signed-in
+  /// user's JWT; the app never ships a static API key.
   final String openWebUiBaseUrl;
-  final String openWebUiApiKey;
   final Duration connectTimeout;
   final Duration receiveTimeout;
   final bool enableNetworkLogs;

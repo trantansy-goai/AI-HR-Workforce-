@@ -1,5 +1,5 @@
-import 'package:flutter_project_base/core/logging/redactor.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/core/logging/redactor.dart';
 
 void main() {
   test('redacts sensitive keys recursively, case/format-insensitive', () {

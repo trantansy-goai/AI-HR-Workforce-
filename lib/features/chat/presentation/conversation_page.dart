@@ -7,6 +7,7 @@ import '../../../core/theme/app_tokens.dart';
 import '../../../shared/widgets/app_feedback.dart';
 import '../../../shared/widgets/responsive.dart';
 import '../../../shared/widgets/state_views.dart';
+import '../../auth/application/auth_providers.dart';
 import '../../file/application/file_providers.dart';
 import '../../voice/application/voice_providers.dart';
 import '../application/chat_providers.dart';
@@ -18,6 +19,9 @@ import 'widgets/chat_composer.dart';
 import 'widgets/file_type_sheet.dart';
 import 'widgets/message_bubble.dart';
 import 'widgets/typing_indicator.dart';
+
+/// Open WebUI permission (`permissions.chat.file_upload`) for attachments.
+const uploadPermission = 'chat.file_upload';
 
 class ConversationPage extends ConsumerStatefulWidget {
   const ConversationPage({
@@ -91,6 +95,15 @@ class _ConversationPageState extends ConsumerState<ConversationPage> {
     final state = ref.watch(provider);
     final controller = ref.read(provider.notifier);
     final info = controller.providerInfo;
+    // Server-granted permission; the backend still enforces it on upload.
+    final canAttach =
+        info.supports(ChatCapability.attachments) &&
+        (ref.watch(
+              authControllerProvider.select(
+                (s) => s.user?.allows(uploadPermission),
+              ),
+            ) ??
+            true);
     final selfId = controller.self.id;
     final conversation = ref
         .watch(conversationsProvider)
@@ -147,15 +160,9 @@ class _ConversationPageState extends ConsumerState<ConversationPage> {
             ChatComposer(
               voiceRecorder: ref.watch(voiceRecorderProvider),
               onSend: controller.send,
-              onAttachMedia: info.supports(ChatCapability.attachments)
-                  ? _attachMedia
-                  : null,
-              onAttachFile: info.supports(ChatCapability.attachments)
-                  ? _attachFile
-                  : null,
-              onVoiceRecorded: info.supports(ChatCapability.attachments)
-                  ? controller.sendVoiceNote
-                  : null,
+              onAttachMedia: canAttach ? _attachMedia : null,
+              onAttachFile: canAttach ? _attachFile : null,
+              onVoiceRecorded: canAttach ? controller.sendVoiceNote : null,
               onStop: info.supports(ChatCapability.stopGeneration)
                   ? controller.stopGeneration
                   : null,

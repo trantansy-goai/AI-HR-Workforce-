@@ -54,6 +54,7 @@ abstract final class ErrorMapper {
         return fromStatus(
           error.response?.statusCode,
           error.response?.data,
+          retryAfter: _retryAfterOf(error.response?.headers),
           cause: error,
         );
       case DioExceptionType.unknown:
@@ -63,10 +64,16 @@ abstract final class ErrorMapper {
 
   /// Maps an HTTP status code (and optional JSON body) to a failure.
   ///
-  /// Body convention understood by default:
-  /// `{"message": "...", "errors": {"field": ["msg", ...]}}`.
+  /// Body conventions understood by default:
+  /// `{"message": "...", "errors": {"field": ["msg", ...]}}` and FastAPI /
+  /// Open WebUI's `{"detail": "..."}`.
   /// Adapt [_messageOf]/[_fieldErrorsOf] to your backend's format.
-  static AppFailure fromStatus(int? status, Object? body, {Object? cause}) {
+  static AppFailure fromStatus(
+    int? status,
+    Object? body, {
+    Duration? retryAfter,
+    Object? cause,
+  }) {
     final message = _messageOf(body);
     return switch (status) {
       400 || 422 => ValidationFailure(
@@ -77,6 +84,11 @@ abstract final class ErrorMapper {
       401 => UnauthorizedFailure(message ?? 'Unauthorized', cause),
       403 => ForbiddenFailure(message ?? 'Forbidden', cause),
       404 => NotFoundFailure(message ?? 'Not found', cause),
+      429 => RateLimitFailure(
+        message: message ?? 'Too many requests',
+        retryAfter: retryAfter,
+        cause: cause,
+      ),
       final int s when s >= 500 => ServerFailure(
         message: message ?? 'Server error',
         statusCode: s,
@@ -91,10 +103,16 @@ abstract final class ErrorMapper {
   }
 
   static String? _messageOf(Object? body) {
-    if (body is Map && body['message'] is String) {
-      return body['message'] as String;
+    if (body is! Map) return null;
+    for (final key in const ['message', 'detail']) {
+      if (body[key] is String) return body[key] as String;
     }
     return null;
+  }
+
+  static Duration? _retryAfterOf(Headers? headers) {
+    final seconds = int.tryParse(headers?.value('retry-after') ?? '');
+    return seconds == null ? null : Duration(seconds: seconds);
   }
 
   static Map<String, List<String>> _fieldErrorsOf(Object? body) {

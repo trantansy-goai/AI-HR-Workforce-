@@ -1,8 +1,8 @@
-import 'package:flutter_project_base/features/chat/domain/entities/message.dart';
-import 'package:flutter_project_base/features/chat/domain/entities/message_metadata.dart';
-import 'package:flutter_project_base/features/chat/domain/entities/participant.dart';
-import 'package:flutter_project_base/features/chat/domain/extensions/ai_extensions.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/features/chat/domain/entities/message.dart';
+import 'package:goai_mobile/features/chat/domain/entities/message_metadata.dart';
+import 'package:goai_mobile/features/chat/domain/entities/participant.dart';
+import 'package:goai_mobile/features/chat/domain/extensions/ai_extensions.dart';
 
 /// Example of an app-defined extension (e.g. a booking app).
 class BookingRef extends MessageExtension {

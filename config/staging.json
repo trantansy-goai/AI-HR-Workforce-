@@ -3,7 +3,7 @@
   "APP_NAME": "GOAI Mobile (Staging)",
   "API_BASE_URL": "https://staging-api.example.com",
   "BUSINESS_API_BASE_URL": "https://staging-business.example.com",
-  "OPEN_WEBUI_BASE_URL": "https://staging-openwebui.example.com",
+  "OPEN_WEBUI_BASE_URL": "https://workforce.ai-iep.vn",
   "USE_FAKE_BACKEND": false,
   "ENABLE_NETWORK_LOGS": true,
   "LOG_NETWORK_BODIES": false

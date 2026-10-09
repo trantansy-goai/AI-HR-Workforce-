@@ -35,7 +35,7 @@ class AuthRepositoryImpl implements AuthRepository {
     final stored = await _storage.read();
     if (stored == null) return null;
     _session = stored;
-    if (!stored.isExpired(_clock())) return stored;
+    if (!stored.isExpired(_clock())) return _verify(stored);
     if (!stored.canRefresh) {
       await _clearLocal();
       return null;
@@ -51,6 +51,24 @@ class AuthRepositoryImpl implements AuthRepository {
         return null;
     }
   });
+
+  /// Confirms a stored session with the server and picks up role or
+  /// permission changes. Offline or server errors keep the stored session so
+  /// the app still opens; a rejected token signs out locally.
+  Future<AuthSession?> _verify(AuthSession stored) async {
+    try {
+      final verified = await _remote.verify(stored);
+      await _storage.write(verified);
+      _session = verified;
+      return verified;
+    } on UnauthorizedFailure {
+      await _clearLocal();
+      return null;
+    } on AppFailure catch (failure) {
+      _logger.warning('Session check failed: ${failure.message}', tag: 'auth');
+      return stored;
+    }
+  }
 
   @override
   Future<Result<AuthSession>> signIn(AuthCredential credential) =>

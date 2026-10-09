@@ -56,6 +56,10 @@ class AppLocalizationsVi extends AppLocalizations {
       'Một số thông tin không hợp lệ. Vui lòng kiểm tra lại.';
 
   @override
+  String get errorRateLimited =>
+      'Bạn thao tác quá nhanh. Vui lòng đợi một lát rồi thử lại.';
+
+  @override
   String get errorServer => 'Máy chủ gặp sự cố. Vui lòng thử lại sau.';
 
   @override
@@ -134,6 +138,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get authPasswordLabel => 'Mật khẩu';
 
   @override
+  String get authPasswordRequired => 'Vui lòng nhập mật khẩu';
+
+  @override
   String get authSignInButton => 'Đăng nhập';
 
   @override
@@ -173,8 +180,7 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get homeSubtitle =>
-      'Ứng dụng nền tảng này minh họa các module có thể tái sử dụng.';
+  String get homeSubtitle => 'GO AI Workforce dành cho nhân viên.';
 
   @override
   String get homeChatTitle => 'Demo Chat';

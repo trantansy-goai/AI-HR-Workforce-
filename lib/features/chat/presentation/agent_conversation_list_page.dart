@@ -22,7 +22,7 @@ class AgentConversationListPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final agents = ref.watch(agentsProvider);
+    final agents = ref.watch(agentsProvider).value ?? const <AgentItem>[];
     final agent = agents.firstWhere(
       (a) => a.id == agentId,
       orElse: () => AgentItem(
@@ -83,8 +83,7 @@ class AgentConversationListPage extends ConsumerWidget {
                     label: l10n.chatStartNew,
                     icon: Icons.add_comment_outlined,
                     onPressed: () {
-                      final newId =
-                          'agent-$agentId-${DateTime.now().millisecondsSinceEpoch}';
+                      final newId = AgentItem.newConversationId(agentId);
                       context.push(AppRoutes.conversation(newId));
                     },
                   ),

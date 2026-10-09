@@ -3,7 +3,7 @@ import '../extensions/ai_extensions.dart';
 /// Vendor-neutral contracts for generative backends. Remote APIs (OpenAI,
 /// Anthropic, Gemini, a company RAG service...) and on-device engines
 /// (llama.cpp bindings, llamadart, MLC...) are adapted to these types in the
-/// consuming app. The base bundles no SDK and no model.
+/// data layer. No SDK and no model is bundled.
 
 enum AiRole { system, user, assistant, tool }
 
@@ -31,6 +31,8 @@ class GenerationRequest {
     required this.turns,
     this.options = const GenerationOptions(),
     this.conversationId,
+    this.modelId,
+    this.fileIds = const [],
   });
 
   final List<ChatTurn> turns;
@@ -38,6 +40,14 @@ class GenerationRequest {
 
   /// Lets server-side engines keep their own thread state if they want.
   final String? conversationId;
+
+  /// Preferred model/agent for this request; engines fall back to their
+  /// current model when null or unknown.
+  final String? modelId;
+
+  /// Server-side ids of files uploaded for this conversation, so remote
+  /// engines can ground answers on them (RAG).
+  final List<String> fileIds;
 }
 
 /// One piece of a streamed generation.

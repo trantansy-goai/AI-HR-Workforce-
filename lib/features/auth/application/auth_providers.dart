@@ -14,7 +14,10 @@ final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
     return FakeAuthRemoteDataSource();
   }
   // Public client: auth endpoints must not go through the refresh interceptor.
-  return HttpAuthRemoteDataSource(ref.watch(publicApiClientProvider));
+  return OpenWebUiAuthRemoteDataSource(
+    ref.watch(publicApiClientProvider),
+    baseUrl: ref.watch(appConfigProvider).openWebUiBaseUrl,
+  );
 });
 
 final authRepositoryProvider = Provider<AuthRepository>(

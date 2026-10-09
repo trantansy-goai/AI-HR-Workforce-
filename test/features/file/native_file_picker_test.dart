@@ -2,9 +2,9 @@ import 'dart:typed_data';
 
 import 'package:cross_file/cross_file.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter_project_base/features/file/data/native_file_picker.dart';
-import 'package:flutter_project_base/features/file/domain/attachment.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/features/file/data/native_file_picker.dart';
+import 'package:goai_mobile/features/file/domain/attachment.dart';
 
 base class _TestPlatformFile extends PlatformFile {
   _TestPlatformFile({

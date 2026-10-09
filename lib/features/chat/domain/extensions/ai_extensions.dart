@@ -56,10 +56,14 @@ class ModelInfo {
     required this.displayName,
     this.isLocal = false,
     this.contextWindow,
+    this.description,
   });
 
   final String id;
   final String displayName;
+
+  /// What the model/agent is for, as configured on the server.
+  final String? description;
 
   /// True when inference runs on-device.
   final bool isLocal;
@@ -70,6 +74,7 @@ class ModelInfo {
     'displayName': displayName,
     'isLocal': isLocal,
     'contextWindow': contextWindow,
+    'description': description,
   };
 
   @override

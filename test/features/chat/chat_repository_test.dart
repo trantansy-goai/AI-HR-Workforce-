@@ -1,14 +1,14 @@
-import 'package:flutter_project_base/features/chat/data/cache/in_memory_chat_cache.dart';
-import 'package:flutter_project_base/features/chat/data/chat_repository_impl.dart';
-import 'package:flutter_project_base/features/chat/data/providers/mock_chat_provider.dart';
-import 'package:flutter_project_base/features/chat/domain/entities/chat_event.dart';
-import 'package:flutter_project_base/features/chat/domain/entities/message.dart';
-import 'package:flutter_project_base/features/chat/domain/entities/participant.dart';
-import 'package:flutter_project_base/features/chat/domain/extensions/ai_extensions.dart';
-import 'package:flutter_project_base/features/file/data/demo_file_services.dart';
-import 'package:flutter_project_base/features/file/domain/attachment.dart';
-import 'package:flutter_project_base/shared/utils/id_generator.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/features/chat/data/cache/in_memory_chat_cache.dart';
+import 'package:goai_mobile/features/chat/data/chat_repository_impl.dart';
+import 'package:goai_mobile/features/chat/data/providers/mock_chat_provider.dart';
+import 'package:goai_mobile/features/chat/domain/entities/chat_event.dart';
+import 'package:goai_mobile/features/chat/domain/entities/message.dart';
+import 'package:goai_mobile/features/chat/domain/entities/participant.dart';
+import 'package:goai_mobile/features/chat/domain/extensions/ai_extensions.dart';
+import 'package:goai_mobile/features/file/data/demo_file_services.dart';
+import 'package:goai_mobile/features/file/domain/attachment.dart';
+import 'package:goai_mobile/shared/utils/id_generator.dart';
 
 const self = Participant(id: 'me', displayName: 'Me', type: SenderType.user);
 

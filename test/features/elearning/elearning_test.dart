@@ -1,5 +1,5 @@
-import 'package:flutter_project_base/features/elearning/data/fake_learning_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goai_mobile/features/elearning/data/fake_learning_repository.dart';
 
 void main() {
   group('FakeLearningRepository', () {
