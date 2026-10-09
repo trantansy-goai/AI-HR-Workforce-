@@ -76,17 +76,32 @@ Reference UI Mockup: https://go-ai-hr-phase1-ui.trantansy.chatgpt.site/
 2. Hỏi HR uses agent `employee_service`; to be confirmed by the business.
 3. Image/voice attachments use the same upload pipeline; only text files were
    verified live.
-4. Chat history is local to the device and in memory; server-side chats
-   (`/api/v1/chats/*`) are not used.
-5. Trang chủ, Việc, Học tập, Bản tin, Tài liệu, Phê duyệt and token quota
-   still use fake data — no API yet ([BACKEND_INTEGRATION_TODO.md](BACKEND_INTEGRATION_TODO.md)).
-6. Android staging builds use `com.goaiapp.goai.staging` (from `APP_ENV`);
+4. Chat history lives in Open WebUI (`/api/v1/chats/*`), shared with the
+   website (verified on SM-X510, 2026-10-09). The app lists the newest 60
+   chats only, and new chats are titled with the first question (the website
+   asks a model for a title).
+5. Backend (2026-10-09): no new APIs — use Open WebUI's own APIs or embed
+   the website ([BACKEND_INTEGRATION_TODO.md](BACKEND_INTEGRATION_TODO.md)).
+   Token quota (usage vs. `TOKEN_QUOTA_LIMIT` = 200,000), Tài liệu (knowledge) and Bản tin (shared
+   notes) now use Open WebUI; Tài liệu and Bản tin are empty for `hr@` until
+   an admin shares knowledge/notes with employees. Việc, Học tập, Bài kiểm
+   tra and Phê duyệt still use fake data: Open WebUI has no API for them and
+   the website is Open WebUI itself. Feature-by-feature coverage:
+   [OPENWEBUI_API_MAPPING.md](OPENWEBUI_API_MAPPING.md) §7.
+6. HR vs employee layouts (Hỏi HR, Việc) follow Open WebUI groups:
+   `EMPLOYEE_GROUPS` = `Knowledge-IT`: `knowledge@` gets the employee
+   layouts, every other test account the HR ones. Việc HR blocks are still
+   fake data.
+7. Android staging builds use `com.goaiapp.goai.staging` (from `APP_ENV`);
    iOS still has one bundle id for all environments.
-7. iOS distribution is not set up (needs Apple signing assets).
+8. iOS distribution is not set up (needs Apple signing assets).
 
 ## 5. Next steps
 
-- Backend: fix `HR Chief Manager`; provide APIs for the remaining tabs.
+- Backend: fix `HR Chief Manager`.
+- Admin: share knowledge bases and news notes with the employees' group.
+- Việc, Học tập, Bài kiểm tra, Phê duyệt: WebView once the backend names
+  the website pages and how they authenticate.
 - Firebase: configure App Distribution secrets so PR builds reach QA.
 - iOS: Ad Hoc signing + App Distribution job.
-- Persistent chat history (server chats or local DB).
+- Chat list paging beyond 60 chats; offline cache of server chats.

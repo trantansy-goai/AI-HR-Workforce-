@@ -7,6 +7,32 @@ This document outlines the exact Mobile operations, required backend capabilitie
 > - **File Picking**: NativeFilePicker is implemented using package:file_picker. Device document selection is NOT a backend blocker.
 > - Only **Remote Upload** and **STT (Speech-to-Text)** require backend API contracts.
 
+## Backend decision (2026-10-09)
+
+The backend will not add APIs for the app. The remaining tabs either use
+Open WebUI's own APIs (0.11.4, user-level endpoints only — the server keeps
+its rules in between, so the app never calls a model directly) or embed the
+website in a WebView.
+
+| Tab | Plan | Open WebUI API |
+| --- | --- | --- |
+| Tài liệu | DONE — `OpenWebUiDocumentRepository` (needs knowledge shared with the user's group) | `GET /api/v1/knowledge/` → `/{id}/files` → `/api/v1/files/{id}/content` |
+| Token quota | DONE — `OpenWebUiQuotaRepository` (usage from the server; limit `TOKEN_QUOTA_LIMIT` in config) | `GET /api/v1/users/usage` |
+| Bản tin | DONE — `OpenWebUiNewsRepository`: notes HR shares with the user's group | `/api/v1/notes/` |
+| Lịch (Trang chủ: Việc sắp đến hạn, số việc tuần này) | DONE — `OpenWebUiScheduleRepository` | `GET /api/v1/calendars/events` |
+| Việc của tôi (cases, onboarding checklist) | WebView | none |
+| Phê duyệt | WebView | none |
+| Học tập progress, Bài kiểm tra | WebView | none |
+
+The website (`workforce.ai-iep.vn`) **is** Open WebUI, so embedding it adds
+no page for the WebView tabs above; they need pages from another web app.
+Full feature-by-feature coverage: `OPENWEBUI_API_MAPPING.md` §7.
+
+Open questions for the backend: which website pages back the WebView tabs,
+and whether they accept the Open WebUI JWT (otherwise users sign in again in
+the WebView). For Tài liệu and Bản tin, an admin must share knowledge bases
+and notes with the employees' group; `hr@` sees none today.
+
 ---
 
 ## 1. Authentication & Session
@@ -15,9 +41,7 @@ This document outlines the exact Mobile operations, required backend capabilitie
 - **Mobile Operation**: Sign in with employee credentials & refresh access tokens.
 - **Required Endpoint Capability**: Authenticate employee credentials; issue access & refresh tokens.
 - **Required Request Fields**: email (or username), password.
-- **Required Response Fields**: ccessToken, 
-efreshToken, expiresIn, user (id, displayName, email, 
-oles, permissions).
+- **Required Response Fields**: `accessToken`, `refreshToken`, expiresIn, user (id, displayName, email, `roles`, permissions).
 - **Domain Model**: UserSession, UserProfile.
 - **Current Repository Interface**: AuthRepository, AuthRemoteDataSource.
 - **Current Fake Implementation**: FakeAuthRemoteDataSource.
@@ -45,11 +69,11 @@ oles, permissions).
 - **Mobile Operation**: Fetch document catalog, view document metadata, download/open document file.
 - **Required Endpoint Capability**: List employee-visible documents & return file download stream/URL.
 - **Required Request Fields**: Query params (page, limit, category).
-- **Required Response Fields**: id, 	itle, description, ileSizeBytes, mimeType, uploadedAt, downloadUrl.
+- **Required Response Fields**: id, `title`, description, `fileSizeBytes`, mimeType, uploadedAt, downloadUrl.
 - **Domain Model**: DocumentItem.
 - **Current Repository Interface**: DocumentRepository.
 - **Current Fake Implementation**: FakeDocumentRepository.
-- **Production Adapter Needed**: HttpDocumentRepository.
+- **Production Adapter**: DONE — `OpenWebUiDocumentRepository` (Open WebUI knowledge bases; download with the session).
 
 ---
 
@@ -58,8 +82,8 @@ oles, permissions).
 - **Feature**: File Attachment & Remote Upload
 - **Mobile Operation**: Upload picked local file to backend storage. (Native file picking is already IMPLEMENTED via NativeFilePicker).
 - **Required Endpoint Capability**: Multipart file upload endpoint.
-- **Required Request Fields**: Multipart binary file (ile), optional ilename, mimeType.
-- **Required Response Fields**: ileId, ileName, ileSizeBytes, contentType, ileUrl.
+- **Required Request Fields**: Multipart binary file (`file`), optional `filename`, mimeType.
+- **Required Response Fields**: `fileId`, `fileName`, `fileSizeBytes`, contentType, `fileUrl`.
 - **Domain Model**: Attachment, AttachmentSource.
 - **Current Repository Interface**: FileUploader.
 - **Current Fake Implementation**: FakeFileUploader.
@@ -73,11 +97,11 @@ oles, permissions).
 - **Mobile Operation**: View course list, read module content, view course resources.
 - **Required Endpoint Capability**: Fetch course list & course module details.
 - **Required Request Fields**: None / Course ID parameter.
-- **Required Response Fields**: id, 	itle, summary, durationMinutes, isCompleted, coverImageUrl, content, ttachmentUrl.
+- **Required Response Fields**: id, `title`, summary, durationMinutes, isCompleted, coverImageUrl, content, `attachmentUrl`.
 - **Domain Model**: LearningCourse.
 - **Current Repository Interface**: LearningRepository.
 - **Current Fake Implementation**: FakeLearningRepository.
-- **Production Adapter Needed**: HttpLearningRepository.
+- **Production Adapter Needed**: HttpLearningRepository — no Open WebUI equivalent (needs another backend or a WebView page).
 
 ---
 
@@ -86,14 +110,14 @@ oles, permissions).
 - **Feature**: Compliance & Knowledge Exams
 - **Mobile Operation**: View tests, fetch test questions, submit answer choices, view backend result.
 - **Required Endpoint Capability**: Fetch tests, fetch test question payload, evaluate & grade submission.
-- **Required Request Fields**: Test ID, nswers map (questionId -> choiceIndex).
+- **Required Request Fields**: Test ID, `answers` map (questionId -> choiceIndex).
 - **Required Response Fields**:
   - Questions: id, questionText, options (array of string choices).
-  - Result: id, score, maxScore, isPassed, eedback.
+  - Result: id, score, maxScore, isPassed, `feedback`.
 - **Domain Model**: OnlineTest, TestQuestion, TestSubmission, TestResult.
 - **Current Repository Interface**: OnlineTestRepository.
 - **Current Fake Implementation**: FakeTestRepository.
-- **Production Adapter Needed**: HttpOnlineTestRepository.
+- **Production Adapter Needed**: HttpOnlineTestRepository — no Open WebUI equivalent (needs another backend or a WebView page).
 
 > **Important**: Mobile DOES NOT calculate score, pass/fail, or correct answer choices locally. The backend is authoritative.
 
@@ -105,11 +129,11 @@ oles, permissions).
 - **Mobile Operation**: Fetch news feed, read news article detail.
 - **Required Endpoint Capability**: Fetch news feed & article body content.
 - **Required Request Fields**: Article ID parameter.
-- **Required Response Fields**: id, 	itle, summary, content, publishedAt, imageUrl.
+- **Required Response Fields**: id, `title`, summary, content, publishedAt, imageUrl.
 - **Domain Model**: NewsItem.
 - **Current Repository Interface**: NewsRepository.
 - **Current Fake Implementation**: FakeNewsRepository.
-- **Production Adapter Needed**: HttpNewsRepository.
+- **Production Adapter**: DONE — `OpenWebUiNewsRepository` (admin banners + notes shared with the user).
 
 ---
 
@@ -123,7 +147,7 @@ oles, permissions).
 - **Domain Model**: UserQuota.
 - **Current Repository Interface**: QuotaRepository.
 - **Current Fake Implementation**: FakeQuotaRepository.
-- **Production Adapter Needed**: HttpQuotaRepository.
+- **Production Adapter**: DONE — `OpenWebUiQuotaRepository` (usage from `/api/v1/users/usage`; limit `TOKEN_QUOTA_LIMIT`).
 
 > **Important**: Mobile DOES NOT calculate or enforce authoritative quota limits locally. Backend enforces limits on AI endpoints.
 
@@ -134,13 +158,12 @@ oles, permissions).
 - **Feature**: Generic Request Approvals
 - **Mobile Operation**: List pending approvals, view item details, submit action (approve/reject).
 - **Required Endpoint Capability**: List pending approval items & post server-driven action.
-- **Required Request Fields**: Approval ID, ction ("approve" or "reject"), optional comment.
-- **Required Response Fields**: Item id, 	itle, 
-equesterName, status, vailableActions array (["approve", "reject"]), createdAt, detail.
+- **Required Request Fields**: Approval ID, `action` ("approve" or "reject"), optional comment.
+- **Required Response Fields**: Item id, `title`, `requesterName`, status, `availableActions` array (["approve", "reject"]), createdAt, detail.
 - **Domain Model**: ApprovalItem.
 - **Current Repository Interface**: ApprovalRepository.
 - **Current Fake Implementation**: FakeApprovalRepository.
-- **Production Adapter Needed**: HttpApprovalRepository.
+- **Production Adapter Needed**: HttpApprovalRepository — no Open WebUI equivalent (needs another backend or a WebView page).
 
 ---
 
@@ -149,9 +172,9 @@ equesterName, status, vailableActions array (["approve", "reject"]), createdAt,
 - **Feature**: Voice Input Audio Transcription
 - **Mobile Operation**: Transcribe local voice recording produced by NativeVoiceRecorder. (Audio recording is already IMPLEMENTED via NativeVoiceRecorder).
 - **Required Endpoint Capability**: Multipart audio file transcription endpoint.
-- **Required Request Fields**: Multipart audio file (udio file in M4A/AAC format).
+- **Required Request Fields**: Multipart audio file (`audio` file in M4A/AAC format).
 - **Required Response Fields**: { "text": "Transcribed text content..." }.
 - **Domain Model**: Plain text string / OutgoingMessage.
 - **Current Repository Interface**: SttDataSource (to be injected into voice controller).
 - **Current Fake Implementation**: None (Audio file remains on device).
-- **Production Adapter Needed**: HttpSttDataSource.
+- **Production Adapter**: DONE — `OpenWebUiSpeechTranscriber` (`POST /api/v1/audio/transcriptions`); the transcript becomes the message text.
