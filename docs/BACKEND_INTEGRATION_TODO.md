@@ -26,12 +26,26 @@ website in a WebView.
 
 The website (`workforce.ai-iep.vn`) **is** Open WebUI, so embedding it adds
 no page for the WebView tabs above; they need pages from another web app.
-Full feature-by-feature coverage: `OPENWEBUI_API_MAPPING.md` §7.
+Full feature-by-feature coverage: `OPENWEBUI_API_MAPPING.md` §8.
 
 Open questions for the backend: which website pages back the WebView tabs,
 and whether they accept the Open WebUI JWT (otherwise users sign in again in
 the WebView). For Tài liệu and Bản tin, an admin must share knowledge bases
 and notes with the employees' group; `hr@` sees none today.
+
+## Live test: speech-to-text and LLM (2026-10-09)
+
+Details, method and raw numbers: `OPENWEBUI_API_MAPPING.md` §7.
+
+| Area | Finding | Who | Action |
+| --- | --- | --- | --- |
+| STT accuracy | Server uses local Whisper **`base`**: "bao nhiêu ngày" → "bài nhau này"; near-silence → Chinese text | Admin | Switch to Whisper `large-v3-turbo` or OpenAI / Azure (vi-VN) in Admin › Settings › Audio |
+| STT in the app | Fixed: bubble at once, transcript filled in, `language=vi` sent, audio no longer used as a RAG source | App | Done (`f4d3f07`) |
+| LLM latency | ~10 s to the first word (Open WebUI itself answers in 0.5 s) | Backend | Stream tokens; faster model for FAQs |
+| Prompt size | 63–84 k prompt tokens for a one-line question | Backend | Top-k retrieval instead of whole policies |
+| Answer quality | "Tools temporarily disconnected" answers; leading blank lines | Backend | Re-enable data tools; trim output |
+| Token quota | 200 k / 30 days = 2–3 questions at today's prompt size | Business + Backend | Agree on the allowance after reducing prompts |
+| Chat titles | Title generation disabled (no task model) | Admin | Set a task model, enable title generation |
 
 ---
 
@@ -178,3 +192,4 @@ and notes with the employees' group; `hr@` sees none today.
 - **Current Repository Interface**: SttDataSource (to be injected into voice controller).
 - **Current Fake Implementation**: None (Audio file remains on device).
 - **Production Adapter**: DONE — `OpenWebUiSpeechTranscriber` (`POST /api/v1/audio/transcriptions`); the transcript becomes the message text.
+- **Live result (2026-10-09)**: works end to end; accuracy limited by the server's Whisper `base` model (see the live test above).

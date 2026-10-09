@@ -87,7 +87,7 @@ Reference UI Mockup: https://go-ai-hr-phase1-ui.trantansy.chatgpt.site/
    an admin shares knowledge/notes with employees. Việc, Học tập, Bài kiểm
    tra and Phê duyệt still use fake data: Open WebUI has no API for them and
    the website is Open WebUI itself. Feature-by-feature coverage:
-   [OPENWEBUI_API_MAPPING.md](OPENWEBUI_API_MAPPING.md) §7.
+   [OPENWEBUI_API_MAPPING.md](OPENWEBUI_API_MAPPING.md) §8.
 6. HR vs employee layouts (Hỏi HR, Việc) follow Open WebUI groups:
    `EMPLOYEE_GROUPS` = `Knowledge-IT`: `knowledge@` gets the employee
    layouts, every other test account the HR ones. Việc HR blocks are still

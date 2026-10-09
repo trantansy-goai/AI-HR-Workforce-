@@ -90,9 +90,11 @@ recorded response shapes.
  "permissions": {"chat": {"file_upload": true}, "workspace": {"models": false}}}
 ```
 
+
 - `expires_at` is epoch seconds or `null` (no expiry) → `AuthSession.expiresAt`.
 - `permissions` is flattened to granted dotted keys (`chat.file_upload`) →
   `AuthUser.permissions`. `role` → `AuthUser.role`.
+
 - `profile_image_url` is kept only if absolute or root-relative (`data:` URIs
   are dropped).
 
@@ -129,12 +131,15 @@ website's format so both show the same chats:
   "messages": [...], "timestamp": <ms>}}
 ```
 
+
 - Created on the first finished answer (`POST /api/v1/chats/new`); later
   answers send only unsaved messages (`POST /api/v1/chats/{id}` with
   `history`): the server merges `history.messages` by id and recomputes
   `childrenIds`.
+
 - Regenerate stores a sibling answer under the same question (a branch, as
   on the website). Failed answers are not stored.
+
 - Reading follows `parentId` from `history.currentId` to the root.
 - The completion request does not pass `chat_id`: with it the server would
   answer over its websocket instead of the HTTP stream.
@@ -165,8 +170,10 @@ Error text comes from Open WebUI's `{"detail": "..."}` (and the generic
 - JWT in `SecureStore` only; `Authorization` is redacted by the logging interceptor.
 - One JWT per signed-in user; the Open WebUI client and model cache are
   rebuilt when the user changes.
+
 - Agent list and upload button follow server data/permissions; the server
   still enforces them.
+
 - 401 → local session ends.
 
 ---
@@ -183,14 +190,126 @@ Error text comes from Open WebUI's `{"detail": "..."}` (and the generic
   `finish_reason` chunk, then `[DONE]`. With files, the first event is
   `{"sources": [...]}`, where `source.name` is `null` and the file name is in
   `metadata[0].name`.
+
 - Agents pause **11–19 s between chunks** even for short answers →
   `OpenWebUiClient.generationTimeout` = 5 min (the app-wide receive timeout is 30 s).
+
 - Upload of a small text file reached `completed` after about 3 polls.
 - `profile_image_url` (`/api/v1/users/{id}/profile/image`) needs the bearer
   token (401 without it). No screen shows it yet; an avatar widget must send
   the header.
 
-## 7. Coverage: every app feature vs. the Open WebUI API (0.11.4)
+## 7. Live test: speech-to-text and LLM (2026-10-09)
+
+Server: `workforce.ai-iep.vn`, Open WebUI 0.11.4. Device: Samsung SM-X510
+(staging build). Accounts: `hr@` (role `user`, group HR) for chats; `test@`
+(admin) only to read the audio and model configuration (read-only calls).
+
+### 7.1 Speech-to-text (voice notes)
+
+**Server configuration** (`GET /api/v1/audio/config`, admin):
+
+| Setting | Value | Meaning |
+| --- | --- | --- |
+| `stt.ENGINE` | `""` (empty) | Built-in local Whisper (faster-whisper) running on the Open WebUI server |
+| `stt.WHISPER_MODEL` | `base` | Small multilingual Whisper model (~74 M parameters); weak on Vietnamese |
+| `stt.ALLOWED_EXTENSIONS` | mp3, wav, m4a, webm, ogg, flac, mp4, mpga, mpeg | The app's AAC-LC `.m4a` is accepted |
+
+**App flow** (after the 2026-10-09 fix): recording stops → the voice-note
+bubble shows at once with "Đang chuyển giọng nói thành chữ…" → in parallel the
+audio is uploaded (`POST /api/v1/files/`) and transcribed
+(`POST /api/v1/audio/transcriptions`, multipart `file` + `language` = app
+language, e.g. `vi`) → the transcript becomes the text of that same bubble →
+the question goes to the agent as text. The audio is kept for playback but is
+no longer passed to the model as a RAG file. If transcription fails, the
+audio is sent alone (previous behavior).
+
+**Results**
+
+| # | Recording | `language` sent | Transcript returned | Assessment |
+| --- | --- | --- | --- | --- |
+| 1 | 11 s, mostly silence (device) | no (before the fix) | `搶黑色盲索` | Wrong language: Whisper guessed Chinese on near-silence |
+| 2 | 7 s, Vietnamese question (device) | no | `Tôi được nghỉ phép một năm bao nhiêu ngay` | Words right; missing tone mark (`ngay` → `ngày`) |
+| 3 | 3 s, Vietnamese question (device) | `vi` | `Tôi được nghỉ phép bài nhau này` | `bao nhiêu ngày` misheard as `bài nhau này` |
+| 4 | 1 s 440 Hz tone (API probe) | no | `""` (HTTP 200) | Endpoint works; nothing spoken |
+
+Before the fix the voice note was also sent to the model as a RAG file: the
+agent cited `voice_….m4a` as its source and answered that "the provided
+documents do not contain this information". Fixed in the app (`f4d3f07`).
+
+Transcription time was not measured separately from the upload.
+
+**Conclusion.** The app sends the audio and the language correctly; accuracy
+is limited by the server's `base` Whisper model.
+
+**Recommendation (admin, no app change).** Admin › Settings › Audio:
+
+- Whisper `large-v3-turbo` (or `large-v3`) on the server, if it has the
+  CPU/GPU for it, or
+
+- an external engine: OpenAI (`gpt-4o-transcribe` / `whisper-1`) or Azure
+  Speech (`vi-VN`).
+
+### 7.2 LLM answers (agents)
+
+**How measured.** A script with the `hr@` JWT posted
+`POST /api/chat/completions` (`stream: true`, one user message
+"Tôi được nghỉ phép bao nhiêu ngày một năm?", no system prompt, no files) and
+timed the SSE stream: first byte, first content token, total time, number of
+content chunks, gaps between chunks over 2 s, and the `usage` the server
+reported.
+
+| Agent | First byte | First content token | Total | Content chunks | Gaps > 2 s | Prompt tokens | Completion tokens |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `employee_service` | 0.5 s | **10.6 s** | 11.2 s | 8 | none | **84,375** | 675 |
+| `payroll` | 0.8 s | **10.2 s** | 10.4 s | 5 | none | **63,068** | 588 |
+
+For comparison, 2026-10-08: `employee_service` ≈ 10,750 prompt tokens per
+turn; `payroll` / `onboarding` took 21 s / 12 s with 11–19 s pauses between
+chunks.
+
+**Findings**
+
+- **The delay is in the agent backend, not the app or the network.** Open WebUI
+  answers within 0.5–0.8 s; the next ~10 s pass before any text. The app
+  renders chunks as they arrive (verified on the device).
+
+- **Very large prompts.** A one-line question costs 63–84 k prompt tokens: the
+  agents inject large rule/knowledge context on every turn (it was ≈ 10.7 k
+  the day before).
+
+- **No real token streaming.** ~600 completion tokens arrive in 5–8 chunks at
+  the end: the backend produces the whole answer first. Users stare at an
+  empty bubble for ~10 s.
+
+- **`employee_service` is not a workspace model** (`/api/v1/models/model`:
+  no base model, system prompt, tools or knowledge), so its rules live in the
+  external agent backend, which only the backend team can tune.
+
+- **Answer quality seen in the app:** "các công cụ truy xuất dữ liệu nhân viên
+  và chính sách trực tiếp đang tạm dừng kết nối…" (tools disabled on the
+  backend), and answers that start with blank lines.
+
+- **Quota impact:** at 63–84 k tokens per question, the 200,000-token
+  `TOKEN_QUOTA_LIMIT` allows only 2–3 questions per user per 30 days.
+
+- **Title generation is off** (`/api/v1/tasks/config`: no task model,
+  `ENABLE_TITLE_GENERATION` false); the app falls back to the first question.
+
+**Recommendations (backend)**
+
+1. Retrieve only the relevant passages (top-k RAG) instead of injecting whole
+   policies; target < 10 k prompt tokens for FAQ questions.
+
+2. Stream tokens as they are generated (forward the model's stream).
+3. Use a faster model for `employee_service` FAQs; keep the heavy chain for
+   cases that need tools.
+
+4. Re-enable the data tools behind the agents, and trim leading blank lines.
+5. Set a task model and enable title generation.
+6. Agree on the token allowance with the prompt size above in mind.
+
+## 8. Coverage: every app feature vs. the Open WebUI API (0.11.4)
 
 All 30 Open WebUI routers (~280 user-level endpoints) were checked against
 the app's features (inventory of 2026-10-09). Every feature with a matching
@@ -238,24 +357,28 @@ API is wired; the rest have no Open WebUI equivalent.
 APIs available but with no matching app feature yet (candidates, not
 gaps): chat share, archive and folders, memories.
 
-## 8. Open items
+## 9. Open items
 
 1. **Server bug: `HR Chief Manager` is listed by `/api/models` but chat
    returns `400 {"detail": "Model not found"}`.** The app shows the reply as
    failed. Needs a fix in the Open WebUI model config (its base model is
    probably missing or disabled). Its id also contains spaces; the app
    handles that.
+
 2. Confirm `employee_service` is the intended Hỏi HR agent.
 3. Images and voice notes use the same file pipeline; not tested live (only a text file was).
 4. Chat history is on the server (newest 60 chats; no paging yet). Titles
    are the first question; the website names chats with a model call.
+
 5. Uploaded-file URLs and avatars need the bearer header to display.
 6. `hr@` reads no knowledge base and no shared note (2026-10-09): Tài liệu and
    Bản tin are empty until an admin grants a group read access (knowledge
    *Access* / note *Share*). The agents' own knowledge stays attached to the
    models and is not listed.
+
 7. Open WebUI reports usage only; the 200,000-token limit is app config
    (`TOKEN_QUOTA_LIMIT`), for display, not enforced by the server.
+
 8. `EMPLOYEE_GROUPS` = `Knowledge-IT` (the only employee test account).
    Probe of the test accounts (2026-10-09):
 
