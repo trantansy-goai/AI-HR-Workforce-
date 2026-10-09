@@ -41,6 +41,22 @@ class AuthController extends Notifier<AuthState> {
     if (ref.mounted) state = const Unauthenticated();
   }
 
+  /// Changes the password, then signs out: the server revokes the old
+  /// tokens, so the user signs in again with the new password.
+  Future<Result<void>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    final result = await ref
+        .read(authRepositoryProvider)
+        .changePassword(
+          currentPassword: currentPassword,
+          newPassword: newPassword,
+        );
+    if (result is Ok<void>) await signOut();
+    return result;
+  }
+
   /// Called by the network layer when refresh fails.
   Future<void> handleSessionExpired() => signOut();
 

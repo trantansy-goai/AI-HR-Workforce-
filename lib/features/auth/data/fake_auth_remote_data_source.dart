@@ -68,6 +68,23 @@ class FakeAuthRemoteDataSource implements AuthRemoteDataSource {
   @override
   Future<void> signOut(AuthSession session) async {}
 
+  /// The demo shows the SSO entry (it is not wired to a provider).
+  @override
+  Future<List<String>> ssoProviders() async => const ['Demo SSO'];
+
+  /// Demo accounts use `demo123456`; anything else is "wrong".
+  @override
+  Future<void> changePassword(
+    AuthSession session, {
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    await Future<void>.delayed(latency);
+    if (currentPassword != 'demo123456') {
+      throw const ValidationFailure(message: 'Incorrect password.');
+    }
+  }
+
   AuthSession _issue(AuthUser user) {
     _issued++;
     return AuthSession(

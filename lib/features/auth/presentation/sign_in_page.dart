@@ -336,25 +336,28 @@ class _SignInPageState extends ConsumerState<SignInPage> {
         isLoading: _submitting,
         expand: true,
       ),
-      const SizedBox(height: AppSpacing.md),
-      _NoticeBox(
-        background: AppHrPalette.accentSoft,
-        child: Text(
-          l10n.authSsoPrompt,
-          style: const TextStyle(
-            color: AppHrPalette.ink,
-            fontSize: 14,
-            height: 1.4,
+      // Only when the server offers single sign-on.
+      if (ref.watch(ssoProvidersProvider).value?.isNotEmpty ?? false) ...[
+        const SizedBox(height: AppSpacing.md),
+        _NoticeBox(
+          background: AppHrPalette.accentSoft,
+          child: Text(
+            l10n.authSsoPrompt,
+            style: const TextStyle(
+              color: AppHrPalette.ink,
+              fontSize: 14,
+              height: 1.4,
+            ),
           ),
         ),
-      ),
-      const SizedBox(height: AppSpacing.md),
-      AppButton(
-        label: l10n.authSsoButton,
-        variant: AppButtonVariant.tonal,
-        onPressed: _busy ? null : _handleSso,
-        expand: true,
-      ),
+        const SizedBox(height: AppSpacing.md),
+        AppButton(
+          label: l10n.authSsoButton,
+          variant: AppButtonVariant.tonal,
+          onPressed: _busy ? null : _handleSso,
+          expand: true,
+        ),
+      ],
       // Demo shortcut, only when running against the fake backend.
       if (isFake) ...[
         const SizedBox(height: AppSpacing.xs),

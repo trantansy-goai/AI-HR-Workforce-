@@ -139,6 +139,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authPasswordRequired => 'Please enter your password';
 
   @override
+  String get authChangePassword => 'Change password';
+
+  @override
+  String get authCurrentPassword => 'Current password';
+
+  @override
+  String get authNewPassword => 'New password';
+
+  @override
+  String get authConfirmPassword => 'Confirm new password';
+
+  @override
+  String get authPasswordMismatch => 'Passwords do not match';
+
+  @override
+  String get authPasswordChanged =>
+      'Password changed. Please sign in with your new password.';
+
+  @override
+  String get authPasswordRejected =>
+      'The current password is wrong or the new password is not accepted.';
+
+  @override
   String get authSignInButton => 'Sign in';
 
   @override
@@ -514,6 +537,17 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get homeUpcomingWorkDetail =>
       'Finish onboarding checklist · due 10/10';
+
+  @override
+  String get homeNoUpcomingWork => 'Nothing due in the next 30 days';
+
+  @override
+  String get homeUpcomingUnavailable => 'Could not load your calendar';
+
+  @override
+  String homeUpcomingItem(String title, String when) {
+    return '$title · $when';
+  }
 
   @override
   String get homeMyCoursesDetail => 'Basic workplace safety · 12 min left';

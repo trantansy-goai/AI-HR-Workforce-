@@ -34,4 +34,7 @@ class DocumentItem extends Equatable {
 abstract interface class DocumentRepository {
   Future<List<DocumentItem>> getDocuments();
   Future<DocumentItem> getDocumentDetail(String id);
+
+  /// Saves the file on this device and returns its path.
+  Future<String> download(DocumentItem document);
 }

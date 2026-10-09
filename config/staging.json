@@ -6,5 +6,7 @@
   "OPEN_WEBUI_BASE_URL": "https://workforce.ai-iep.vn",
   "USE_FAKE_BACKEND": false,
   "ENABLE_NETWORK_LOGS": true,
-  "LOG_NETWORK_BODIES": false
+  "LOG_NETWORK_BODIES": false,
+  "TOKEN_QUOTA_LIMIT": 200000,
+  "EMPLOYEE_GROUPS": "Knowledge-IT"
 }

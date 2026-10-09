@@ -73,6 +73,30 @@ void main() {
     expect(state.session?.isGuest, isTrue);
   });
 
+  test(
+    'changing the password signs out; a wrong one keeps the session',
+    () async {
+      final container = createTestContainer();
+      final controller = container.read(authControllerProvider.notifier);
+      await _settle();
+      await controller.signInWithEmail('me@x.io', 'secret1');
+
+      final wrong = await controller.changePassword(
+        currentPassword: 'nope',
+        newPassword: 'n3w',
+      );
+      expect(wrong.isOk, isFalse);
+      expect(container.read(authControllerProvider), isA<Authenticated>());
+
+      final changed = await controller.changePassword(
+        currentPassword: 'demo123456',
+        newPassword: 'n3w',
+      );
+      expect(changed.isOk, isTrue);
+      expect(container.read(authControllerProvider), isA<Unauthenticated>());
+    },
+  );
+
   test('failed sign in keeps user signed out', () async {
     final container = createTestContainer();
     final controller = container.read(authControllerProvider.notifier);

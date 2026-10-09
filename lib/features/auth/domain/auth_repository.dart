@@ -18,4 +18,10 @@ abstract interface class AuthRepository {
 
   /// Clears local session; best-effort server logout.
   Future<void> signOut();
+
+  /// Changes the signed-in user's password on the server.
+  Future<Result<void>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  });
 }

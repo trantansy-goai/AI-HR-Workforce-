@@ -99,8 +99,14 @@ class AgentConversationListPage extends ConsumerWidget {
                   onRetry: () => ref.refresh(conversationsProvider),
                 ),
                 data: (items) {
+                  final modelId = agentModelId(agentId);
                   final agentHistory = items.where((c) {
                     if (c.kind != ConversationKind.assistant) return false;
+                    // Server chats name the model that answers in them.
+                    if (c.participants.any((p) => p.id == modelId) ||
+                        c.id.startsWith('agent-$agentId-')) {
+                      return true;
+                    }
                     if (agentId == 'mock-assistant') {
                       return c.id == 'assistant' ||
                           c.title.contains('Mock Assistant') ||
@@ -137,9 +143,11 @@ class AgentConversationListPage extends ConsumerWidget {
                     itemBuilder: (context, index) {
                       final conv = agentHistory[index];
                       final last = conv.lastMessage;
+                      // Server chats list without messages: show the date.
                       final preview = last?.content.isNotEmpty == true
                           ? last!.content
-                          : 'No messages yet';
+                          : MaterialLocalizations.of(context)
+                                .formatMediumDate(conv.updatedAt);
 
                       return Card(
                         clipBehavior: Clip.antiAlias,

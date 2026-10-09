@@ -12,6 +12,7 @@ import '../../../shared/widgets/app_feedback.dart';
 import '../../../shared/widgets/hr_widgets.dart';
 import '../../../shared/widgets/state_views.dart';
 import '../../auth/application/auth_providers.dart';
+import '../../auth/presentation/change_password_dialog.dart';
 import '../../news/application/news_providers.dart';
 import '../../news/domain/news_item.dart';
 import '../../notification/application/notification_providers.dart';
@@ -307,7 +308,10 @@ class _AccountSection extends ConsumerWidget {
       case _AccountAction.chats:
         context.go(AppRoutes.chats);
       case _AccountAction.security:
-        await showDialog<void>(
+        // Guests have no password to change.
+        final canChangePassword =
+            ref.read(authControllerProvider).user?.isAnonymous == false;
+        final changePassword = await showDialog<bool>(
           context: context,
           barrierDismissible: false,
           builder: (ctx) => AlertDialog(
@@ -319,6 +323,11 @@ class _AccountSection extends ConsumerWidget {
             title: Text(l10n.authSecurityDialogTitle),
             content: Text(l10n.authSecurityDialogMessage),
             actions: [
+              if (canChangePassword)
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(true),
+                  child: Text(l10n.authChangePassword),
+                ),
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(),
                 child: Text(l10n.commonClose),
@@ -326,6 +335,9 @@ class _AccountSection extends ConsumerWidget {
             ],
           ),
         );
+        if ((changePassword ?? false) && context.mounted) {
+          await showChangePasswordDialog(context);
+        }
       case _AccountAction.signOut:
         final confirmed = await context.showConfirmDialog(
           title: l10n.authSignOutConfirmTitle,

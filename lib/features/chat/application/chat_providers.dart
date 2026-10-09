@@ -9,6 +9,7 @@ import '../data/fixtures/chat_fixtures.dart';
 import '../data/providers/mock_chat_provider.dart';
 import '../data/providers/open_webui_chat_provider.dart';
 import '../data/repositories/model_repository_impl.dart';
+import '../data/sources/open_webui_chats_api.dart';
 import '../data/sources/open_webui_client.dart';
 import '../domain/chat_cache.dart';
 import '../domain/chat_provider.dart';
@@ -16,6 +17,7 @@ import '../domain/chat_repository.dart';
 import '../domain/entities/agent_item.dart';
 import '../domain/entities/conversation.dart';
 import '../domain/entities/participant.dart';
+import '../domain/extensions/ai_extensions.dart';
 
 /// The current user as a chat participant. Only rebuilds when identity
 /// changes (not on token refresh).
@@ -46,13 +48,31 @@ final modelRepositoryProvider = Provider<ModelRepositoryImpl>((ref) {
   return ModelRepositoryImpl(ref.watch(openWebUiClientProvider));
 });
 
-/// Open WebUI generative chat provider.
+/// App agent id → Open WebUI model id, for agents the app names itself.
+/// Hỏi HR → "GO AI Employee Service" (grounded HR FAQ + routing). Users
+/// without access to it get their default model instead.
+const _agentModelIds = {AgentItem.hrAssistantId: 'employee_service'};
+
+/// The server model that answers for [agentId]; conversations list it as a
+/// participant (see `AgentConversationListPage`).
+String agentModelId(String agentId) => _agentModelIds[agentId] ?? agentId;
+
+/// Open WebUI chat history (`/api/v1/chats/*`), shared with the website.
+final openWebUiChatsApiProvider = Provider<OpenWebUiChatsApi>((ref) {
+  return OpenWebUiChatsApi(
+    dio: ref.watch(authenticatedDioProvider),
+    baseUrl: ref.watch(appConfigProvider).openWebUiBaseUrl,
+  );
+});
+
+/// Open WebUI generative chat provider; history is kept on the server.
 final openWebUiChatProvider = Provider<OpenWebUiChatProvider>((ref) {
   final provider = OpenWebUiChatProvider(
     client: ref.watch(openWebUiClientProvider),
-    // Hỏi HR → "GO AI Employee Service" (grounded HR FAQ + routing). Users
-    // without access to it get their default model instead.
-    agentModelIds: const {AgentItem.hrAssistantId: 'employee_service'},
+    agentModelIds: _agentModelIds,
+    chats: ref.watch(openWebUiChatsApiProvider),
+    self: ref.watch(chatSelfProvider),
+    logger: ref.watch(appLoggerProvider),
   );
   ref.onDispose(provider.dispose);
   return provider;
@@ -117,3 +137,27 @@ final agentsProvider = FutureProvider<List<AgentItem>>((ref) async {
       ),
   ];
 });
+
+/// One-tap questions for [agentId]: the starters configured on its server
+/// model plus the shared prompt templates. Empty with the fake backend, and
+/// when the server has none or cannot be reached (they are optional).
+final promptSuggestionsProvider = FutureProvider.autoDispose
+    .family<List<PromptSuggestion>, String>((ref, agentId) async {
+      if (ref.watch(appConfigProvider).useFakeBackend) return const [];
+      final modelId = agentModelId(agentId);
+      final (models, prompts) = await (
+        ref
+            .watch(modelRepositoryProvider)
+            .getAgents()
+            .catchError((Object _) => <ModelInfo>[]),
+        ref
+            .watch(openWebUiChatsApiProvider)
+            .listPrompts()
+            .catchError((Object _) => <PromptSuggestion>[]),
+      ).wait;
+      final starters = [
+        for (final m in models)
+          if (m.id == modelId) ...m.suggestions,
+      ];
+      return {...starters, ...prompts}.toList();
+    });

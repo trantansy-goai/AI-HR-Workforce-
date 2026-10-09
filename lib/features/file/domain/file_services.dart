@@ -24,3 +24,11 @@ abstract interface class AttachmentPicker {
   /// (without dots, e.g. `['pdf']`); null allows any file.
   Future<List<Attachment>> pickFiles({List<String>? extensions});
 }
+
+/// Local copies of remote attachments, for players and viewers that cannot
+/// send the session's credentials themselves. Throws `AppFailure`.
+abstract interface class AttachmentDownloader {
+  /// Path of a device copy of [attachment]: its own device path, or a
+  /// cached download of its URL.
+  Future<String> localPath(Attachment attachment);
+}

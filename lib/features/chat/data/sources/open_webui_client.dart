@@ -64,7 +64,8 @@ class OpenWebUiClient implements RemoteAiClient {
     return models;
   }
 
-  /// `{"data": [{"id", "name", "info": {"meta": {"description"}}}]}`.
+  /// `{"data": [{"id", "name", "info": {"meta": {"description",
+  /// "suggestion_prompts": [{"title": [line1, line2], "content"}]}}}]}`.
   static List<ModelInfo> parseModels(Object? body) {
     final list = body is Map ? body['data'] : null;
     if (list is! List) {
@@ -79,6 +80,22 @@ class OpenWebUiClient implements RemoteAiClient {
             description: switch (item['info']) {
               {'meta': {'description': final String d}} when d.isNotEmpty => d,
               _ => null,
+            },
+            suggestions: switch (item['info']) {
+              {'meta': {'suggestion_prompts': final List<dynamic> prompts}} => [
+                for (final p in prompts.whereType<Map<String, dynamic>>())
+                  if (p['content'] case final String text
+                      when text.trim().isNotEmpty)
+                    PromptSuggestion(
+                      label: switch (p['title']) {
+                        [final String first, ...] when first.isNotEmpty =>
+                          first,
+                        _ => text.trim(),
+                      },
+                      text: text.trim(),
+                    ),
+              ],
+              _ => const [],
             },
           ),
     ];

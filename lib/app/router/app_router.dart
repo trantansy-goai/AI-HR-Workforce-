@@ -10,9 +10,9 @@ import '../../features/auth/application/auth_providers.dart';
 import '../../features/auth/presentation/sign_in_page.dart';
 import '../../features/chat/presentation/agent_conversation_list_page.dart';
 import '../../features/chat/presentation/ask_hr_answer_page.dart';
-import '../../features/chat/presentation/ask_hr_page.dart';
 import '../../features/chat/presentation/chat_hub_page.dart';
 import '../../features/chat/presentation/conversation_page.dart';
+import '../../features/chat/presentation/hoi_hr_tab.dart';
 import '../../features/document/presentation/document_pages.dart';
 import '../../features/elearning/presentation/elearning_hub_page.dart';
 import '../../features/elearning/presentation/learning_pages.dart';
@@ -89,7 +89,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.askHr,
-                builder: (context, state) => const AskHrPage(),
+                builder: (context, state) => const HoiHrTab(),
                 routes: [
                   GoRoute(
                     path: 'answer',

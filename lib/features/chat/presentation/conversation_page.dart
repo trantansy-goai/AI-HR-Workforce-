@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../app/router/app_routes.dart';
+import '../../../core/di/core_providers.dart';
 import '../../../core/error/failure_messages.dart';
 import '../../../core/localization/l10n.dart';
 import '../../../core/theme/app_tokens.dart';
@@ -15,6 +18,7 @@ import '../application/conversation_controller.dart';
 import '../domain/chat_provider.dart';
 import '../domain/entities/conversation.dart';
 import '../domain/entities/message.dart';
+import '../domain/extensions/ai_extensions.dart';
 import 'widgets/chat_composer.dart';
 import 'widgets/file_type_sheet.dart';
 import 'widgets/message_bubble.dart';
@@ -79,6 +83,13 @@ class _ConversationPageState extends ConsumerState<ConversationPage> {
   }
 
   /// File-type sheet, then the system file picker filtered to that type.
+  /// Opens a cited document; web sources (absolute URLs) have no document.
+  void _openSource(SourceReference source) {
+    final uri = source.uri;
+    if (uri != null && uri.startsWith('http')) return;
+    context.push(AppRoutes.document(source.id));
+  }
+
   Future<void> _attachFile() async {
     final choice = await showFileTypeSheet(context);
     if (choice == null) return;
@@ -199,7 +210,10 @@ class _ConversationPageState extends ConsumerState<ConversationPage> {
       }
       return EmptyView(
         title: l10n.chatEmptyMessages,
-        message: l10n.chatDemoHint,
+        // The /fail tip only works against the mock provider.
+        message: ref.watch(appConfigProvider).useFakeBackend
+            ? l10n.chatDemoHint
+            : null,
         icon: Icons.chat_bubble_outline,
       );
     }
@@ -233,6 +247,7 @@ class _ConversationPageState extends ConsumerState<ConversationPage> {
           onRegenerate: canRegenerate && messageIndex == lastAiIndex
               ? _controller.regenerate
               : null,
+          onOpenSource: _openSource,
         );
       },
     );

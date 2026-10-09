@@ -115,6 +115,22 @@ class AuthRepositoryImpl implements AuthRepository {
     );
   }
 
+  @override
+  Future<Result<void>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) => guard(() async {
+    final session = _session;
+    if (session == null) {
+      throw const UnauthorizedFailure('Not signed in');
+    }
+    await _remote.changePassword(
+      session,
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+    );
+  });
+
   Future<void> _clearLocal() async {
     _session = null;
     await _storage.clear();

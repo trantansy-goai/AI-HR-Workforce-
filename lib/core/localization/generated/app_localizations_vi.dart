@@ -141,6 +141,29 @@ class AppLocalizationsVi extends AppLocalizations {
   String get authPasswordRequired => 'Vui lòng nhập mật khẩu';
 
   @override
+  String get authChangePassword => 'Đổi mật khẩu';
+
+  @override
+  String get authCurrentPassword => 'Mật khẩu hiện tại';
+
+  @override
+  String get authNewPassword => 'Mật khẩu mới';
+
+  @override
+  String get authConfirmPassword => 'Nhập lại mật khẩu mới';
+
+  @override
+  String get authPasswordMismatch => 'Mật khẩu nhập lại không khớp';
+
+  @override
+  String get authPasswordChanged =>
+      'Đã đổi mật khẩu. Vui lòng đăng nhập lại bằng mật khẩu mới.';
+
+  @override
+  String get authPasswordRejected =>
+      'Mật khẩu hiện tại không đúng hoặc mật khẩu mới chưa đạt yêu cầu.';
+
+  @override
   String get authSignInButton => 'Đăng nhập';
 
   @override
@@ -513,6 +536,17 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get homeUpcomingWorkDetail =>
       'Hoàn tất checklist nhận việc · hạn 10/10';
+
+  @override
+  String get homeNoUpcomingWork => 'Không có việc nào trong 30 ngày tới';
+
+  @override
+  String get homeUpcomingUnavailable => 'Không tải được lịch';
+
+  @override
+  String homeUpcomingItem(String title, String when) {
+    return '$title · $when';
+  }
 
   @override
   String get homeMyCoursesDetail => 'An toàn lao động cơ bản · còn 12 phút';

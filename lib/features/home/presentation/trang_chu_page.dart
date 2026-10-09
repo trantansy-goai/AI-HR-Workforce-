@@ -8,6 +8,7 @@ import '../../../core/localization/l10n.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../shared/widgets/hr_top_bar.dart';
 import '../../auth/application/auth_providers.dart';
+import '../../my_work/application/my_work_providers.dart';
 import '../../news/application/news_providers.dart';
 import '../../news/domain/news_item.dart';
 import '../../quota/application/quota_providers.dart';
@@ -165,14 +166,7 @@ class _Hero extends StatelessWidget {
 List<Widget> _overviewCards(BuildContext context) {
   final l10n = context.l10n;
   return [
-    _OverviewCard(
-      title: l10n.homeUpcomingWork,
-      subtitle: l10n.homeUpcomingWorkDetail,
-      badge: 'A3',
-      badgeBackground: AppHrPalette.amberSoft,
-      badgeForeground: AppHrPalette.amberInk,
-      onTap: () => context.go(AppRoutes.myWork),
-    ),
+    const _UpcomingWorkCard(),
     _OverviewCard(
       title: l10n.homeMyCourses,
       subtitle: l10n.homeMyCoursesDetail,
@@ -271,16 +265,27 @@ class _Greeting extends ConsumerWidget {
   }
 }
 
-/// "Bạn có **2 việc** cần hoàn thành tuần này."
-class _PendingTasksBox extends StatelessWidget {
+/// "Bạn có **2 việc** cần hoàn thành tuần này." With a calendar, the count
+/// is this week's calendar items; demo builds show a sample count.
+class _PendingTasksBox extends ConsumerWidget {
   const _PendingTasksBox();
 
-  // Demo value until a task-summary source exists.
-  static const _pendingCount = 2;
+  static const _demoCount = 2;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
+    final now = DateTime.now();
+    final endOfWeek = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).add(Duration(days: DateTime.daysPerWeek - now.weekday + 1));
+    final pendingCount = switch (ref.watch(upcomingScheduleProvider)) {
+      AsyncData(value: final items?) =>
+        items.where((i) => i.startsAt.isBefore(endOfWeek)).length,
+      _ => _demoCount,
+    };
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
@@ -300,7 +305,7 @@ class _PendingTasksBox extends StatelessWidget {
           children: [
             TextSpan(text: l10n.homePendingTasksLead),
             TextSpan(
-              text: l10n.homePendingTasksCount(_pendingCount),
+              text: l10n.homePendingTasksCount(pendingCount),
               style: const TextStyle(fontWeight: FontWeight.w800),
             ),
             TextSpan(text: l10n.homePendingTasksTail),
@@ -409,6 +414,36 @@ class _Surface extends StatelessWidget {
           child: child,
         ),
       ),
+    );
+  }
+}
+
+/// "Việc sắp đến hạn": the next calendar item, or the demo text without a
+/// calendar.
+class _UpcomingWorkCard extends ConsumerWidget {
+  const _UpcomingWorkCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final subtitle = switch (ref.watch(upcomingScheduleProvider)) {
+      AsyncData(value: null) => l10n.homeUpcomingWorkDetail,
+      AsyncData(value: final items?) when items.isEmpty =>
+        l10n.homeNoUpcomingWork,
+      AsyncData(value: final items?) => l10n.homeUpcomingItem(
+        items.first.title,
+        DateFormat('dd/MM HH:mm').format(items.first.startsAt),
+      ),
+      AsyncError() => l10n.homeUpcomingUnavailable,
+      _ => l10n.commonLoading,
+    };
+    return _OverviewCard(
+      title: l10n.homeUpcomingWork,
+      subtitle: subtitle,
+      badge: 'A3',
+      badgeBackground: AppHrPalette.amberSoft,
+      badgeForeground: AppHrPalette.amberInk,
+      onTap: () => context.go(AppRoutes.myWork),
     );
   }
 }
@@ -533,7 +568,6 @@ class _QuotaCard extends ConsumerWidget {
     );
 
     return _Surface(
-      onTap: () => context.go(AppRoutes.account),
       child: quotaAsync.when(
         loading: () => Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

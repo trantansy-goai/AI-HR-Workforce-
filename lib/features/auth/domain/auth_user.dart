@@ -11,6 +11,7 @@ class AuthUser extends Equatable {
     this.isAnonymous = false,
     this.role,
     this.permissions,
+    this.groups,
   });
 
   factory AuthUser.fromJson(Map<String, dynamic> json) => AuthUser(
@@ -22,6 +23,9 @@ class AuthUser extends Equatable {
     role: json['role'] as String?,
     permissions: (json['permissions'] as List<dynamic>?)
         ?.map((p) => p.toString())
+        .toSet(),
+    groups: (json['groups'] as List<dynamic>?)
+        ?.map((g) => g.toString())
         .toSet(),
   );
 
@@ -46,6 +50,10 @@ class AuthUser extends Equatable {
   bool allows(String permission) =>
       permissions == null || permissions!.contains(permission);
 
+  /// Names of the groups the user belongs to, as reported by the server.
+  /// Null when the backend has no groups or they could not be read.
+  final Set<String>? groups;
+
   Map<String, dynamic> toJson() => {
     'id': id,
     'email': email,
@@ -54,6 +62,7 @@ class AuthUser extends Equatable {
     'isAnonymous': isAnonymous,
     'role': role,
     'permissions': permissions?.toList(),
+    'groups': groups?.toList(),
   };
 
   @override
@@ -65,5 +74,6 @@ class AuthUser extends Equatable {
     isAnonymous,
     role,
     permissions,
+    groups,
   ];
 }

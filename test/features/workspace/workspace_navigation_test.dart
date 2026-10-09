@@ -156,6 +156,20 @@ void main() {
     });
   });
 
+  testWidgets('HR staff get the agent list in the Hỏi HR tab', (tester) async {
+    await signInAsGuest(tester);
+    await tester.tap(find.widgetWithText(NavigationDestination, 'My Work'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('HR / Admin'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.widgetWithText(NavigationDestination, 'Ask HR'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('AI & HR AGENTS'), findsOneWidget);
+    expect(find.text('I need to see the leave policy.'), findsNothing);
+  });
+
   group('Chat list (Account), Agents & History', () {
     testWidgets('chat list presents AI & HR agents', (tester) async {
       await signInAsGuest(tester);

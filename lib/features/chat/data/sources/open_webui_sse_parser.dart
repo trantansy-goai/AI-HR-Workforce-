@@ -110,14 +110,16 @@ class OpenWebUiSseParser {
   }
 
   List<SourceReference>? _sources(Map<String, dynamic> json) {
-    final raw = json['sources'] ?? json['citations'];
-    if (raw is! List) return null;
-    final sources = [
-      for (final item in raw.whereType<Map<String, dynamic>>())
-        ?_sourceOf(item),
-    ];
+    final sources = parseSources(json['sources'] ?? json['citations']);
     return sources.isEmpty ? null : sources;
   }
+
+  /// Sources of a stream event or of a stored chat message.
+  List<SourceReference> parseSources(Object? raw) => [
+    if (raw is List)
+      for (final item in raw.whereType<Map<String, dynamic>>())
+        ?_sourceOf(item),
+  ];
 
   /// Accepts Open WebUI's `{"source": {...}, "document": [...],
   /// "metadata": [{...}]}` and flat `{"id", "title", "url", "snippet"}`.
@@ -142,7 +144,8 @@ class OpenWebUiSseParser {
       metadata['name'],
       metadata['source'],
     ]);
-    final id = pick([source['id'], item['id'], metadata['file_id'], title]);
+    // The file id first: it opens the document (`/api/v1/files/{id}`).
+    final id = pick([metadata['file_id'], source['id'], item['id'], title]);
     if (id == null) return null;
     return SourceReference(
       id: id,

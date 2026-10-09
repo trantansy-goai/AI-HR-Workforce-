@@ -7,6 +7,7 @@ import '../../../core/error/app_failure.dart';
 import '../../../core/error/result.dart';
 import '../../file/domain/attachment.dart';
 import '../../file/domain/mime_types.dart';
+import '../../voice/application/voice_providers.dart';
 import '../domain/chat_provider.dart';
 import '../domain/entities/message.dart';
 import '../domain/entities/participant.dart';
@@ -147,14 +148,28 @@ class ConversationController extends Notifier<ConversationState> {
   }
 
   /// Sends a recorded voice note on its own (pending attachments stay put).
-  Future<void> sendVoiceNote(String path, Duration duration) {
+  /// Sends a voice note with its transcript as the text, so the model gets
+  /// the question itself. Without speech-to-text, or when it fails or hears
+  /// nothing, the audio goes alone.
+  Future<void> sendVoiceNote(String path, Duration duration) async {
     final now = DateTime.now().millisecondsSinceEpoch;
     final name = 'voice_$now.m4a';
     final mime = MimeTypes.fromFileName(name);
+    var transcript = '';
+    try {
+      transcript =
+          await ref
+              .read(speechTranscriberProvider)
+              ?.transcribe(path, mimeType: mime) ??
+          '';
+    } on Object {
+      // Keep the voice note; the server still extracts its text for RAG.
+    }
     return ref
         .read(chatRepositoryProvider)
         .sendMessage(
           conversationId,
+          text: transcript,
           attachments: [
             Attachment(
               id: 'voice_$now',

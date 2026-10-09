@@ -18,6 +18,7 @@ class MessageBubble extends StatelessWidget {
     this.onRetry,
     this.onReply,
     this.onRegenerate,
+    this.onOpenSource,
   });
 
   final Message message;
@@ -28,6 +29,9 @@ class MessageBubble extends StatelessWidget {
 
   /// Shown under the message when non-null (e.g. last AI answer).
   final VoidCallback? onRegenerate;
+
+  /// Makes citation chips tappable (e.g. to open the cited document).
+  final ValueChanged<SourceReference>? onOpenSource;
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +125,7 @@ class MessageBubble extends StatelessWidget {
             ),
           ),
           if (citations != null && citations.sources.isNotEmpty)
-            _Citations(citations: citations),
+            _Citations(citations: citations, onOpen: onOpenSource),
           _Footer(
             message: message,
             isMine: isMine,
@@ -250,9 +254,10 @@ class _ReplyQuote extends StatelessWidget {
 }
 
 class _Citations extends StatelessWidget {
-  const _Citations({required this.citations});
+  const _Citations({required this.citations, this.onOpen});
 
   final Citations citations;
+  final ValueChanged<SourceReference>? onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -266,10 +271,11 @@ class _Citations extends StatelessWidget {
         children: [
           Text(context.l10n.chatSources, style: theme.textTheme.labelSmall),
           for (final source in citations.sources)
-            Chip(
+            ActionChip(
               visualDensity: VisualDensity.compact,
               avatar: const Icon(Icons.link, size: 14),
               label: Text(source.title, style: theme.textTheme.labelSmall),
+              onPressed: onOpen == null ? null : () => onOpen!(source),
             ),
         ],
       ),

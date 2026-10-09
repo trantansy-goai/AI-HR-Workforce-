@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../../core/localization/l10n.dart';
 import '../../../../core/theme/app_tokens.dart';
+import '../../../file/application/file_providers.dart';
 import '../../../file/domain/attachment.dart';
 import '../../../file/domain/mime_types.dart';
 import '../../../file/presentation/attachment_viewers.dart';
@@ -108,29 +110,38 @@ class _ImageTile extends StatelessWidget {
 }
 
 /// First frame of the video with a play button; opens the video viewer.
-class _VideoTile extends StatefulWidget {
+class _VideoTile extends ConsumerStatefulWidget {
   const _VideoTile({required this.attachment});
 
   final Attachment attachment;
 
   @override
-  State<_VideoTile> createState() => _VideoTileState();
+  ConsumerState<_VideoTile> createState() => _VideoTileState();
 }
 
-class _VideoTileState extends State<_VideoTile> {
+class _VideoTileState extends ConsumerState<_VideoTile> {
   VideoPlayerController? _controller;
 
   @override
   void initState() {
     super.initState();
-    final controller = videoControllerFor(widget.attachment);
-    _controller = controller;
-    controller
-        ?.initialize()
-        .then((_) {
-          if (mounted) setState(() {});
-        })
-        .catchError((Object _) {});
+    unawaited(_load());
+  }
+
+  /// First frame as the thumbnail; the tile stays a placeholder on failure.
+  Future<void> _load() async {
+    try {
+      final controller = await videoControllerFor(ref, widget.attachment);
+      if (!mounted) {
+        await controller?.dispose();
+        return;
+      }
+      _controller = controller;
+      await controller?.initialize();
+      if (mounted) setState(() {});
+    } on Object {
+      // Placeholder only.
+    }
   }
 
   @override
@@ -282,7 +293,7 @@ class _FileTile extends StatelessWidget {
 }
 
 /// Inline audio: play/pause, duration (or position) and a progress bar.
-class AudioAttachmentPlayer extends StatefulWidget {
+class AudioAttachmentPlayer extends ConsumerStatefulWidget {
   const AudioAttachmentPlayer({
     super.key,
     required this.attachment,
@@ -293,10 +304,11 @@ class AudioAttachmentPlayer extends StatefulWidget {
   final Color color;
 
   @override
-  State<AudioAttachmentPlayer> createState() => _AudioAttachmentPlayerState();
+  ConsumerState<AudioAttachmentPlayer> createState() =>
+      _AudioAttachmentPlayerState();
 }
 
-class _AudioAttachmentPlayerState extends State<AudioAttachmentPlayer> {
+class _AudioAttachmentPlayerState extends ConsumerState<AudioAttachmentPlayer> {
   AudioPlayer? _player;
   final _subs = <StreamSubscription<Object?>>[];
   PlayerState _state = PlayerState.stopped;
@@ -309,12 +321,11 @@ class _AudioAttachmentPlayerState extends State<AudioAttachmentPlayer> {
     _duration = widget.attachment.media?.duration;
   }
 
-  Source? get _source {
-    final path = widget.attachment.devicePath;
-    if (path != null) return DeviceFileSource(path);
-    final url = widget.attachment.remoteUrl;
-    return url == null ? null : UrlSource(url);
-  }
+  /// The device copy; remote audio is downloaded first, since the player
+  /// cannot send the session's token.
+  Future<Source> _source() async => DeviceFileSource(
+    await ref.read(attachmentLocalPathProvider(widget.attachment).future),
+  );
 
   /// Created on first play so lists of messages don't spin up players.
   AudioPlayer _ensurePlayer() {
@@ -353,9 +364,7 @@ class _AudioAttachmentPlayerState extends State<AudioAttachmentPlayer> {
       } else if (_state == PlayerState.paused) {
         await player.resume();
       } else {
-        final source = _source;
-        if (source == null) throw StateError('No audio source');
-        await player.play(source);
+        await player.play(await _source());
       }
     } catch (_) {
       if (!mounted) return;

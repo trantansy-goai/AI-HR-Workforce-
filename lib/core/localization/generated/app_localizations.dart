@@ -338,6 +338,48 @@ abstract class AppLocalizations {
   /// **'Please enter your password'**
   String get authPasswordRequired;
 
+  /// No description provided for @authChangePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get authChangePassword;
+
+  /// No description provided for @authCurrentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current password'**
+  String get authCurrentPassword;
+
+  /// No description provided for @authNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get authNewPassword;
+
+  /// No description provided for @authConfirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm new password'**
+  String get authConfirmPassword;
+
+  /// No description provided for @authPasswordMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get authPasswordMismatch;
+
+  /// No description provided for @authPasswordChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed. Please sign in with your new password.'**
+  String get authPasswordChanged;
+
+  /// No description provided for @authPasswordRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'The current password is wrong or the new password is not accepted.'**
+  String get authPasswordRejected;
+
   /// No description provided for @authSignInButton.
   ///
   /// In en, this message translates to:
@@ -1039,6 +1081,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Finish onboarding checklist · due 10/10'**
   String get homeUpcomingWorkDetail;
+
+  /// No description provided for @homeNoUpcomingWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing due in the next 30 days'**
+  String get homeNoUpcomingWork;
+
+  /// No description provided for @homeUpcomingUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your calendar'**
+  String get homeUpcomingUnavailable;
+
+  /// No description provided for @homeUpcomingItem.
+  ///
+  /// In en, this message translates to:
+  /// **'{title} · {when}'**
+  String homeUpcomingItem(String title, String when);
 
   /// No description provided for @homeMyCoursesDetail.
   ///
