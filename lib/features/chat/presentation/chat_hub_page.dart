@@ -6,6 +6,8 @@ import '../../../app/router/app_routes.dart';
 import '../../../core/error/app_failure.dart';
 import '../../../core/localization/l10n.dart';
 import '../../../core/theme/app_tokens.dart';
+import '../../../core/theme/hr_theme.dart';
+import '../../../shared/widgets/hr_top_bar.dart';
 import '../../../shared/widgets/responsive.dart';
 import '../../../shared/widgets/state_views.dart';
 import '../application/chat_providers.dart';
@@ -19,7 +21,11 @@ import 'conversation_page.dart';
 /// assistant, review past conversations or start a new one. On wide tablets,
 /// provides a master-detail split layout.
 class ChatHubPage extends ConsumerStatefulWidget {
-  const ChatHubPage({super.key});
+  const ChatHubPage({this.asTab = false, super.key});
+
+  /// Shown as the Hỏi HR tab (HR users): workspace top bar instead of a
+  /// back-navigable app bar.
+  final bool asTab;
 
   @override
   ConsumerState<ChatHubPage> createState() => _ChatHubPageState();
@@ -36,59 +42,81 @@ class _ChatHubPageState extends ConsumerState<ChatHubPage> {
     final agents = ref.watch(agentsProvider);
     final conversationsAsync = ref.watch(conversationsProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.chatHubTitle)),
-      body: SafeArea(
-        top: false,
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final isWideTablet =
-                constraints.maxWidth >= ResponsiveBreakpoints.wideTablet;
+    final body = SafeArea(
+      top: false,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isWideTablet =
+              constraints.maxWidth >= ResponsiveBreakpoints.wideTablet;
 
-            if (isWideTablet) {
-              return Row(
-                children: [
-                  // Master Pane: Agent discovery & history
-                  SizedBox(
-                    width: 380,
-                    child: _buildDiscoveryList(
-                      context,
-                      ref,
-                      theme,
-                      l10n,
-                      agents,
-                      conversationsAsync,
-                      isMasterDetail: true,
-                    ),
+          if (isWideTablet) {
+            return Row(
+              children: [
+                // Master Pane: Agent discovery & history
+                SizedBox(
+                  width: 380,
+                  child: _buildDiscoveryList(
+                    context,
+                    ref,
+                    theme,
+                    l10n,
+                    agents,
+                    conversationsAsync,
+                    isMasterDetail: true,
                   ),
-                  const VerticalDivider(width: 1, thickness: 1),
-                  // Detail Pane: Active conversation or empty state
-                  Expanded(
-                    child: _selectedConversationId != null
-                        ? ConversationPage(
-                            key: ValueKey(_selectedConversationId),
-                            conversationId: _selectedConversationId!,
-                          )
-                        : _buildEmptyDetailState(theme, l10n),
-                  ),
-                ],
-              );
-            }
-
-            // Compact / phone / medium portrait layout
-            return ResponsiveCenter(
-              maxWidth: ContentConstraints.reading,
-              child: _buildDiscoveryList(
-                context,
-                ref,
-                theme,
-                l10n,
-                agents,
-                conversationsAsync,
-                isMasterDetail: false,
-              ),
+                ),
+                const VerticalDivider(width: 1, thickness: 1),
+                // Detail Pane: Active conversation or empty state
+                Expanded(
+                  child: _selectedConversationId != null
+                      ? ConversationPage(
+                          key: ValueKey(_selectedConversationId),
+                          conversationId: _selectedConversationId!,
+                        )
+                      : _buildEmptyDetailState(theme, l10n),
+                ),
+              ],
             );
-          },
+          }
+
+          // Compact / phone / medium portrait layout
+          return ResponsiveCenter(
+            maxWidth: ContentConstraints.reading,
+            child: _buildDiscoveryList(
+              context,
+              ref,
+              theme,
+              l10n,
+              agents,
+              conversationsAsync,
+              isMasterDetail: false,
+            ),
+          );
+        },
+      ),
+    );
+
+    if (!widget.asTab) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l10n.chatHubTitle)),
+        body: body,
+      );
+    }
+    return Theme(
+      data: hrScopedTheme(theme),
+      child: Scaffold(
+        backgroundColor: AppHrPalette.background,
+        body: SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
+              HrTopBar(
+                title: l10n.homeAppBarTitle,
+                actions: const [HrNotificationButton()],
+              ),
+              Expanded(child: body),
+            ],
+          ),
         ),
       ),
     );

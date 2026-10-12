@@ -150,7 +150,7 @@ class ChatDiscoveryPage extends ConsumerWidget {
                   ),
                   error: (err, _) => SliverToBoxAdapter(
                     child: ErrorView(
-                      message: err.toString(),
+                      error: err,
                       onRetry: () => ref.refresh(conversationsProvider),
                     ),
                   ),

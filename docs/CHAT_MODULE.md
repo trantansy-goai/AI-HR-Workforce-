@@ -153,7 +153,8 @@ Owns all chat behavior so providers stay thin:
 ## Cache
 
 `ChatCache` stores conversations and messages and exposes streams. The app
-ships `InMemoryChatCache` (lost on restart). For offline history implement
+ships `InMemoryChatCache` (lost on restart; with Open WebUI the history is
+reloaded from the server by `OpenWebUiChatProvider`). For offline history implement
 `ChatCache` with Drift/SQLite/Isar and override `chatCacheProvider`. The
 cache is recreated when the signed-in user changes, so data never leaks
 between accounts.

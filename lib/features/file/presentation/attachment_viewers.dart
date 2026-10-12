@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:video_player/video_player.dart';
 
@@ -9,6 +10,7 @@ import '../../../core/localization/l10n.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_feedback.dart';
+import '../application/file_providers.dart';
 import '../domain/attachment.dart';
 import '../domain/mime_types.dart';
 import 'file_type_style.dart';
@@ -28,8 +30,9 @@ Future<void> openAttachmentViewer(BuildContext context, Attachment attachment) {
   ).push(MaterialPageRoute<void>(fullscreenDialog: true, builder: (_) => page));
 }
 
-/// Image from the device copy when available, else from its URL.
-class AttachmentImage extends StatelessWidget {
+/// Image from the device copy when available, else downloaded from its URL
+/// (with the session's token for the app's own API).
+class AttachmentImage extends ConsumerWidget {
   const AttachmentImage({
     super.key,
     required this.attachment,
@@ -40,7 +43,7 @@ class AttachmentImage extends StatelessWidget {
   final BoxFit fit;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     Widget broken(BuildContext context, Object _, StackTrace? _) => Container(
       color: AppHrPalette.divider,
       alignment: Alignment.center,
@@ -54,20 +57,30 @@ class AttachmentImage extends StatelessWidget {
     if (path != null) {
       return Image.file(File(path), fit: fit, errorBuilder: broken);
     }
-    final url = attachment.remoteUrl;
-    if (url != null) {
-      return Image.network(url, fit: fit, errorBuilder: broken);
-    }
-    return broken(context, '', null);
+    if (attachment.remoteUrl == null) return broken(context, '', null);
+    return switch (ref.watch(attachmentLocalPathProvider(attachment))) {
+      AsyncData(:final value) => Image.file(
+        File(value),
+        fit: fit,
+        errorBuilder: broken,
+      ),
+      AsyncError() => broken(context, '', null),
+      _ => const ColoredBox(color: AppHrPalette.divider),
+    };
   }
 }
 
-VideoPlayerController? videoControllerFor(Attachment attachment) {
-  final path = attachment.devicePath;
-  if (path != null) return VideoPlayerController.file(File(path));
-  final url = attachment.remoteUrl;
-  if (url != null) return VideoPlayerController.networkUrl(Uri.parse(url));
-  return null;
+/// A player for [attachment] from its device copy (downloaded first when it
+/// is remote); null when it has no file.
+Future<VideoPlayerController?> videoControllerFor(
+  WidgetRef ref,
+  Attachment attachment,
+) async {
+  if (attachment.devicePath == null && attachment.remoteUrl == null) {
+    return null;
+  }
+  final path = await ref.read(attachmentLocalPathProvider(attachment).future);
+  return VideoPlayerController.file(File(path));
 }
 
 class _ViewerScaffold extends StatelessWidget {
@@ -120,38 +133,43 @@ class ImageViewerPage extends StatelessWidget {
 }
 
 /// Full-screen video with play/pause and a seek bar.
-class VideoViewerPage extends StatefulWidget {
+class VideoViewerPage extends ConsumerStatefulWidget {
   const VideoViewerPage({super.key, required this.attachment});
 
   final Attachment attachment;
 
   @override
-  State<VideoViewerPage> createState() => _VideoViewerPageState();
+  ConsumerState<VideoViewerPage> createState() => _VideoViewerPageState();
 }
 
-class _VideoViewerPageState extends State<VideoViewerPage> {
+class _VideoViewerPageState extends ConsumerState<VideoViewerPage> {
   VideoPlayerController? _controller;
   bool _failed = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = videoControllerFor(widget.attachment);
-    final controller = _controller;
-    if (controller == null) {
-      _failed = true;
-      return;
+    unawaited(_load());
+  }
+
+  Future<void> _load() async {
+    try {
+      final controller = await videoControllerFor(ref, widget.attachment);
+      if (!mounted) {
+        await controller?.dispose();
+        return;
+      }
+      if (controller == null) {
+        setState(() => _failed = true);
+        return;
+      }
+      _controller = controller..addListener(_onTick);
+      await controller.initialize();
+      if (mounted) setState(() {});
+      unawaited(controller.play());
+    } on Object {
+      if (mounted) setState(() => _failed = true);
     }
-    controller.addListener(_onTick);
-    controller
-        .initialize()
-        .then((_) {
-          if (mounted) setState(() {});
-          unawaited(controller.play());
-        })
-        .catchError((Object _) {
-          if (mounted) setState(() => _failed = true);
-        });
   }
 
   void _onTick() {
@@ -256,14 +274,21 @@ class _VideoViewerPageState extends State<VideoViewerPage> {
 }
 
 /// File details with "open with another app" (system handler for the type).
-class FileViewerPage extends StatelessWidget {
+class FileViewerPage extends ConsumerWidget {
   const FileViewerPage({super.key, required this.attachment});
 
   final Attachment attachment;
 
-  Future<void> _open(BuildContext context) async {
-    final path = attachment.devicePath;
-    final result = path == null ? null : await OpenFilex.open(path);
+  Future<void> _open(BuildContext context, WidgetRef ref) async {
+    OpenResult? result;
+    try {
+      final path = await ref.read(
+        attachmentLocalPathProvider(attachment).future,
+      );
+      result = await OpenFilex.open(path);
+    } on Object {
+      result = null;
+    }
     if (!context.mounted) return;
     if (result == null || result.type != ResultType.done) {
       context.showAppSnackBar(
@@ -274,7 +299,7 @@ class FileViewerPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final style = FileTypeStyle.of(attachment);
     final size = attachment.sizeBytes == null
@@ -317,7 +342,7 @@ class FileViewerPage extends StatelessWidget {
                 AppButton(
                   label: l10n.chatOpenWith,
                   icon: Icons.open_in_new,
-                  onPressed: () => _open(context),
+                  onPressed: () => _open(context, ref),
                   expand: true,
                 ),
               ],

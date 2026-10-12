@@ -21,7 +21,7 @@ class NewsListPage extends ConsumerWidget {
         child: newsAsync.when(
           loading: () => const LoadingView(label: 'Loading news...'),
           error: (err, stack) => ErrorView(
-            message: err.toString(),
+            error: err,
             onRetry: () => ref.refresh(newsListProvider),
           ),
           data: (newsList) {
@@ -118,7 +118,7 @@ class NewsDetailPage extends ConsumerWidget {
         child: newsAsync.when(
           loading: () => const LoadingView(label: 'Loading article...'),
           error: (err, stack) => ErrorView(
-            message: err.toString(),
+            error: err,
             onRetry: () => ref.refresh(newsDetailProvider(newsId)),
           ),
           data: (item) {

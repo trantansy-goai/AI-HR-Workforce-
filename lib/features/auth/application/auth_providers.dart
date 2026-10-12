@@ -31,3 +31,15 @@ final authRepositoryProvider = Provider<AuthRepository>(
 final authControllerProvider = NotifierProvider<AuthController, AuthState>(
   AuthController.new,
 );
+
+/// SSO providers offered by the server; the sign-in page hides its SSO entry
+/// when there are none (or they cannot be read).
+final ssoProvidersProvider = FutureProvider.autoDispose<List<String>>((
+  ref,
+) async {
+  try {
+    return await ref.watch(authRemoteDataSourceProvider).ssoProviders();
+  } on Object {
+    return const [];
+  }
+});

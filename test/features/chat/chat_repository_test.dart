@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goai_mobile/features/chat/data/cache/in_memory_chat_cache.dart';
 import 'package:goai_mobile/features/chat/data/chat_repository_impl.dart';
@@ -8,9 +10,34 @@ import 'package:goai_mobile/features/chat/domain/entities/participant.dart';
 import 'package:goai_mobile/features/chat/domain/extensions/ai_extensions.dart';
 import 'package:goai_mobile/features/file/data/demo_file_services.dart';
 import 'package:goai_mobile/features/file/domain/attachment.dart';
+import 'package:goai_mobile/features/voice/domain/speech_transcriber.dart';
 import 'package:goai_mobile/shared/utils/id_generator.dart';
 
 const self = Participant(id: 'me', displayName: 'Me', type: SenderType.user);
+
+/// Answers when [result] completes, so tests can look in between.
+class _GatedTranscriber implements SpeechTranscriber {
+  final result = Completer<String>();
+  String? language;
+
+  @override
+  Future<String> transcribe(
+    String path, {
+    required String mimeType,
+    String? language,
+  }) {
+    this.language = language;
+    return result.future;
+  }
+}
+
+Attachment _voiceNote() => const Attachment(
+  id: 'voice-1',
+  name: 'voice_1.m4a',
+  mimeType: 'audio/mp4',
+  kind: AttachmentKind.audio,
+  source: LocalAttachmentSource('/tmp/voice_1.m4a'),
+);
 
 void main() {
   late MockChatProvider provider;
@@ -204,5 +231,61 @@ void main() {
     );
     await Future<void>.delayed(Duration.zero);
     expect(messages('team').single.content, 'pushed');
+  });
+
+  group('voice notes', () {
+    late _GatedTranscriber transcriber;
+
+    setUp(() {
+      transcriber = _GatedTranscriber();
+      repository = ChatRepositoryImpl(
+        provider: provider,
+        cache: cache,
+        self: self,
+        ids: SequentialIdGenerator('voice'),
+        uploader: FakeFileUploader(stepDelay: Duration.zero, steps: 1),
+        transcriber: transcriber,
+        transcriptionLanguage: () => 'vi',
+      );
+    });
+
+    test('show at once, then get their text in the same message', () async {
+      final sending = repository.sendMessage(
+        'assistant',
+        attachments: [_voiceNote()],
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      final shown = messages('assistant').single;
+      expect(shown.id, 'voice-1');
+      expect(shown.content, isEmpty);
+      expect(shown.isPending, isTrue);
+      expect(transcriber.language, 'vi');
+
+      transcriber.result.complete('Tôi được nghỉ phép bao nhiêu ngày?');
+      await sending;
+
+      // The provider gives the message its server id once accepted.
+      final sent = messages('assistant').firstWhere((m) => m.sender == self);
+      expect(sent.content, 'Tôi được nghỉ phép bao nhiêu ngày?');
+      expect(sent.type, MessageType.text);
+      expect(sent.attachments.single.uploadStatus, UploadStatus.uploaded);
+      expect(sent.status, MessageStatus.sent);
+    });
+
+    test('a failed transcription still sends the audio', () async {
+      final sending = repository.sendMessage(
+        'assistant',
+        attachments: [_voiceNote()],
+      );
+      await Future<void>.delayed(Duration.zero);
+      transcriber.result.completeError(StateError('no STT engine'));
+      await sending;
+
+      // The provider gives the message its server id once accepted.
+      final sent = messages('assistant').firstWhere((m) => m.sender == self);
+      expect(sent.content, isEmpty);
+      expect(sent.status, MessageStatus.sent);
+    });
   });
 }

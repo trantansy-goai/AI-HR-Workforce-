@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../domain/document_item.dart';
 
 class FakeDocumentRepository implements DocumentRepository {
@@ -45,5 +47,13 @@ class FakeDocumentRepository implements DocumentRepository {
       (d) => d.id == id,
       orElse: () => _demoDocuments.first,
     );
+  }
+
+  /// Writes a small text stand-in, since the demo files do not exist.
+  @override
+  Future<String> download(DocumentItem document) async {
+    final file = File('${Directory.systemTemp.path}/${document.id}.txt');
+    await file.writeAsString('${document.title}\n\n${document.description}');
+    return file.path;
   }
 }

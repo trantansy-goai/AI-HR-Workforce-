@@ -137,7 +137,7 @@ abstract class AppLocalizations {
   /// No description provided for @commonEmpty.
   ///
   /// In en, this message translates to:
-  /// **'Nothing here yet'**
+  /// **'No data'**
   String get commonEmpty;
 
   /// No description provided for @commonErrorTitle.
@@ -337,6 +337,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter your password'**
   String get authPasswordRequired;
+
+  /// No description provided for @authChangePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get authChangePassword;
+
+  /// No description provided for @authCurrentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current password'**
+  String get authCurrentPassword;
+
+  /// No description provided for @authNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get authNewPassword;
+
+  /// No description provided for @authConfirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm new password'**
+  String get authConfirmPassword;
+
+  /// No description provided for @authPasswordMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get authPasswordMismatch;
+
+  /// No description provided for @authPasswordChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed. Please sign in with your new password.'**
+  String get authPasswordChanged;
+
+  /// No description provided for @authPasswordRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'The current password is wrong or the new password is not accepted.'**
+  String get authPasswordRejected;
 
   /// No description provided for @authSignInButton.
   ///
@@ -619,6 +661,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sources'**
   String get chatSources;
+
+  /// No description provided for @chatTranscribing.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcribing your voice note…'**
+  String get chatTranscribing;
+
+  /// No description provided for @chatRateGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good answer'**
+  String get chatRateGood;
+
+  /// No description provided for @chatRateBad.
+  ///
+  /// In en, this message translates to:
+  /// **'Bad answer'**
+  String get chatRateBad;
+
+  /// No description provided for @chatReadAloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Read aloud'**
+  String get chatReadAloud;
+
+  /// No description provided for @chatStopReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop reading'**
+  String get chatStopReading;
+
+  /// No description provided for @chatActionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not complete the action. Please try again.'**
+  String get chatActionFailed;
+
+  /// No description provided for @chatRename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get chatRename;
+
+  /// No description provided for @chatRenameTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename conversation'**
+  String get chatRenameTitle;
+
+  /// No description provided for @chatPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin'**
+  String get chatPin;
+
+  /// No description provided for @chatUnpin.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin'**
+  String get chatUnpin;
+
+  /// No description provided for @chatDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get chatDelete;
+
+  /// No description provided for @chatDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this conversation?'**
+  String get chatDeleteConfirmTitle;
+
+  /// No description provided for @chatDeleteConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'It is deleted for you on the app and the website. This cannot be undone.'**
+  String get chatDeleteConfirmMessage;
+
+  /// No description provided for @chatPinned.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned'**
+  String get chatPinned;
 
   /// No description provided for @chatYou.
   ///
@@ -1039,6 +1165,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Finish onboarding checklist · due 10/10'**
   String get homeUpcomingWorkDetail;
+
+  /// No description provided for @homeNoUpcomingWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing due in the next 30 days'**
+  String get homeNoUpcomingWork;
+
+  /// No description provided for @homeUpcomingUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your calendar'**
+  String get homeUpcomingUnavailable;
+
+  /// No description provided for @homeUpcomingItem.
+  ///
+  /// In en, this message translates to:
+  /// **'{title} · {when}'**
+  String homeUpcomingItem(String title, String when);
 
   /// No description provided for @homeMyCoursesDetail.
   ///
@@ -1688,12 +1832,6 @@ abstract class AppLocalizations {
   /// **'Pass marks, retake limits and certificate validity are approved by the content owner before release.'**
   String get learningPolicyNote;
 
-  /// No description provided for @learningEmptyCourses.
-  ///
-  /// In en, this message translates to:
-  /// **'You have no assigned courses yet.'**
-  String get learningEmptyCourses;
-
   /// No description provided for @profileNewsTitle.
   ///
   /// In en, this message translates to:
@@ -1765,6 +1903,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Coming soon'**
   String get commonComingSoon;
+
+  /// No description provided for @commonPressBackAgainToExit.
+  ///
+  /// In en, this message translates to:
+  /// **'Press back again to exit'**
+  String get commonPressBackAgainToExit;
 
   /// No description provided for @notificationOpenHint.
   ///

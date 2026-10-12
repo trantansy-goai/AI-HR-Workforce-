@@ -19,6 +19,13 @@ enum ChatCapability {
   realtime,
   citations,
   toolCalls,
+
+  /// Replies can be rated (see [MessageRater]).
+  rating,
+
+  /// Conversations can be renamed, pinned and deleted (see
+  /// [ConversationManager]).
+  manageConversations,
 }
 
 class ChatProviderInfo {
@@ -139,4 +146,17 @@ abstract interface class GenerativeChatProvider implements ChatProvider {
     String conversationId, {
     required List<Message> history,
   });
+}
+
+/// Providers whose conversations can be renamed, pinned and deleted.
+abstract interface class ConversationManager {
+  Future<void> renameConversation(String conversationId, String title);
+  Future<void> setPinned(String conversationId, {required bool pinned});
+  Future<void> deleteConversation(String conversationId);
+}
+
+/// Providers that record the user's rating of a reply.
+abstract interface class MessageRater {
+  /// Stores [rating] for [message]; null clears it.
+  Future<void> rate(Message message, UserRating? rating);
 }

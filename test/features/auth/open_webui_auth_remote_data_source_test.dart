@@ -49,8 +49,8 @@ void main() {
 
     final session = await source.signIn(credential);
 
-    expect(http.requests.single.uri.toString(), '$_base/api/v1/auths/signin');
-    expect(http.requests.single.data, {
+    expect(http.requests.first.uri.toString(), '$_base/api/v1/auths/signin');
+    expect(http.requests.first.data, {
       'email': 'hr@company.test',
       'password': 'secret',
     });
@@ -130,9 +130,73 @@ void main() {
 
     final verified = await source.verify(held);
 
-    expect(http.requests.single.headers['Authorization'], 'Bearer jwt-1');
+    expect(http.requests.first.headers['Authorization'], 'Bearer jwt-1');
     expect(verified.user.role, 'admin');
     expect(verified.accessToken, 'jwt-1');
+  });
+
+  test('sign in and verify read the user\'s group names', () async {
+    serve({
+      'POST /api/v1/auths/signin': const FakeResponse(_sessionJson),
+      'GET /api/v1/auths/': const FakeResponse(_sessionJson),
+      'GET /api/v1/users/groups': const FakeResponse([
+        {'id': 'g-1', 'name': 'HR'},
+        {'id': 'g-2', 'name': 'Managers'},
+        {'id': 'g-3', 'name': ''},
+      ]),
+    });
+
+    final session = await source.signIn(credential);
+    final verified = await source.verify(held);
+
+    expect(session.user.groups, {'HR', 'Managers'});
+    expect(verified.user.groups, {'HR', 'Managers'});
+    expect(session.user.permissions, {'chat.file_upload'});
+    final groups = http.requests.where(
+      (r) => r.uri.path == '/api/v1/users/groups',
+    );
+    expect(
+      groups.map((r) => r.headers['Authorization']),
+      everyElement('Bearer jwt-1'),
+    );
+  });
+
+  test('change password posts both passwords with the bearer', () async {
+    serve({'POST /api/v1/auths/update/password': const FakeResponse(true)});
+
+    await source.changePassword(
+      held,
+      currentPassword: 'old',
+      newPassword: 'new-Secret-1',
+    );
+
+    expect(http.requests.single.headers['Authorization'], 'Bearer jwt-1');
+    expect(http.requests.single.data, {
+      'password': 'old',
+      'new_password': 'new-Secret-1',
+    });
+  });
+
+  test('a wrong current password (400) is a ValidationFailure', () async {
+    serve({
+      'POST /api/v1/auths/update/password': const FakeResponse({
+        'detail': 'Incorrect password',
+      }, status: 400),
+    });
+
+    await expectLater(
+      source.changePassword(held, currentPassword: 'x', newPassword: 'y'),
+      throwsA(isA<ValidationFailure>()),
+    );
+  });
+
+  test('unreadable groups leave them unknown', () async {
+    serve({'POST /api/v1/auths/signin': const FakeResponse(_sessionJson)});
+
+    final session = await source.signIn(credential);
+
+    expect(session.user.groups, isNull);
+    expect(session.accessToken, 'jwt-1');
   });
 
   test('verify surfaces 401 as UnauthorizedFailure', () async {

@@ -59,7 +59,10 @@ flutter build apk --release --dart-define-from-file=config/production.json
 
 Keys: `APP_ENV`, `APP_NAME`, `API_BASE_URL`, `USE_FAKE_BACKEND`,
 `ENABLE_NETWORK_LOGS`, `LOG_NETWORK_BODIES`, `CONNECT_TIMEOUT_MS`,
-`RECEIVE_TIMEOUT_MS`.
+`RECEIVE_TIMEOUT_MS`, `TOKEN_QUOTA_LIMIT` (tokens per user per 30 days, shown
+against Open WebUI usage; default 200000), `EMPLOYEE_GROUPS` (comma-separated
+Open WebUI group names of plain employees; members of any other group, and
+admins, get the HR layouts of Hỏi HR and Việc).
 
 **Secrets:** nothing compiled into an app is secret. Do not put API keys for
 paid services (LLM vendors, payment providers) in these files — call them

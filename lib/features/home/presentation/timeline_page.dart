@@ -44,7 +44,7 @@ class TimelinePage extends ConsumerWidget {
                 child: newsAsync.when(
                   loading: () => const LoadingView(label: 'Loading posts...'),
                   error: (err, _) => ErrorView(
-                    message: err.toString(),
+                    error: err,
                     onRetry: () => ref.refresh(newsListProvider),
                   ),
                   data: (items) {

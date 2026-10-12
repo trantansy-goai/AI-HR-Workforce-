@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/core_providers.dart';
 import '../data/fake_approval_repository.dart';
+import '../data/noop_approval_repository.dart';
 import '../domain/approval_item.dart';
 
 final approvalRepositoryProvider = Provider<ApprovalRepository>((ref) {
@@ -9,9 +10,7 @@ final approvalRepositoryProvider = Provider<ApprovalRepository>((ref) {
   if (config.useFakeBackend) {
     return FakeApprovalRepository();
   }
-  throw UnimplementedError(
-    'Remote Approval API repository is pending backend integration. Set useFakeBackend=true for development demo mode.',
-  );
+  return const NoopApprovalRepository();
 });
 
 final approvalListProvider = FutureProvider.autoDispose<List<ApprovalItem>>((

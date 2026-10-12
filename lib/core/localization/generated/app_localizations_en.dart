@@ -28,7 +28,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonLoading => 'Loading…';
 
   @override
-  String get commonEmpty => 'Nothing here yet';
+  String get commonEmpty => 'No data';
 
   @override
   String get commonErrorTitle => 'Something went wrong';
@@ -137,6 +137,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authPasswordRequired => 'Please enter your password';
+
+  @override
+  String get authChangePassword => 'Change password';
+
+  @override
+  String get authCurrentPassword => 'Current password';
+
+  @override
+  String get authNewPassword => 'New password';
+
+  @override
+  String get authConfirmPassword => 'Confirm new password';
+
+  @override
+  String get authPasswordMismatch => 'Passwords do not match';
+
+  @override
+  String get authPasswordChanged =>
+      'Password changed. Please sign in with your new password.';
+
+  @override
+  String get authPasswordRejected =>
+      'The current password is wrong or the new password is not accepted.';
 
   @override
   String get authSignInButton => 'Sign in';
@@ -288,6 +311,50 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatSources => 'Sources';
+
+  @override
+  String get chatTranscribing => 'Transcribing your voice note…';
+
+  @override
+  String get chatRateGood => 'Good answer';
+
+  @override
+  String get chatRateBad => 'Bad answer';
+
+  @override
+  String get chatReadAloud => 'Read aloud';
+
+  @override
+  String get chatStopReading => 'Stop reading';
+
+  @override
+  String get chatActionFailed =>
+      'Could not complete the action. Please try again.';
+
+  @override
+  String get chatRename => 'Rename';
+
+  @override
+  String get chatRenameTitle => 'Rename conversation';
+
+  @override
+  String get chatPin => 'Pin';
+
+  @override
+  String get chatUnpin => 'Unpin';
+
+  @override
+  String get chatDelete => 'Delete';
+
+  @override
+  String get chatDeleteConfirmTitle => 'Delete this conversation?';
+
+  @override
+  String get chatDeleteConfirmMessage =>
+      'It is deleted for you on the app and the website. This cannot be undone.';
+
+  @override
+  String get chatPinned => 'Pinned';
 
   @override
   String get chatYou => 'You';
@@ -514,6 +581,17 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get homeUpcomingWorkDetail =>
       'Finish onboarding checklist · due 10/10';
+
+  @override
+  String get homeNoUpcomingWork => 'Nothing due in the next 30 days';
+
+  @override
+  String get homeUpcomingUnavailable => 'Could not load your calendar';
+
+  @override
+  String homeUpcomingItem(String title, String when) {
+    return '$title · $when';
+  }
 
   @override
   String get homeMyCoursesDetail => 'Basic workplace safety · 12 min left';
@@ -909,9 +987,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Pass marks, retake limits and certificate validity are approved by the content owner before release.';
 
   @override
-  String get learningEmptyCourses => 'You have no assigned courses yet.';
-
-  @override
   String get profileNewsTitle => 'Company news';
 
   @override
@@ -950,6 +1025,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonComingSoon => 'Coming soon';
+
+  @override
+  String get commonPressBackAgainToExit => 'Press back again to exit';
 
   @override
   String get notificationOpenHint => 'Tap to view details';

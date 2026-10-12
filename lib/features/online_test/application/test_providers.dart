@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/core_providers.dart';
 import '../data/fake_test_repository.dart';
+import '../data/noop_test_repository.dart';
 import '../domain/test_models.dart';
 
 final onlineTestRepositoryProvider = Provider<OnlineTestRepository>((ref) {
@@ -9,9 +10,7 @@ final onlineTestRepositoryProvider = Provider<OnlineTestRepository>((ref) {
   if (config.useFakeBackend) {
     return FakeTestRepository();
   }
-  throw UnimplementedError(
-    'Remote Online Test API repository is pending backend integration. Set useFakeBackend=true for development demo mode.',
-  );
+  return const NoopTestRepository();
 });
 
 final onlineTestsProvider = FutureProvider.autoDispose<List<OnlineTest>>((

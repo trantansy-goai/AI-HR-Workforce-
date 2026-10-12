@@ -10,6 +10,7 @@ import '../../file/domain/mime_types.dart';
 import '../domain/chat_provider.dart';
 import '../domain/entities/message.dart';
 import '../domain/entities/participant.dart';
+import '../domain/extensions/ai_extensions.dart';
 import 'chat_providers.dart';
 
 class ConversationState extends Equatable {
@@ -147,6 +148,8 @@ class ConversationController extends Notifier<ConversationState> {
   }
 
   /// Sends a recorded voice note on its own (pending attachments stay put).
+  /// Sends a voice note. It shows at once; the repository fills in its
+  /// transcript when speech-to-text is available.
   Future<void> sendVoiceNote(String path, Duration duration) {
     final now = DateTime.now().millisecondsSinceEpoch;
     final name = 'voice_$now.m4a';
@@ -173,6 +176,12 @@ class ConversationController extends Notifier<ConversationState> {
 
   Future<void> stopGeneration() =>
       ref.read(chatRepositoryProvider).stopGeneration(conversationId);
+
+  /// Rates a reply (null clears). The rating shows at once and is undone
+  /// when saving fails, which the returned result reports.
+  Future<Result<void>> rate(Message message, UserRating? rating) => ref
+      .read(chatRepositoryProvider)
+      .rateMessage(conversationId, message.id, rating);
 
   Future<void> regenerate() =>
       ref.read(chatRepositoryProvider).regenerate(conversationId);

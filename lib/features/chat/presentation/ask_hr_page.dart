@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/router/app_routes.dart';
@@ -8,6 +9,7 @@ import '../../../core/theme/hr_theme.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/hr_top_bar.dart';
 import '../../../shared/widgets/hr_widgets.dart';
+import '../application/chat_providers.dart';
 import '../domain/entities/agent_item.dart';
 import 'widgets/hr_answer_widgets.dart';
 
@@ -17,14 +19,14 @@ import 'widgets/hr_answer_widgets.dart';
 /// Typing a question opens a new HR-assistant conversation with it. Phones
 /// and portrait tablets show one column; landscape tablets put the question
 /// area beside the sample exchange.
-class AskHrPage extends StatefulWidget {
+class AskHrPage extends ConsumerStatefulWidget {
   const AskHrPage({super.key});
 
   @override
-  State<AskHrPage> createState() => _AskHrPageState();
+  ConsumerState<AskHrPage> createState() => _AskHrPageState();
 }
 
-class _AskHrPageState extends State<AskHrPage> {
+class _AskHrPageState extends ConsumerState<AskHrPage> {
   final _questionController = TextEditingController();
 
   @override
@@ -33,8 +35,8 @@ class _AskHrPageState extends State<AskHrPage> {
     super.dispose();
   }
 
-  void _ask() {
-    final question = _questionController.text.trim();
+  void _ask([String? text]) {
+    final question = (text ?? _questionController.text).trim();
     if (question.isEmpty) return;
     _questionController.clear();
     FocusScope.of(context).unfocus();
@@ -186,6 +188,26 @@ class _AskHrPageState extends State<AskHrPage> {
           ),
         ],
       ),
+      // Starters and prompt templates configured on the server, if any.
+      if (ref.watch(promptSuggestionsProvider(AgentItem.hrAssistantId)).value
+          case final suggestions? when suggestions.isNotEmpty) ...[
+        const SizedBox(height: AppSpacing.sm),
+        Wrap(
+          spacing: AppSpacing.xs,
+          runSpacing: AppSpacing.xs,
+          children: [
+            for (final s in suggestions)
+              ActionChip(
+                label: Text(
+                  s.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                onPressed: () => _ask(s.text),
+              ),
+          ],
+        ),
+      ],
     ];
   }
 

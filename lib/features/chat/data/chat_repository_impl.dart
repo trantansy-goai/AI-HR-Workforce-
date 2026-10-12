@@ -6,6 +6,7 @@ import '../../../core/logging/app_logger.dart';
 import '../../../shared/utils/id_generator.dart';
 import '../../file/domain/attachment.dart';
 import '../../file/domain/file_services.dart';
+import '../../voice/domain/speech_transcriber.dart';
 import '../domain/chat_cache.dart';
 import '../domain/chat_provider.dart';
 import '../domain/chat_repository.dart';
@@ -13,6 +14,7 @@ import '../domain/entities/chat_event.dart';
 import '../domain/entities/conversation.dart';
 import '../domain/entities/message.dart';
 import '../domain/entities/participant.dart';
+import '../domain/extensions/ai_extensions.dart';
 
 class ChatRepositoryImpl implements ChatRepository {
   ChatRepositoryImpl({
@@ -25,7 +27,10 @@ class ChatRepositoryImpl implements ChatRepository {
     DateTime Function()? clock,
     this.pageSize = 30,
     this.historyWindow = 20,
-  }) : _ids = ids ?? RandomIdGenerator(),
+    this._transcriber,
+    String? Function()? transcriptionLanguage,
+  }) : _transcriptionLanguage = transcriptionLanguage ?? (() => null),
+       _ids = ids ?? RandomIdGenerator(),
        _clock = clock ?? DateTime.now {
     _incoming = _provider.incoming.listen(
       _apply,
@@ -38,6 +43,10 @@ class ChatRepositoryImpl implements ChatRepository {
   final ChatCache _cache;
   final IdGenerator _ids;
   final FileUploader? _uploader;
+
+  /// Turns voice notes into the message text; null sends audio only.
+  final SpeechTranscriber? _transcriber;
+  final String? Function() _transcriptionLanguage;
   final AppLogger _logger;
   final DateTime Function() _clock;
 
@@ -168,7 +177,18 @@ class ChatRepositoryImpl implements ChatRepository {
   Future<void> _deliver(Message message) async {
     var current = message;
     try {
+      // The voice note is already on screen; its text arrives while the
+      // audio uploads, and the provider gets the question as text.
+      final transcribing = _transcribe(current);
       current = await _uploadAttachments(current);
+      final transcript = await transcribing;
+      if (transcript.isNotEmpty) {
+        current =
+            (_cache.message(current.conversationId, current.id) ?? current)
+                .copyWith(content: transcript, type: MessageType.text);
+        await _cache.upsertMessages(current.conversationId, [current]);
+        await _touchConversation(current);
+      }
       final outgoing = OutgoingMessage.fromMessage(
         current,
         history: _history(current.conversationId, excludeId: current.id),
@@ -178,6 +198,31 @@ class ChatRepositoryImpl implements ChatRepository {
       final failure = ErrorMapper.map(error, stackTrace);
       _logger.warning('Send failed: ${failure.message}', tag: 'chat');
       await _markFailed(current.conversationId, current.id);
+    }
+  }
+
+  /// Text of a voice-only message; empty when there is nothing to
+  /// transcribe or it fails (the audio is still sent).
+  Future<String> _transcribe(Message message) async {
+    final transcriber = _transcriber;
+    if (transcriber == null || message.content.isNotEmpty) return '';
+    final voice = message.attachments
+        .where((a) => a.kind == AttachmentKind.audio && a.devicePath != null)
+        .firstOrNull;
+    if (voice == null) return '';
+    try {
+      return await transcriber.transcribe(
+        voice.devicePath!,
+        mimeType: voice.mimeType,
+        language: _transcriptionLanguage(),
+      );
+    } on Object catch (error) {
+      _logger.warning(
+        'Voice note transcription failed',
+        tag: 'chat',
+        error: error,
+      );
+      return '';
     }
   }
 
@@ -354,6 +399,92 @@ class ChatRepositoryImpl implements ChatRepository {
     AttachmentKind.audio => MessageType.audio,
     AttachmentKind.document || AttachmentKind.other => MessageType.file,
   };
+
+  // ---------------------------------------------------------------------------
+  // Ratings & conversation management
+
+  @override
+  Future<Result<void>> rateMessage(
+    String conversationId,
+    String messageId,
+    UserRating? rating,
+  ) async {
+    final rater = switch (_provider) {
+      final MessageRater r
+          when _provider.info.supports(ChatCapability.rating) =>
+        r,
+      _ => null,
+    };
+    final message = _cache.message(conversationId, messageId);
+    if (rater == null || message == null) return const Ok(null);
+    final rated = message.copyWith(
+      metadata: rating == null
+          ? message.metadata.remove<UserRating>()
+          : message.metadata.put(rating),
+    );
+    await _cache.upsertMessages(conversationId, [rated]);
+    final result = await guard(() => rater.rate(rated, rating));
+    if (!result.isOk) {
+      final latest = _cache.message(conversationId, messageId) ?? rated;
+      await _cache.upsertMessages(conversationId, [
+        latest.copyWith(metadata: message.metadata),
+      ]);
+    }
+    return result;
+  }
+
+  ConversationManager? get _manager => switch (_provider) {
+    final ConversationManager m
+        when _provider.info.supports(ChatCapability.manageConversations) =>
+      m,
+    _ => null,
+  };
+
+  Conversation? _conversation(String id) =>
+      _cache.conversations.where((c) => c.id == id).firstOrNull;
+
+  @override
+  Future<Result<void>> renameConversation(
+    String conversationId,
+    String title,
+  ) async {
+    final manager = _manager;
+    final name = title.trim();
+    if (manager == null || name.isEmpty) return const Ok(null);
+    return guard(() async {
+      await manager.renameConversation(conversationId, name);
+      if (_conversation(conversationId) case final c?) {
+        await _cache.upsertConversation(c.copyWith(title: name));
+      }
+    });
+  }
+
+  @override
+  Future<Result<void>> setPinned(
+    String conversationId, {
+    required bool pinned,
+  }) async {
+    final manager = _manager;
+    if (manager == null) return const Ok(null);
+    return guard(() async {
+      await manager.setPinned(conversationId, pinned: pinned);
+      if (_conversation(conversationId) case final c?) {
+        await _cache.upsertConversation(c.copyWith(isPinned: pinned));
+      }
+    });
+  }
+
+  @override
+  Future<Result<void>> deleteConversation(String conversationId) async {
+    final manager = _manager;
+    if (manager == null) return const Ok(null);
+    return guard(() async {
+      await manager.deleteConversation(conversationId);
+      _loaded.remove(conversationId);
+      _cursors.remove(conversationId);
+      await _cache.removeConversation(conversationId);
+    });
+  }
 
   @override
   Future<void> dispose() async {

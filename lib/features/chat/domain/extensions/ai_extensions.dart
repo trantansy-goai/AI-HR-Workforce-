@@ -57,6 +57,7 @@ class ModelInfo {
     this.isLocal = false,
     this.contextWindow,
     this.description,
+    this.suggestions = const [],
   });
 
   final String id;
@@ -64,6 +65,9 @@ class ModelInfo {
 
   /// What the model/agent is for, as configured on the server.
   final String? description;
+
+  /// Starter questions configured for this model/agent.
+  final List<PromptSuggestion> suggestions;
 
   /// True when inference runs on-device.
   final bool isLocal;
@@ -83,6 +87,42 @@ class ModelInfo {
 
   @override
   int get hashCode => Object.hash(id, isLocal);
+}
+
+/// The user's rating of a reply: +1 (helpful) or -1 (not helpful).
+class UserRating extends MessageExtension {
+  const UserRating(this.value) : assert(value == 1 || value == -1);
+
+  final int value;
+
+  bool get isPositive => value > 0;
+
+  @override
+  String get key => 'feedback.rating';
+
+  @override
+  Map<String, Object?> toJson() => {'value': value};
+
+  @override
+  List<Object?> get props => [value];
+}
+
+/// A ready-made question the user can ask with one tap.
+class PromptSuggestion {
+  const PromptSuggestion({required this.label, required this.text});
+
+  /// Short chip label.
+  final String label;
+
+  /// Message sent when chosen.
+  final String text;
+
+  @override
+  bool operator ==(Object other) =>
+      other is PromptSuggestion && other.label == label && other.text == text;
+
+  @override
+  int get hashCode => Object.hash(label, text);
 }
 
 /// Sources backing an answer (RAG / web search / knowledge base).

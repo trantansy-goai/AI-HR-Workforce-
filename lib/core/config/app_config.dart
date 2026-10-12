@@ -26,6 +26,8 @@ class AppConfig {
     this.logNetworkBodies = false,
     this.useFakeBackend = false,
     this.useFakeNativeAdapters = false,
+    this.tokenQuotaLimit = 200000,
+    this.employeeGroups = const {},
   });
 
   /// Reads configuration from compile-time environment declarations.
@@ -81,6 +83,16 @@ class AppConfig {
         'USE_FAKE_NATIVE_ADAPTERS',
         defaultValue: false,
       ),
+      tokenQuotaLimit: const int.fromEnvironment(
+        'TOKEN_QUOTA_LIMIT',
+        defaultValue: 200000,
+      ),
+      employeeGroups: {
+        for (final name in const String.fromEnvironment(
+          'EMPLOYEE_GROUPS',
+        ).split(','))
+          if (name.trim().isNotEmpty) name.trim(),
+      },
     );
   }
 
@@ -102,6 +114,15 @@ class AppConfig {
 
   /// When true, uses in-memory fake native adapters (voice, file picker).
   final bool useFakeNativeAdapters;
+
+  /// Tokens each user may use per 30 days, shown against the usage Open
+  /// WebUI reports (it has no allowance of its own). Display only: the
+  /// server enforces its own limits.
+  final int tokenQuotaLimit;
+
+  /// Server group names of plain employees (`EMPLOYEE_GROUPS`, comma
+  /// separated). Users in any other group get the HR layouts.
+  final Set<String> employeeGroups;
 
   bool get isProduction => environment == AppEnvironment.production;
   bool get isDevelopment => environment == AppEnvironment.development;

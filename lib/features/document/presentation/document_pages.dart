@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:open_filex/open_filex.dart';
 
+import '../../../core/error/error_mapper.dart';
+import '../../../core/error/failure_messages.dart';
+import '../../../core/localization/l10n.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../shared/widgets/app_feedback.dart';
 import '../../../shared/widgets/responsive.dart';
@@ -30,7 +34,7 @@ class DocumentListPage extends ConsumerWidget {
                   loading: () =>
                       const LoadingView(label: 'Loading documents...'),
                   error: (err, stack) => ErrorView(
-                    message: err.toString(),
+                    error: err,
                     onRetry: () => ref.refresh(documentsProvider),
                   ),
                   data: (documents) {
@@ -129,7 +133,7 @@ class DocumentDetailPage extends ConsumerWidget {
           loading: () =>
               const LoadingView(label: 'Loading document details...'),
           error: (err, stack) => ErrorView(
-            message: err.toString(),
+            error: err,
             onRetry: () => ref.refresh(documentDetailProvider(documentId)),
           ),
           data: (doc) {
@@ -159,19 +163,65 @@ class DocumentDetailPage extends ConsumerWidget {
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const Spacer(),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: context.showComingSoon,
-                      icon: const Icon(Icons.download),
-                      label: const Text('Download Document'),
-                    ),
-                  ),
+                  _DownloadButton(document: doc),
                 ],
               ),
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+/// Saves the document on the device (with the user's token), then opens it
+/// in an installed viewer.
+class _DownloadButton extends ConsumerStatefulWidget {
+  const _DownloadButton({required this.document});
+
+  final DocumentItem document;
+
+  @override
+  ConsumerState<_DownloadButton> createState() => _DownloadButtonState();
+}
+
+class _DownloadButtonState extends ConsumerState<_DownloadButton> {
+  bool _busy = false;
+
+  Future<void> _download() async {
+    setState(() => _busy = true);
+    try {
+      final path = await ref
+          .read(documentRepositoryProvider)
+          .download(widget.document);
+      final result = await OpenFilex.open(path);
+      if (result.type != ResultType.done && mounted) {
+        context.showAppSnackBar(result.message, type: AppSnackType.error);
+      }
+    } catch (error, stackTrace) {
+      if (!mounted) return;
+      context.showAppSnackBar(
+        ErrorMapper.map(error, stackTrace).localizedMessage(context.l10n),
+        type: AppSnackType.error,
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: _busy ? null : _download,
+        icon: _busy
+            ? const SizedBox.square(
+                dimension: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Icon(Icons.download),
+        label: const Text('Download Document'),
       ),
     );
   }

@@ -28,7 +28,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get commonLoading => 'Đang tải…';
 
   @override
-  String get commonEmpty => 'Chưa có nội dung';
+  String get commonEmpty => 'Không có dữ liệu';
 
   @override
   String get commonErrorTitle => 'Đã xảy ra lỗi';
@@ -139,6 +139,29 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get authPasswordRequired => 'Vui lòng nhập mật khẩu';
+
+  @override
+  String get authChangePassword => 'Đổi mật khẩu';
+
+  @override
+  String get authCurrentPassword => 'Mật khẩu hiện tại';
+
+  @override
+  String get authNewPassword => 'Mật khẩu mới';
+
+  @override
+  String get authConfirmPassword => 'Nhập lại mật khẩu mới';
+
+  @override
+  String get authPasswordMismatch => 'Mật khẩu nhập lại không khớp';
+
+  @override
+  String get authPasswordChanged =>
+      'Đã đổi mật khẩu. Vui lòng đăng nhập lại bằng mật khẩu mới.';
+
+  @override
+  String get authPasswordRejected =>
+      'Mật khẩu hiện tại không đúng hoặc mật khẩu mới chưa đạt yêu cầu.';
 
   @override
   String get authSignInButton => 'Đăng nhập';
@@ -291,6 +314,49 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get chatSources => 'Nguồn tham khảo';
+
+  @override
+  String get chatTranscribing => 'Đang chuyển giọng nói thành chữ…';
+
+  @override
+  String get chatRateGood => 'Câu trả lời tốt';
+
+  @override
+  String get chatRateBad => 'Câu trả lời chưa tốt';
+
+  @override
+  String get chatReadAloud => 'Đọc thành tiếng';
+
+  @override
+  String get chatStopReading => 'Dừng đọc';
+
+  @override
+  String get chatActionFailed => 'Không thực hiện được. Vui lòng thử lại.';
+
+  @override
+  String get chatRename => 'Đổi tên';
+
+  @override
+  String get chatRenameTitle => 'Đổi tên cuộc trò chuyện';
+
+  @override
+  String get chatPin => 'Ghim';
+
+  @override
+  String get chatUnpin => 'Bỏ ghim';
+
+  @override
+  String get chatDelete => 'Xoá';
+
+  @override
+  String get chatDeleteConfirmTitle => 'Xoá cuộc trò chuyện này?';
+
+  @override
+  String get chatDeleteConfirmMessage =>
+      'Cuộc trò chuyện sẽ bị xoá trên cả app và website, không thể khôi phục.';
+
+  @override
+  String get chatPinned => 'Đã ghim';
 
   @override
   String get chatYou => 'Bạn';
@@ -513,6 +579,17 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get homeUpcomingWorkDetail =>
       'Hoàn tất checklist nhận việc · hạn 10/10';
+
+  @override
+  String get homeNoUpcomingWork => 'Không có việc nào trong 30 ngày tới';
+
+  @override
+  String get homeUpcomingUnavailable => 'Không tải được lịch';
+
+  @override
+  String homeUpcomingItem(String title, String when) {
+    return '$title · $when';
+  }
 
   @override
   String get homeMyCoursesDetail => 'An toàn lao động cơ bản · còn 12 phút';
@@ -888,9 +965,6 @@ class AppLocalizationsVi extends AppLocalizations {
       'Điểm đạt, số lần làm lại và hiệu lực chứng nhận do chủ sở hữu nội dung phê duyệt trước khi phát hành.';
 
   @override
-  String get learningEmptyCourses => 'Bạn chưa được giao khóa học nào.';
-
-  @override
   String get profileNewsTitle => 'Bản tin công ty';
 
   @override
@@ -929,6 +1003,10 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get commonComingSoon => 'Tính năng sắp ra mắt';
+
+  @override
+  String get commonPressBackAgainToExit =>
+      'Nhấn thêm lần nữa để thoát ứng dụng';
 
   @override
   String get notificationOpenHint => 'Chạm để xem chi tiết';

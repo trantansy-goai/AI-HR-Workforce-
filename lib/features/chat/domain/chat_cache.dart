@@ -25,5 +25,8 @@ abstract interface class ChatCache {
     Message message,
   );
 
+  /// Drops a conversation and its messages.
+  Future<void> removeConversation(String conversationId);
+
   Future<void> clear();
 }

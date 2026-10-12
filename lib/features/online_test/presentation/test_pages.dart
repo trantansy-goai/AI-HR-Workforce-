@@ -20,7 +20,7 @@ class TestListPage extends ConsumerWidget {
         child: testsAsync.when(
           loading: () => const LoadingView(label: 'Loading tests...'),
           error: (err, stack) => ErrorView(
-            message: err.toString(),
+            error: err,
             onRetry: () => ref.refresh(onlineTestsProvider),
           ),
           data: (tests) {
@@ -112,7 +112,7 @@ class TestTakingPage extends ConsumerWidget {
         child: questionsAsync.when(
           loading: () => const LoadingView(label: 'Loading questions...'),
           error: (err, stack) => ErrorView(
-            message: err.toString(),
+            error: err,
             onRetry: () => ref.refresh(testQuestionsProvider(testId)),
           ),
           data: (questions) {

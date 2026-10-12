@@ -21,7 +21,7 @@ class LearningListPage extends ConsumerWidget {
         child: coursesAsync.when(
           loading: () => const LoadingView(label: 'Loading courses...'),
           error: (err, stack) => ErrorView(
-            message: err.toString(),
+            error: err,
             onRetry: () => ref.refresh(learningCoursesProvider),
           ),
           data: (courses) {
@@ -106,7 +106,7 @@ class LearningDetailPage extends ConsumerWidget {
         child: courseAsync.when(
           loading: () => const LoadingView(label: 'Loading course...'),
           error: (err, stack) => ErrorView(
-            message: err.toString(),
+            error: err,
             onRetry: () => ref.refresh(learningCourseDetailProvider(courseId)),
           ),
           data: (course) {

@@ -1,22 +1,65 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/localization/l10n.dart';
 import '../../core/theme/app_tokens.dart';
+import '../../shared/widgets/app_feedback.dart';
 import '../../shared/widgets/responsive.dart';
 
 /// Shell Scaffold providing adaptive navigation across the 5 approved
 /// workspace destinations:
 /// - Compact/phone (< 600dp): Material 3 Bottom NavigationBar
 /// - Tablet (>= 600dp): Side NavigationRail with GoAI brand header
-class WorkspaceShell extends StatelessWidget {
+///
+/// System back on a tab root goes to Trang chủ; on Trang chủ the first press
+/// shows a hint and a second press within [exitConfirmWindow] closes the app.
+class WorkspaceShell extends StatefulWidget {
   const WorkspaceShell({required this.navigationShell, super.key});
 
   final StatefulNavigationShell navigationShell;
 
+  static const exitConfirmWindow = Duration(seconds: 2);
+
+  @override
+  State<WorkspaceShell> createState() => _WorkspaceShellState();
+}
+
+class _WorkspaceShellState extends State<WorkspaceShell> {
+  DateTime? _lastBackPress;
+
+  void _onBack() {
+    final shell = widget.navigationShell;
+    if (shell.currentIndex != 0) {
+      shell.goBranch(0);
+      return;
+    }
+    final now = DateTime.now();
+    final last = _lastBackPress;
+    if (last != null &&
+        now.difference(last) <= WorkspaceShell.exitConfirmWindow) {
+      SystemNavigator.pop();
+      return;
+    }
+    _lastBackPress = now;
+    ScaffoldMessenger.maybeOf(context)?.hideCurrentSnackBar();
+    context.showAppSnackBar(context.l10n.commonPressBackAgainToExit);
+  }
+
   @override
   Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _onBack();
+      },
+      child: _buildShell(context),
+    );
+  }
+
+  Widget _buildShell(BuildContext context) {
     final l10n = context.l10n;
+    final navigationShell = widget.navigationShell;
 
     if (context.isTablet) {
       return Scaffold(

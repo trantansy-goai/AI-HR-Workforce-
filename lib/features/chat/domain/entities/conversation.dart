@@ -27,6 +27,7 @@ class Conversation extends Equatable {
     required this.updatedAt,
     this.lastMessage,
     this.unreadCount = 0,
+    this.isPinned = false,
   });
 
   final String id;
@@ -36,6 +37,9 @@ class Conversation extends Equatable {
   final DateTime updatedAt;
   final Message? lastMessage;
   final int unreadCount;
+
+  /// Kept at the top of conversation lists.
+  final bool isPinned;
 
   /// First participant that is not [selfId].
   Participant? counterpart(String selfId) {
@@ -51,6 +55,7 @@ class Conversation extends Equatable {
     DateTime? updatedAt,
     Message? lastMessage,
     int? unreadCount,
+    bool? isPinned,
   }) => Conversation(
     id: id,
     title: title ?? this.title,
@@ -59,6 +64,7 @@ class Conversation extends Equatable {
     updatedAt: updatedAt ?? this.updatedAt,
     lastMessage: lastMessage ?? this.lastMessage,
     unreadCount: unreadCount ?? this.unreadCount,
+    isPinned: isPinned ?? this.isPinned,
   );
 
   @override
@@ -70,5 +76,6 @@ class Conversation extends Equatable {
     updatedAt,
     lastMessage,
     unreadCount,
+    isPinned,
   ];
 }
