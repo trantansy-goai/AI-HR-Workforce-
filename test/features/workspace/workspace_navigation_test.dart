@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -525,6 +526,46 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Quota unavailable'), findsOneWidget);
+    });
+  });
+
+  group('System back on the workspace tabs', () {
+    testWidgets('back on another tab returns to Home', (tester) async {
+      await signInAsGuest(tester);
+      await tester.tap(find.widgetWithText(NavigationDestination, 'Learning'));
+      await tester.pumpAndSettle();
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Upcoming Work'), findsOneWidget);
+    });
+
+    testWidgets('Home needs a second back press to exit', (tester) async {
+      final calls = <String>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (call) async {
+          calls.add(call.method);
+          return null;
+        },
+      );
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        ),
+      );
+      await signInAsGuest(tester);
+
+      await tester.binding.handlePopRoute();
+      await tester.pump();
+      expect(find.text('Press back again to exit'), findsOneWidget);
+      expect(calls, isNot(contains('SystemNavigator.pop')));
+
+      await tester.binding.handlePopRoute();
+      await tester.pump();
+      expect(calls, contains('SystemNavigator.pop'));
     });
   });
 }
