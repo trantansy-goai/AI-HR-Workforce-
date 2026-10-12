@@ -21,7 +21,7 @@ class ApprovalListPage extends ConsumerWidget {
         child: approvalsAsync.when(
           loading: () => const LoadingView(label: 'Loading approvals...'),
           error: (err, stack) => ErrorView(
-            message: err.toString(),
+            error: err,
             onRetry: () => ref.refresh(approvalListProvider),
           ),
           data: (approvals) {

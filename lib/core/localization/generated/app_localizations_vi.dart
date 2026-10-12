@@ -28,7 +28,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get commonLoading => 'Đang tải…';
 
   @override
-  String get commonEmpty => 'Chưa có nội dung';
+  String get commonEmpty => 'Không có dữ liệu';
 
   @override
   String get commonErrorTitle => 'Đã xảy ra lỗi';
@@ -965,9 +965,6 @@ class AppLocalizationsVi extends AppLocalizations {
       'Điểm đạt, số lần làm lại và hiệu lực chứng nhận do chủ sở hữu nội dung phê duyệt trước khi phát hành.';
 
   @override
-  String get learningEmptyCourses => 'Bạn chưa được giao khóa học nào.';
-
-  @override
   String get profileNewsTitle => 'Bản tin công ty';
 
   @override
@@ -1006,6 +1003,10 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get commonComingSoon => 'Tính năng sắp ra mắt';
+
+  @override
+  String get commonPressBackAgainToExit =>
+      'Nhấn thêm lần nữa để thoát ứng dụng';
 
   @override
   String get notificationOpenHint => 'Chạm để xem chi tiết';

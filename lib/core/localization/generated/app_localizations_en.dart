@@ -28,7 +28,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonLoading => 'Loading…';
 
   @override
-  String get commonEmpty => 'Nothing here yet';
+  String get commonEmpty => 'No data';
 
   @override
   String get commonErrorTitle => 'Something went wrong';
@@ -987,9 +987,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Pass marks, retake limits and certificate validity are approved by the content owner before release.';
 
   @override
-  String get learningEmptyCourses => 'You have no assigned courses yet.';
-
-  @override
   String get profileNewsTitle => 'Company news';
 
   @override
@@ -1028,6 +1025,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonComingSoon => 'Coming soon';
+
+  @override
+  String get commonPressBackAgainToExit => 'Press back again to exit';
 
   @override
   String get notificationOpenHint => 'Tap to view details';

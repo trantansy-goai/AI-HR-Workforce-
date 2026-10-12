@@ -121,7 +121,7 @@ void main() {
 
     testWidgets('EmptyView uses localized default title', (tester) async {
       await tester.pumpWidget(testApp(const EmptyView()));
-      expect(find.text('Nothing here yet'), findsOneWidget);
+      expect(find.text('No data'), findsOneWidget);
     });
 
     testWidgets('ErrorView localizes failure and retries', (tester) async {
@@ -137,6 +137,14 @@ void main() {
       expect(find.textContaining('No internet connection'), findsOneWidget);
       await tester.tap(find.text('Retry'));
       expect(retried, isTrue);
+    });
+
+    testWidgets('ErrorView never shows a raw exception', (tester) async {
+      await tester.pumpWidget(
+        testApp(ErrorView(error: UnimplementedError('stack trace here'))),
+      );
+      expect(find.text('An unexpected error occurred.'), findsOneWidget);
+      expect(find.textContaining('stack trace here'), findsNothing);
     });
 
     testWidgets('ErrorView is translated to Vietnamese', (tester) async {

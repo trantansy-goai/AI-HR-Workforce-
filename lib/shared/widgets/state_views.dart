@@ -54,11 +54,19 @@ class EmptyView extends StatelessWidget {
   }
 }
 
-/// Error placeholder with retry. Pass a [failure] to get a localized message.
+/// Error placeholder with retry. Pass a [failure] (or any caught [error]) to
+/// get a localized, user-safe message; raw exceptions are never shown.
 class ErrorView extends StatelessWidget {
-  const ErrorView({super.key, this.failure, this.message, this.onRetry});
+  const ErrorView({
+    super.key,
+    this.failure,
+    this.error,
+    this.message,
+    this.onRetry,
+  });
 
   final AppFailure? failure;
+  final Object? error;
   final String? message;
   final VoidCallback? onRetry;
 
@@ -69,7 +77,7 @@ class ErrorView extends StatelessWidget {
       icon: Icons.error_outline,
       iconColor: Theme.of(context).colorScheme.error,
       title: l10n.commonErrorTitle,
-      message: message ?? failure?.localizedMessage(l10n),
+      message: message ?? errorMessage(l10n, failure ?? error),
       action: onRetry == null
           ? null
           : FilledButton.tonalIcon(
@@ -80,6 +88,14 @@ class ErrorView extends StatelessWidget {
     );
   }
 }
+
+/// User-facing text for an error caught in the UI: the localized failure
+/// message for an [AppFailure], a generic message for anything else.
+String? errorMessage(AppLocalizations l10n, Object? error) => switch (error) {
+  null => null,
+  final AppFailure failure => failure.localizedMessage(l10n),
+  _ => l10n.errorUnknown,
+};
 
 class _MessageLayout extends StatelessWidget {
   const _MessageLayout({

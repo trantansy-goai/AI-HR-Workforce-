@@ -127,9 +127,14 @@ class _CoursesTabView extends ConsumerWidget {
 
     return coursesAsync.when(
       loading: () => const LoadingView(),
-      error: (_, _) =>
-          ErrorView(onRetry: () => ref.invalidate(learningCoursesProvider)),
+      error: (err, _) => ErrorView(
+        error: err,
+        onRetry: () => ref.invalidate(learningCoursesProvider),
+      ),
       data: (courses) {
+        if (courses.isEmpty) {
+          return const EmptyView(icon: Icons.school_outlined);
+        }
         final pending = courses.where((c) => !c.isCompleted).toList();
         final mandatory = pending.where((c) => c.isMandatory).toList()
           ..sort(
@@ -157,27 +162,23 @@ class _CoursesTabView extends ConsumerWidget {
                     ),
             ),
             const SizedBox(height: AppSpacing.md),
-            if (courses.isEmpty)
-              HrCard(child: Text(l10n.learningEmptyCourses))
-            else ...[
-              if (featured != null) ...[
-                _CourseCard(course: featured),
-                const SizedBox(height: AppSpacing.lg),
-                _CourseProgress(course: featured),
-                const SizedBox(height: AppSpacing.md),
-                AppButton(
-                  label: featured.completionPercentage > 0
-                      ? l10n.learningContinue
-                      : l10n.learningStart,
-                  onPressed: () => context.push(AppRoutes.course(featured.id)),
-                  expand: true,
-                ),
-                const SizedBox(height: AppSpacing.md),
-              ],
-              for (final course in others) ...[
-                _CourseCard(course: course),
-                const SizedBox(height: AppSpacing.md),
-              ],
+            if (featured != null) ...[
+              _CourseCard(course: featured),
+              const SizedBox(height: AppSpacing.lg),
+              _CourseProgress(course: featured),
+              const SizedBox(height: AppSpacing.md),
+              AppButton(
+                label: featured.completionPercentage > 0
+                    ? l10n.learningContinue
+                    : l10n.learningStart,
+                onPressed: () => context.push(AppRoutes.course(featured.id)),
+                expand: true,
+              ),
+              const SizedBox(height: AppSpacing.md),
+            ],
+            for (final course in others) ...[
+              _CourseCard(course: course),
+              const SizedBox(height: AppSpacing.md),
             ],
             HrNoticeBox(text: l10n.learningPolicyNote, warning: true),
           ],
@@ -303,16 +304,12 @@ class _TestsTabView extends ConsumerWidget {
     return testsAsync.when(
       loading: () => const LoadingView(label: 'Loading certification tests...'),
       error: (err, _) => ErrorView(
-        message: err.toString(),
+        error: err,
         onRetry: () => ref.refresh(onlineTestsProvider),
       ),
       data: (tests) {
         if (tests.isEmpty) {
-          return const EmptyView(
-            title: 'No Tests Assigned',
-            message: 'You have completed all pending certification exams.',
-            icon: Icons.assignment_turned_in_outlined,
-          );
+          return const EmptyView(icon: Icons.assignment_turned_in_outlined);
         }
 
         return LayoutBuilder(

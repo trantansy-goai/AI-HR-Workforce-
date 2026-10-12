@@ -34,7 +34,7 @@ class DocumentListPage extends ConsumerWidget {
                   loading: () =>
                       const LoadingView(label: 'Loading documents...'),
                   error: (err, stack) => ErrorView(
-                    message: err.toString(),
+                    error: err,
                     onRetry: () => ref.refresh(documentsProvider),
                   ),
                   data: (documents) {
@@ -133,7 +133,7 @@ class DocumentDetailPage extends ConsumerWidget {
           loading: () =>
               const LoadingView(label: 'Loading document details...'),
           error: (err, stack) => ErrorView(
-            message: err.toString(),
+            error: err,
             onRetry: () => ref.refresh(documentDetailProvider(documentId)),
           ),
           data: (doc) {

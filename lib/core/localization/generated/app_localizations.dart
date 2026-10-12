@@ -137,7 +137,7 @@ abstract class AppLocalizations {
   /// No description provided for @commonEmpty.
   ///
   /// In en, this message translates to:
-  /// **'Nothing here yet'**
+  /// **'No data'**
   String get commonEmpty;
 
   /// No description provided for @commonErrorTitle.
@@ -1832,12 +1832,6 @@ abstract class AppLocalizations {
   /// **'Pass marks, retake limits and certificate validity are approved by the content owner before release.'**
   String get learningPolicyNote;
 
-  /// No description provided for @learningEmptyCourses.
-  ///
-  /// In en, this message translates to:
-  /// **'You have no assigned courses yet.'**
-  String get learningEmptyCourses;
-
   /// No description provided for @profileNewsTitle.
   ///
   /// In en, this message translates to:
@@ -1909,6 +1903,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Coming soon'**
   String get commonComingSoon;
+
+  /// No description provided for @commonPressBackAgainToExit.
+  ///
+  /// In en, this message translates to:
+  /// **'Press back again to exit'**
+  String get commonPressBackAgainToExit;
 
   /// No description provided for @notificationOpenHint.
   ///
