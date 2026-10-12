@@ -137,7 +137,7 @@ final agentsProvider = FutureProvider<List<AgentItem>>((ref) async {
   if (ref.watch(appConfigProvider).useFakeBackend) return ChatFixtures.agents;
   final models = await ref.watch(modelRepositoryProvider).getAgents();
   return [
-    for (final model in models)
+    for (final model in uniqueByName(models))
       AgentItem(
         id: model.id,
         name: model.displayName,
@@ -147,6 +147,29 @@ final agentsProvider = FutureProvider<List<AgentItem>>((ref) async {
       ),
   ];
 });
+
+/// [models] without repeated display names, keeping order. The server can
+/// list two models under one name (e.g. a pipe and the workspace model that
+/// wraps it); users cannot tell them apart, so the one with a real
+/// description is kept.
+List<ModelInfo> uniqueByName(List<ModelInfo> models) {
+  bool described(ModelInfo m) =>
+      (m.description ?? '').trim().isNotEmpty &&
+      m.description!.trim() != m.displayName.trim();
+  final byName = <String, ModelInfo>{};
+  for (final model in models) {
+    final key = model.displayName.trim().toLowerCase();
+    final kept = byName[key];
+    if (kept == null || (!described(kept) && described(model))) {
+      byName[key] = model;
+    }
+  }
+  final keep = byName.values.toSet();
+  return [
+    for (final model in models)
+      if (keep.remove(model)) model,
+  ];
+}
 
 /// One-tap questions for [agentId]: the starters configured on its server
 /// model plus the shared prompt templates. Empty with the fake backend, and

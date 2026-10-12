@@ -100,7 +100,7 @@ class AgentConversationListPage extends ConsumerWidget {
               child: conversationsAsync.when(
                 loading: () => const LoadingView(label: 'Loading history...'),
                 error: (err, _) => ErrorView(
-                  message: err.toString(),
+                  error: err,
                   onRetry: () => ref.refresh(conversationsProvider),
                 ),
                 data: (items) {
@@ -130,8 +130,9 @@ class AgentConversationListPage extends ConsumerWidget {
                                 c.id.startsWith('agent-legal-assistant') ||
                                 c.participants.any((p) => p.id == 'mock-legal');
                           }
-                          return c.id.contains(agentId) ||
-                              c.title.contains(agent.name);
+                          // Server agents: only the model match above, so a
+                          // chat never shows under several agents.
+                          return false;
                         }).toList()
                         // Pinned first; the cache keeps newest first otherwise.
                         ..sort(
