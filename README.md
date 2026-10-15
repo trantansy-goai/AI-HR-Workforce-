@@ -133,5 +133,13 @@ only created when they contain something.
    translate the values (keep keys and placeholders).
 2. Run `flutter gen-l10n` (also runs automatically on `flutter run`/`build`).
    Generated files in `lib/core/localization/generated/` are committed.
-3. Add the language name to `SettingsPage._languageName`.
-4. For iOS, add the locale to `CFBundleLocalizations` in `ios/Runner/Info.plist` (en and vi are already listed).
+3. Add the locale to `AppLocales` (`pickerOrder` and `nativeName`) in
+   `lib/core/localization/l10n.dart`. Locales are stored and compared by
+   language tag (`zh-Hant`), because Simplified (`zh`) and Traditional
+   (`zh_Hant`) Chinese share the language code.
+4. For iOS, add the locale to `CFBundleLocalizations` in `ios/Runner/Info.plist`.
+
+Languages: English (template), Vietnamese, Chinese Simplified (`app_zh.arb`),
+Chinese Traditional (`app_zh_Hant.arb`), Japanese, Korean. Vietnamese,
+Chinese, Japanese and Korean texts were reviewed by the customer on
+2026-10-15 (linguistic review; not yet checked on a device).

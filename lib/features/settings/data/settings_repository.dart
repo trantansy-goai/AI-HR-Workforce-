@@ -21,5 +21,5 @@ class SettingsRepository {
 
   Future<void> saveLocale(Locale? locale) => locale == null
       ? _store.remove(localeKey)
-      : _store.setString(localeKey, locale.languageCode);
+      : _store.setString(localeKey, locale.toLanguageTag());
 }

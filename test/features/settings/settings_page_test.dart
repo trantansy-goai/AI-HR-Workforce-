@@ -9,6 +9,9 @@ void main() {
   testWidgets(
     'SettingsPage does not show theme selector and preserves language/about sections',
     (tester) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 2;
+      addTearDown(tester.view.reset);
       await tester.pumpWidget(
         ProviderScope(
           retry: noRetry,
@@ -29,6 +32,10 @@ void main() {
       expect(find.text('System default'), findsOneWidget);
       expect(find.text('English'), findsOneWidget);
       expect(find.text('Tiếng Việt'), findsOneWidget);
+      expect(find.text('简体中文'), findsOneWidget);
+      expect(find.text('繁體中文'), findsOneWidget);
+      expect(find.text('日本語'), findsOneWidget);
+      expect(find.text('한국어'), findsOneWidget);
       expect(find.text('About'), findsOneWidget);
       expect(find.text('App name'), findsOneWidget);
       expect(find.text('Version'), findsOneWidget);
