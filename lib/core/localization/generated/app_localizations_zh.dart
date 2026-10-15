@@ -73,7 +73,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get authHeaderTitle => 'GO AI HR';
 
   @override
-  String get authSecurityBadge => '安全';
+  String get authSecurityBadge => '安全保障';
 
   @override
   String get authBrandEyebrow => 'GO AI · HR WORKFORCE';
@@ -118,7 +118,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get authSecurityDialogTitle => '企业安全';
 
   @override
-  String get authSecurityDialogMessage => '您的会话和数据采用端到端加密保护，符合企业人力资源信息安全规范。';
+  String get authSecurityDialogMessage => '您的会话和数据采用端到端加密保护，符合企业人力资源安全政策。';
 
   @override
   String get authEmailLabel => '邮箱';
@@ -194,7 +194,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeChatTitle => '聊天演示';
 
   @override
-  String get homeChatSubtitle => '使用模拟提供方的通用聊天引擎';
+  String get homeChatSubtitle => '使用模拟服务的通用聊天引擎';
 
   @override
   String get homeSettingsTitle => '设置';
@@ -336,7 +336,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get chatDeleteConfirmTitle => '删除此对话？';
 
   @override
-  String get chatDeleteConfirmMessage => '对话将同时从应用和网站中删除，且无法恢复。';
+  String get chatDeleteConfirmMessage => '此对话将从您在应用和网站中的对话列表中删除。此操作无法撤销。';
 
   @override
   String get chatPinned => '已置顶';
@@ -450,7 +450,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get headerQuotaExceeded => '已超出配额';
 
   @override
-  String get headerQuotaWarning => '配额即将用完';
+  String get headerQuotaWarning => '配额提醒';
 
   @override
   String get notificationTitle => '通知';
@@ -569,7 +569,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get homeMyCoursesDetail => '基础劳动安全 · 剩余 12 分钟';
+  String get homeMyCoursesDetail => '基础职业安全培训 · 剩余 12 分钟';
 
   @override
   String get homePendingCaseDetail => '等待 HR 回复 · 预计 09/10';
@@ -584,7 +584,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeNewsLoading => '正在加载公告…';
 
   @override
-  String get askHrTitle => '需要 HR 帮您什么？';
+  String get askHrTitle => '您需要 HR 提供什么帮助？';
 
   @override
   String get askHrSend => '发送问题';
@@ -596,7 +596,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get askHrSampleAnswer => '我可以为您总结现行制度并提供已批准版本的链接。您想了解申请条件，还是如何提交申请？';
 
   @override
-  String get askHrPrivacyNotice => '个人信息需要额外验证。投诉将为 HR 建立保密案件。';
+  String get askHrPrivacyNotice => '访问个人信息需要额外验证。投诉将建立保密案件，交由 HR 处理。';
 
   @override
   String get askHrViewPolicySources => '查看制度与来源';
@@ -617,7 +617,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get askHrSourceMeta => '生效日期：01/09/2026 · 负责部门：HR';
 
   @override
-  String get askHrSourcePath => '公司文档库 → 有权限的版本 → 第 3.2 节';
+  String get askHrSourcePath => '公司文档库 → 您有权访问的版本 → 第 3.2 节';
 
   @override
   String get askHrSourceWarning => '找不到生效版本或信息有冲突？请转交 HR 核实，不要将此回答视为确定的制度。';
@@ -700,7 +700,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get myWorkCaseEscalationNote => '逾期 → A0 将提醒并升级给负责人。';
+  String get myWorkCaseEscalationNote => '逾期 → A0 提醒负责人并将事项升级处理。';
 
   @override
   String get myWorkNewRequestButton => '新建 HR 申请';
@@ -741,7 +741,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get myWorkRequestPrivacyNotice => '仅分享必要的内容。敏感信息将按权限转交 HR。';
+  String get myWorkRequestPrivacyNotice => '请仅分享必要信息。敏感信息将转交具有相应权限的 HR 处理。';
 
   @override
   String get myWorkRequestSubmit => '提交申请';
@@ -771,7 +771,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get myWorkRoleDemoHint => '演示模式：选择角色以预览“工作”标签页';
 
   @override
-  String get hrApprovalsEyebrow => '仅限有权审批的人员';
+  String get hrApprovalsEyebrow => '仅限授权审批人员';
 
   @override
   String get hrApprovalsTitle => '待我审批';
@@ -780,7 +780,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get hrApprovalProbationTitle => '试用期评估档案';
 
   @override
-  String get hrApprovalProbationMeta => '#PB-238 · Nguyen A · 截止 11/10';
+  String get hrApprovalProbationMeta => '#PB-238 · Nguyễn A · 截止 11/10';
 
   @override
   String get hrApprovalProbationBadge => '待审批';
@@ -813,7 +813,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get hrProbationTraining => '必修培训：已确认';
 
   @override
-  String get hrProbationManagerOpinion => '主管意见：需要补充';
+  String get hrProbationManagerOpinion => '主管意见：需补充信息';
 
   @override
   String get hrProbationMissingEvidence => '证明材料不完整。请在做决定前要求补充信息。';
@@ -825,10 +825,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get hrProbationRequestMore => '要求补充信息';
 
   @override
-  String get hrProbationEscalate => '转交 HR/法务审核';
+  String get hrProbationEscalate => '转交 HR/法务升级处理';
 
   @override
-  String get hrProbationDecisionNote => '只有在满足条件、权限正确并再次确认后，才会显示决定选项。';
+  String get hrProbationDecisionNote => '只有满足条件、用户具有相应审批权限并再次确认后，才会显示决定选项。';
 
   @override
   String hrQueueOverdue(int count) {
@@ -893,7 +893,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String learningQuizQuestions(int count) {
-    return '测验 $count 题';
+    return '测验：$count 题';
   }
 
   @override
@@ -948,13 +948,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get profileAccountActions => '语言 / 安全 / 退出登录';
 
   @override
-  String get profilePushNote => '推送仅显示“有新更新”；请打开应用并验证身份以查看敏感数据。';
+  String get profilePushNote => '推送通知仅显示“有新动态”；请打开应用并验证身份后查看敏感数据。';
 
   @override
   String get profileLanguageSettings => '语言与设置';
 
   @override
-  String get profileSecurity => '安全';
+  String get profileSecurity => '安全设置';
 
   @override
   String get commonComingSoon => '即将推出';
@@ -1105,7 +1105,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get authHeaderTitle => 'GO AI HR';
 
   @override
-  String get authSecurityBadge => '安全';
+  String get authSecurityBadge => '安全防護';
 
   @override
   String get authBrandEyebrow => 'GO AI · HR WORKFORCE';
@@ -1150,7 +1150,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get authSecurityDialogTitle => '企業安全';
 
   @override
-  String get authSecurityDialogMessage => '您的工作階段與資料採用端對端加密保護，符合企業人力資源資訊安全規範。';
+  String get authSecurityDialogMessage => '您的工作階段與資料採用端對端加密保護，符合企業人力資源安全政策。';
 
   @override
   String get authEmailLabel => '電子郵件';
@@ -1226,7 +1226,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get homeChatTitle => '聊天示範';
 
   @override
-  String get homeChatSubtitle => '使用模擬提供者的通用聊天引擎';
+  String get homeChatSubtitle => '使用模擬服務的通用聊天引擎';
 
   @override
   String get homeSettingsTitle => '設定';
@@ -1368,7 +1368,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get chatDeleteConfirmTitle => '要刪除此對話嗎？';
 
   @override
-  String get chatDeleteConfirmMessage => '對話將同時從應用程式和網站中刪除，且無法復原。';
+  String get chatDeleteConfirmMessage => '此對話將從您在應用程式與網站中的對話清單中刪除。此操作無法復原。';
 
   @override
   String get chatPinned => '已釘選';
@@ -1482,7 +1482,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get headerQuotaExceeded => '已超出配額';
 
   @override
-  String get headerQuotaWarning => '配額即將用完';
+  String get headerQuotaWarning => '配額提醒';
 
   @override
   String get notificationTitle => '通知';
@@ -1508,7 +1508,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get profileApprovals => '待審核';
+  String get profileApprovals => '待核准';
 
   @override
   String get profileSettings => '設定';
@@ -1529,7 +1529,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get myWorkCasesTitle => '我的案件與申請';
 
   @override
-  String get myWorkApprovalsTitle => '待我審核';
+  String get myWorkApprovalsTitle => '待我核准';
 
   @override
   String get homeNewsSection => '最新公告';
@@ -1601,7 +1601,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get homeMyCoursesDetail => '基礎勞動安全 · 剩餘 12 分鐘';
+  String get homeMyCoursesDetail => '基礎職業安全訓練 · 剩餘 12 分鐘';
 
   @override
   String get homePendingCaseDetail => '等待 HR 回覆 · 預計 09/10';
@@ -1616,7 +1616,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get homeNewsLoading => '正在載入公告…';
 
   @override
-  String get askHrTitle => '需要 HR 協助您什麼？';
+  String get askHrTitle => '您需要 HR 提供什麼協助？';
 
   @override
   String get askHrSend => '傳送問題';
@@ -1628,7 +1628,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get askHrSampleAnswer => '我可以為您摘要現行制度並提供已核准版本的連結。您想了解申請條件，還是如何提交申請？';
 
   @override
-  String get askHrPrivacyNotice => '個人資訊需要額外驗證。申訴將為 HR 建立保密案件。';
+  String get askHrPrivacyNotice => '存取個人資訊需進一步驗證身分。申訴將建立保密案件，交由 HR 處理。';
 
   @override
   String get askHrViewPolicySources => '查看制度與來源';
@@ -1649,7 +1649,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get askHrSourceMeta => '生效日期：01/09/2026 · 負責單位：HR';
 
   @override
-  String get askHrSourcePath => '公司文件庫 → 有權限的版本 → 第 3.2 節';
+  String get askHrSourcePath => '公司文件庫 → 您有權存取的版本 → 第 3.2 節';
 
   @override
   String get askHrSourceWarning => '找不到生效版本或資訊有衝突？請轉交 HR 確認，勿將此回答視為確定的制度。';
@@ -1732,7 +1732,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get myWorkCaseEscalationNote => '逾期 → A0 將提醒並升級給負責人。';
+  String get myWorkCaseEscalationNote => '逾期 → A0 提醒負責人並將事項向上呈報處理。';
 
   @override
   String get myWorkNewRequestButton => '新增 HR 申請';
@@ -1773,7 +1773,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get myWorkRequestPrivacyNotice => '僅分享必要的內容。敏感資訊將依權限轉交 HR。';
+  String get myWorkRequestPrivacyNotice => '請僅分享必要資訊。敏感資訊將交由具備相應權限的 HR 處理。';
 
   @override
   String get myWorkRequestSubmit => '提交申請';
@@ -1803,19 +1803,19 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get myWorkRoleDemoHint => '示範模式：選擇角色以預覽「工作」分頁';
 
   @override
-  String get hrApprovalsEyebrow => '僅限有權審核的人員';
+  String get hrApprovalsEyebrow => '僅限獲授權的核准人員';
 
   @override
-  String get hrApprovalsTitle => '待我審核';
+  String get hrApprovalsTitle => '待我核准';
 
   @override
   String get hrApprovalProbationTitle => '試用期評估檔案';
 
   @override
-  String get hrApprovalProbationMeta => '#PB-238 · Nguyen A · 截止 11/10';
+  String get hrApprovalProbationMeta => '#PB-238 · Nguyễn A · 截止 11/10';
 
   @override
-  String get hrApprovalProbationBadge => '待審核';
+  String get hrApprovalProbationBadge => '待核准';
 
   @override
   String get hrApprovalChecklistTitle => '有例外的清單';
@@ -1827,7 +1827,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get hrApprovalChecklistBadge => '確認';
 
   @override
-  String get hrApprovalsScopeNote => '2 項 · 權限取決於職位、單位、匯報關係與授權層級。';
+  String get hrApprovalsScopeNote => '2 項 · 權限依職位、單位、回報關係與授權層級決定。';
 
   @override
   String get hrApprovalsOpenReview => '開啟評估檔案';
@@ -1845,7 +1845,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get hrProbationTraining => '必修培訓：已確認';
 
   @override
-  String get hrProbationManagerOpinion => '主管意見：需要補充';
+  String get hrProbationManagerOpinion => '主管意見：需補充資訊';
 
   @override
   String get hrProbationMissingEvidence => '證明資料不完整。請在做決定前要求補充資訊。';
@@ -1857,10 +1857,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get hrProbationRequestMore => '要求補充資訊';
 
   @override
-  String get hrProbationEscalate => '轉交 HR／法務審核';
+  String get hrProbationEscalate => '呈交 HR／法務處理';
 
   @override
-  String get hrProbationDecisionNote => '只有在符合條件、權限正確並再次確認後，才會顯示決定選項。';
+  String get hrProbationDecisionNote => '只有符合條件、使用者具備相應核准權限並再次確認後，才會顯示決定選項。';
 
   @override
   String hrQueueOverdue(int count) {
@@ -1869,14 +1869,14 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String hrQueuePending(int count) {
-    return '待審核 $count';
+    return '待核准 $count';
   }
 
   @override
   String get hrQueueCase1Title => '案件 #HR-1051';
 
   @override
-  String get hrQueueCase1Meta => '申訴 · 保密轉交 · 今天到期';
+  String get hrQueueCase1Meta => '申訴 · 保密轉交 · 今日截止';
 
   @override
   String get hrQueueCase2Title => '案件 #ON-320';
@@ -1894,7 +1894,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get hrQueueOpenWeb => '在網頁版查看佇列';
 
   @override
-  String get hrQueueMobileNote => '行動版用於接收與追蹤；轉交路線設定、知識庫審核與複雜調查請使用網頁工作台。';
+  String get hrQueueMobileNote => '行動版用於接收與追蹤；處理流程設定、知識庫審核與複雜調查請使用網頁工作區。';
 
   @override
   String get learningMyTitle => '我的學習';
@@ -1925,7 +1925,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String learningQuizQuestions(int count) {
-    return '測驗 $count 題';
+    return '測驗：$count 題';
   }
 
   @override
@@ -1980,13 +1980,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get profileAccountActions => '語言 / 安全 / 登出';
 
   @override
-  String get profilePushNote => '推播僅顯示「有新更新」；請開啟應用程式並驗證身分以查看敏感資料。';
+  String get profilePushNote => '推播通知僅顯示「有新動態」；請開啟應用程式並驗證身分後查看敏感資料。';
 
   @override
   String get profileLanguageSettings => '語言與設定';
 
   @override
-  String get profileSecurity => '安全';
+  String get profileSecurity => '安全設定';
 
   @override
   String get commonComingSoon => '即將推出';

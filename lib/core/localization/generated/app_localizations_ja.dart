@@ -250,7 +250,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get profileEmail => 'メールアドレス';
 
   @override
-  String get profileNoEmail => '未設定';
+  String get profileNoEmail => '未提供';
 
   @override
   String get profileGuestBadge => 'ゲストセッション';
@@ -338,7 +338,8 @@ class AppLocalizationsJa extends AppLocalizations {
   String get chatDeleteConfirmTitle => 'この会話を削除しますか？';
 
   @override
-  String get chatDeleteConfirmMessage => 'アプリとウェブサイトの両方から削除されます。この操作は元に戻せません。';
+  String get chatDeleteConfirmMessage =>
+      'この会話は、アプリとウェブサイトの両方で、ご自身の会話一覧から削除されます。この操作は元に戻せません。';
 
   @override
   String get chatPinned => 'ピン留め済み';
@@ -452,7 +453,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get headerQuotaExceeded => '上限を超えました';
 
   @override
-  String get headerQuotaWarning => '上限に近づいています';
+  String get headerQuotaWarning => '上限に関する警告';
 
   @override
   String get notificationTitle => '通知';
@@ -496,7 +497,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get myWorkChecklistTitle => 'オンボーディングチェックリスト';
 
   @override
-  String get myWorkCasesTitle => 'マイケース・申請';
+  String get myWorkCasesTitle => 'マイ案件・申請';
 
   @override
   String get myWorkApprovalsTitle => '自分の承認待ち';
@@ -571,7 +572,7 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get homeMyCoursesDetail => '基本の労働安全 · 残り 12 分';
+  String get homeMyCoursesDetail => '職場の安全の基礎 · 残り 12 分';
 
   @override
   String get homePendingCaseDetail => 'HR の回答待ち · 予定 09/10';
@@ -586,7 +587,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get homeNewsLoading => 'お知らせを読み込み中…';
 
   @override
-  String get askHrTitle => 'HR にどのようなご用件ですか？';
+  String get askHrTitle => 'HR にどのようなサポートをご希望ですか？';
 
   @override
   String get askHrSend => '質問を送信';
@@ -600,7 +601,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get askHrPrivacyNotice =>
-      '個人情報には追加の本人確認が必要です。苦情は HR 向けの機密ケースとして登録されます。';
+      '個人情報の閲覧には追加の本人確認が必要です。苦情・相談は機密扱いの案件として登録され、HR が対応します。';
 
   @override
   String get askHrViewPolicySources => '規定と参照元を見る';
@@ -668,7 +669,7 @@ class AppLocalizationsJa extends AppLocalizations {
       '「チェックリスト完了」は証跡の記録です。正式な記録は、確認後に元のシステムで更新されます。';
 
   @override
-  String get myWorkCasesEmpty => 'ケースはまだありません。';
+  String get myWorkCasesEmpty => '案件はまだありません。';
 
   @override
   String myWorkCaseUpdated(String date) {
@@ -696,18 +697,19 @@ class AppLocalizationsJa extends AppLocalizations {
   String get myWorkCaseSecureTitle => 'セキュアなやり取り';
 
   @override
-  String get myWorkCaseSecureBody => 'ご自身のケースの範囲内でのみ、閲覧と追加ができます。';
+  String get myWorkCaseSecureBody => 'ご自身の案件の範囲内でのみ、閲覧と追加ができます。';
 
   @override
   String get myWorkCaseAddDocs => '書類を追加';
 
   @override
   String myWorkCaseDocsAdded(int count) {
-    return 'ケースに $count 件のファイルを添付しました';
+    return '案件に $count 件のファイルを添付しました';
   }
 
   @override
-  String get myWorkCaseEscalationNote => '期限超過 → A0 がリマインドし、担当者へエスカレーションします。';
+  String get myWorkCaseEscalationNote =>
+      '期限超過 → A0 が担当者にリマインドし、上位レベルでの対応を依頼します。';
 
   @override
   String get myWorkNewRequestButton => '新しい HR 申請';
@@ -749,7 +751,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get myWorkRequestPrivacyNotice =>
-      '必要な内容のみ共有してください。機密性の高い情報は、権限に応じて HR に回付されます。';
+      '必要な内容のみ共有してください。機密性の高い情報は、対応権限を持つ HR 担当者に回付されます。';
 
   @override
   String get myWorkRequestSubmit => '申請を送信';
@@ -759,7 +761,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get myWorkRequestAfterBody =>
-      'ケース番号（例：#HR-1042）が発行されます · 回答予定：2 営業日以内 · 担当：割り当てられた HR。';
+      '案件番号（例：#HR-1042）が発行されます · 回答予定：2 営業日 · 担当：割り当てられた HR。';
 
   @override
   String get myWorkRequestUrgentNote => '苦情・緊急案件：直属の上長を経由せず、権限のある担当者へ直接回付されます。';
@@ -779,7 +781,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get myWorkRoleDemoHint => 'デモモード：役割を選んでワークタブをプレビュー';
 
   @override
-  String get hrApprovalsEyebrow => '権限のある承認者向け';
+  String get hrApprovalsEyebrow => '承認権限を持つ方のみ';
 
   @override
   String get hrApprovalsTitle => '自分の承認待ち';
@@ -788,13 +790,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get hrApprovalProbationTitle => '試用期間の評価ファイル';
 
   @override
-  String get hrApprovalProbationMeta => '#PB-238 · Nguyen A · 期限 11/10';
+  String get hrApprovalProbationMeta => '#PB-238 · Nguyễn A · 期限 11/10';
 
   @override
   String get hrApprovalProbationBadge => '承認待ち';
 
   @override
-  String get hrApprovalChecklistTitle => '例外のあるチェックリスト';
+  String get hrApprovalChecklistTitle => '例外事項のあるチェックリスト';
 
   @override
   String get hrApprovalChecklistMeta => '#ON-320 · 書類不足 · 期限 09/10';
@@ -803,7 +805,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get hrApprovalChecklistBadge => '要確認';
 
   @override
-  String get hrApprovalsScopeNote => '2 件 · 権限は職位、所属、レポートライン、権限レベルによって決まります。';
+  String get hrApprovalsScopeNote => '2 件 · 権限は職位、所属、報告系統、権限レベルによって決まります。';
 
   @override
   String get hrApprovalsOpenReview => '評価ファイルを開く';
@@ -815,7 +817,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get hrProbationTitle => '試用期間の評価 #PB-238';
 
   @override
-  String get hrProbationChecklist => 'チェックリスト 12/13 項目';
+  String get hrProbationChecklist => 'チェックリスト：12/13 項目';
 
   @override
   String get hrProbationTraining => '必須研修：確認済み';
@@ -833,11 +835,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get hrProbationRequestMore => '追加情報を依頼';
 
   @override
-  String get hrProbationEscalate => 'HR/法務へエスカレーション';
+  String get hrProbationEscalate => 'HR／法務に対応を依頼';
 
   @override
   String get hrProbationDecisionNote =>
-      '判断の選択肢は、条件を満たし、権限が正しく、再確認した後にのみ表示されます。';
+      '条件を満たし、ユーザーに適切な承認権限があり、再確認が完了した場合にのみ、判断の選択肢が表示されます。';
 
   @override
   String hrQueueOverdue(int count) {
@@ -850,19 +852,19 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get hrQueueCase1Title => 'ケース #HR-1051';
+  String get hrQueueCase1Title => '案件 #HR-1051';
 
   @override
   String get hrQueueCase1Meta => '苦情 · 機密ルート · 本日期限';
 
   @override
-  String get hrQueueCase2Title => 'ケース #ON-320';
+  String get hrQueueCase2Title => '案件 #ON-320';
 
   @override
   String get hrQueueCase2Meta => '入社書類の不足 · 担当：HR A';
 
   @override
-  String get hrQueueCase3Title => 'ケース #TR-102';
+  String get hrQueueCase3Title => '案件 #TR-102';
 
   @override
   String get hrQueueCase3Meta => 'コースに承認済みのコンテンツ版がありません';
@@ -872,10 +874,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get hrQueueMobileNote =>
-      'モバイルは受信と追跡用です。ルーティング設定、ナレッジベースの承認、複雑な調査はウェブワークスペースをご利用ください。';
+      'モバイルアプリでは受付と進捗確認を行います。振り分け設定、ナレッジベースの承認、複雑な調査はウェブワークスペースで行ってください。';
 
   @override
-  String get learningMyTitle => 'マイ学習';
+  String get learningMyTitle => '自分の学習';
 
   @override
   String learningMandatorySummary(int count, String date) {
@@ -898,12 +900,12 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String learningDocMinutes(int minutes) {
-    return '読み物 $minutes 分';
+    return '資料 $minutes 分';
   }
 
   @override
   String learningQuizQuestions(int count) {
-    return 'テスト $count 問';
+    return 'テスト：$count 問';
   }
 
   @override
@@ -944,7 +946,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get profileNewsAckNote => '確認が必要なお知らせには「既読にする」ボタンがあります。';
 
   @override
-  String get profileNotificationsTitle => 'マイ通知';
+  String get profileNotificationsTitle => '自分への通知';
 
   @override
   String get profileAccountSection => 'アカウント';
@@ -959,7 +961,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get profilePushNote =>
-      'プッシュ通知には「新しい更新があります」とだけ表示されます。機密データを見るには、アプリを開いて認証してください。';
+      'プッシュ通知には「新しいお知らせがあります」とだけ表示されます。機密データを確認するには、アプリを開いて認証してください。';
 
   @override
   String get profileLanguageSettings => '言語と設定';
@@ -971,7 +973,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get commonComingSoon => '近日公開';
 
   @override
-  String get commonPressBackAgainToExit => 'もう一度押すとアプリを終了します';
+  String get commonPressBackAgainToExit => '戻るボタンをもう一度押すとアプリを終了します';
 
   @override
   String get notificationOpenHint => 'タップして詳細を表示';

@@ -140,5 +140,6 @@ only created when they contain something.
 4. For iOS, add the locale to `CFBundleLocalizations` in `ios/Runner/Info.plist`.
 
 Languages: English (template), Vietnamese, Chinese Simplified (`app_zh.arb`),
-Chinese Traditional (`app_zh_Hant.arb`), Japanese, Korean. The Chinese,
-Japanese and Korean texts are machine-drafted and awaiting customer review.
+Chinese Traditional (`app_zh_Hant.arb`), Japanese, Korean. Vietnamese,
+Chinese, Japanese and Korean texts were reviewed by the customer on
+2026-10-15 (linguistic review; not yet checked on a device).

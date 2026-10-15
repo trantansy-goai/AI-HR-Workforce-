@@ -120,7 +120,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get authSecurityDialogMessage =>
-      '세션과 데이터는 기업 인사 정보 보안 정책을 준수하는 종단 간 암호화로 보호됩니다.';
+      '세션과 데이터는 기업 인사 정보 보안 정책에 따른 종단 간 암호화로 보호됩니다.';
 
   @override
   String get authEmailLabel => '이메일';
@@ -196,7 +196,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get homeChatTitle => '채팅 데모';
 
   @override
-  String get homeChatSubtitle => '모의 제공자를 사용하는 범용 채팅 엔진';
+  String get homeChatSubtitle => '모의 서비스를 사용하는 범용 채팅 엔진';
 
   @override
   String get homeSettingsTitle => '설정';
@@ -205,7 +205,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get homeSettingsSubtitle => '언어 및 앱 정보';
 
   @override
-  String get homeShowcaseTitle => '기본 구성 요소 쇼케이스';
+  String get homeShowcaseTitle => '기본 UI 구성 요소';
 
   @override
   String get homeShowcaseSubtitle => '디자인 시스템 구성 요소와 상태';
@@ -338,7 +338,8 @@ class AppLocalizationsKo extends AppLocalizations {
   String get chatDeleteConfirmTitle => '이 대화를 삭제하시겠습니까?';
 
   @override
-  String get chatDeleteConfirmMessage => '앱과 웹사이트에서 모두 삭제되며 되돌릴 수 없습니다.';
+  String get chatDeleteConfirmMessage =>
+      '이 대화는 앱과 웹사이트 모두에서 내 대화 목록에서 삭제됩니다. 이 작업은 되돌릴 수 없습니다.';
 
   @override
   String get chatPinned => '고정됨';
@@ -362,7 +363,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get notFoundGoHome => '홈으로 이동';
 
   @override
-  String get showcaseTitle => '기본 구성 요소 쇼케이스';
+  String get showcaseTitle => '기본 UI 구성 요소';
 
   @override
   String get showcaseButtons => '버튼';
@@ -496,7 +497,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get myWorkChecklistTitle => '온보딩 체크리스트';
 
   @override
-  String get myWorkCasesTitle => '내 케이스 및 요청';
+  String get myWorkCasesTitle => '내 접수 내역 및 요청';
 
   @override
   String get myWorkApprovalsTitle => '내 승인 대기';
@@ -571,7 +572,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get homeMyCoursesDetail => '기본 산업 안전 · 12분 남음';
+  String get homeMyCoursesDetail => '기초 산업 안전 교육 · 12분 남음';
 
   @override
   String get homePendingCaseDetail => 'HR 답변 대기 중 · 예상 09/10';
@@ -586,7 +587,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get homeNewsLoading => '소식을 불러오는 중…';
 
   @override
-  String get askHrTitle => 'HR에 어떤 도움이 필요하신가요?';
+  String get askHrTitle => 'HR의 어떤 도움이 필요하신가요?';
 
   @override
   String get askHrSend => '질문 보내기';
@@ -600,7 +601,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get askHrPrivacyNotice =>
-      '개인 정보는 추가 확인이 필요합니다. 고충 제기는 HR을 위한 비공개 케이스로 등록됩니다.';
+      '개인 정보 조회 시 추가 본인 확인이 필요합니다. 고충 사항은 비공개 접수 건으로 등록되어 HR에서 처리합니다.';
 
   @override
   String get askHrViewPolicySources => '정책 및 출처 보기';
@@ -647,7 +648,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get myWorkOnboardingEyebrow => '온보딩';
 
   @override
-  String get myWorkOnboardingRole => '운영 직원 · A 공장';
+  String get myWorkOnboardingRole => '현장 운영 직원 · A 공장';
 
   @override
   String get myWorkOnboardingTemplate => '템플릿: 직무 + 근무지 + 계약 유형 · HR 승인 완료';
@@ -668,7 +669,7 @@ class AppLocalizationsKo extends AppLocalizations {
       '\'체크리스트 완료\'는 증빙 기록입니다. 공식 기록은 검토 후 원본 시스템에서 업데이트됩니다.';
 
   @override
-  String get myWorkCasesEmpty => '아직 케이스가 없습니다.';
+  String get myWorkCasesEmpty => '아직 접수 건가 없습니다.';
 
   @override
   String myWorkCaseUpdated(String date) {
@@ -696,18 +697,19 @@ class AppLocalizationsKo extends AppLocalizations {
   String get myWorkCaseSecureTitle => '보안 소통';
 
   @override
-  String get myWorkCaseSecureBody => '본인 케이스 범위 안에서만 확인하고 보완할 수 있습니다.';
+  String get myWorkCaseSecureBody => '본인 접수 건 범위 안에서만 확인하고 보완할 수 있습니다.';
 
   @override
   String get myWorkCaseAddDocs => '서류 추가';
 
   @override
   String myWorkCaseDocsAdded(int count) {
-    return '케이스에 파일 $count개를 첨부했습니다';
+    return '접수 건에 파일 $count개를 첨부했습니다';
   }
 
   @override
-  String get myWorkCaseEscalationNote => '기한 초과 → A0가 알림을 보내고 담당자에게 이관합니다.';
+  String get myWorkCaseEscalationNote =>
+      '기한 초과 → A0가 담당자에게 알림을 보내고 상위 단계의 처리를 요청합니다.';
 
   @override
   String get myWorkNewRequestButton => '새 HR 요청';
@@ -749,7 +751,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get myWorkRequestPrivacyNotice =>
-      '필요한 내용만 공유하세요. 민감한 정보는 권한에 따라 HR에 전달됩니다.';
+      '필요한 정보만 공유하세요. 민감한 정보는 해당 권한이 있는 HR 담당자에게 전달됩니다.';
 
   @override
   String get myWorkRequestSubmit => '요청 제출';
@@ -759,7 +761,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get myWorkRequestAfterBody =>
-      '케이스 번호(예: #HR-1042)가 발급됩니다 · 예상 답변 기간: 영업일 기준 2일 · 담당: 배정된 HR.';
+      '접수 건 번호(예: #HR-1042)가 발급됩니다 · 예상 답변 기간: 영업일 기준 2일 · 담당: 배정된 HR.';
 
   @override
   String get myWorkRequestUrgentNote =>
@@ -789,13 +791,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get hrApprovalProbationTitle => '수습 평가 파일';
 
   @override
-  String get hrApprovalProbationMeta => '#PB-238 · Nguyen A · 마감 11/10';
+  String get hrApprovalProbationMeta => '#PB-238 · Nguyễn A · 마감 11/10';
 
   @override
   String get hrApprovalProbationBadge => '승인 대기';
 
   @override
-  String get hrApprovalChecklistTitle => '예외가 있는 체크리스트';
+  String get hrApprovalChecklistTitle => '예외 항목이 있는 체크리스트';
 
   @override
   String get hrApprovalChecklistMeta => '#ON-320 · 서류 누락 · 마감 09/10';
@@ -816,13 +818,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get hrProbationTitle => '수습 평가 #PB-238';
 
   @override
-  String get hrProbationChecklist => '체크리스트 12/13개 항목';
+  String get hrProbationChecklist => '체크리스트: 12/13개 항목';
 
   @override
   String get hrProbationTraining => '필수 교육: 확인 완료';
 
   @override
-  String get hrProbationManagerOpinion => '관리자 의견: 보완 필요';
+  String get hrProbationManagerOpinion => '관리자 의견: 추가 정보 필요';
 
   @override
   String get hrProbationMissingEvidence => '증빙이 부족합니다. 결정하기 전에 추가 정보를 요청하세요.';
@@ -834,36 +836,36 @@ class AppLocalizationsKo extends AppLocalizations {
   String get hrProbationRequestMore => '추가 정보 요청';
 
   @override
-  String get hrProbationEscalate => 'HR/법무팀에 이관';
+  String get hrProbationEscalate => 'HR/법무팀에 상위 검토 요청';
 
   @override
   String get hrProbationDecisionNote =>
-      '결정 옵션은 조건을 충족하고 권한이 맞으며 다시 확인한 후에만 표시됩니다.';
+      '조건을 충족하고 사용자에게 적절한 승인 권한이 있으며 재확인까지 완료된 경우에만 결정 옵션이 표시됩니다.';
 
   @override
   String hrQueueOverdue(int count) {
-    return '기한 초과 $count';
+    return '기한 초과 $count건';
   }
 
   @override
   String hrQueuePending(int count) {
-    return '승인 대기 $count';
+    return '승인 대기 $count건';
   }
 
   @override
-  String get hrQueueCase1Title => '케이스 #HR-1051';
+  String get hrQueueCase1Title => '접수 건 #HR-1051';
 
   @override
   String get hrQueueCase1Meta => '고충 제기 · 비공개 전달 · 오늘 마감';
 
   @override
-  String get hrQueueCase2Title => '케이스 #ON-320';
+  String get hrQueueCase2Title => '접수 건 #ON-320';
 
   @override
   String get hrQueueCase2Meta => '입사 서류 누락 · 담당: HR A';
 
   @override
-  String get hrQueueCase3Title => '케이스 #TR-102';
+  String get hrQueueCase3Title => '접수 건 #TR-102';
 
   @override
   String get hrQueueCase3Meta => '과정에 승인된 콘텐츠 버전이 없습니다';
@@ -873,7 +875,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get hrQueueMobileNote =>
-      '모바일은 수신과 추적용입니다. 전달 경로 설정, 지식 베이스 승인, 복잡한 조사는 웹 워크스페이스를 이용하세요.';
+      '모바일 앱에서는 접수와 진행 상황을 확인합니다. 처리 경로 설정, 지식 베이스 승인, 복잡한 조사는 웹 워크스페이스에서 진행하세요.';
 
   @override
   String get learningMyTitle => '내 학습';
@@ -899,12 +901,12 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String learningDocMinutes(int minutes) {
-    return '읽기 $minutes분';
+    return '읽기 자료 $minutes분';
   }
 
   @override
   String learningQuizQuestions(int count) {
-    return '퀴즈 $count문항';
+    return '퀴즈: $count문항';
   }
 
   @override
@@ -961,7 +963,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get profilePushNote =>
-      '푸시 알림에는 \'새 업데이트가 있습니다\'만 표시됩니다. 민감한 데이터는 앱을 열고 인증한 후 확인하세요.';
+      '푸시 알림에는 “새 소식이 있습니다”만 표시됩니다. 민감한 데이터는 앱을 열고 인증한 후 확인하세요.';
 
   @override
   String get profileLanguageSettings => '언어 및 설정';
@@ -973,7 +975,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get commonComingSoon => '곧 제공될 예정입니다';
 
   @override
-  String get commonPressBackAgainToExit => '한 번 더 누르면 앱이 종료됩니다';
+  String get commonPressBackAgainToExit => '뒤로 가기 버튼을 한 번 더 누르면 앱이 종료됩니다';
 
   @override
   String get notificationOpenHint => '탭하여 자세히 보기';

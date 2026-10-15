@@ -46,7 +46,7 @@ void main() {
       expect(find.text('GO AI · HR WORKFORCE'), findsOneWidget);
       expect(find.text('Chào mừng trở lại'), findsOneWidget);
       expect(
-        find.text('Vui lòng xác nhận tài khoản để xem thông tin của mình.'),
+        find.text('Vui lòng xác thực tài khoản để xem thông tin của bạn.'),
         findsOneWidget,
       );
 
@@ -59,7 +59,9 @@ void main() {
 
       // 6. Enterprise SSO
       expect(
-        find.text('Doanh nghiệp có SSO? Chọn "Đăng nhập công ty".'),
+        find.text(
+          'Công ty có đăng nhập một lần (SSO)? Chọn “Đăng nhập công ty”.',
+        ),
         findsOneWidget,
       );
       expect(find.text('Đăng nhập công ty'), findsOneWidget);
@@ -68,7 +70,7 @@ void main() {
       expect(find.text('Lần đầu sử dụng'), findsOneWidget);
       expect(
         find.text(
-          'HR cấp mã kích hoạt; xác minh số điện thoại rồi đặt PIN trên thiết bị.',
+          'HR cấp mã kích hoạt. Hãy xác minh số điện thoại rồi đặt mã PIN trên thiết bị.',
         ),
         findsOneWidget,
       );
@@ -140,7 +142,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      find.text('Vui lòng nhập mã nhân viên hoặc tài khoản'),
+      find.text('Vui lòng nhập mã nhân viên hoặc tài khoản công ty'),
       findsOneWidget,
     );
     expect(find.text('Vui lòng nhập số điện thoại đã đăng ký'), findsOneWidget);
