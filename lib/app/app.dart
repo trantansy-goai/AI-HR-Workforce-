@@ -32,6 +32,7 @@ class App extends ConsumerWidget {
       themeMode: ThemeMode.light,
       locale: settings.locale,
       supportedLocales: AppLocales.supported,
+      localeResolutionCallback: AppLocales.resolve,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

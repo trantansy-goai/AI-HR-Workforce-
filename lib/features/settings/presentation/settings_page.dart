@@ -30,7 +30,7 @@ class SettingsPage extends ConsumerWidget {
           children: [
             _SectionHeader(l10n.settingsLanguage),
             RadioGroup<String>(
-              groupValue: settings.locale?.languageCode ?? '',
+              groupValue: settings.locale?.toLanguageTag() ?? '',
               onChanged: (code) => controller.setLocale(
                 code == null || code.isEmpty ? null : AppLocales.fromCode(code),
               ),
@@ -40,10 +40,10 @@ class SettingsPage extends ConsumerWidget {
                     value: '',
                     title: Text(l10n.settingsLanguageSystem),
                   ),
-                  for (final locale in AppLocales.supported)
+                  for (final locale in AppLocales.pickerOrder)
                     RadioListTile<String>(
-                      value: locale.languageCode,
-                      title: Text(_languageName(locale)),
+                      value: locale.toLanguageTag(),
+                      title: Text(AppLocales.nativeName(locale)),
                     ),
                 ],
               ),
@@ -90,14 +90,6 @@ class SettingsPage extends ConsumerWidget {
       ),
     );
   }
-
-  /// Language names are shown in their own language (endonyms), so they are
-  /// intentionally not translated.
-  static String _languageName(Locale locale) => switch (locale.languageCode) {
-    'en' => 'English',
-    'vi' => 'Tiếng Việt',
-    _ => locale.toLanguageTag(),
-  };
 }
 
 class _SectionHeader extends StatelessWidget {

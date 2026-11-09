@@ -38,8 +38,7 @@ class AppLocalizationsVi extends AppLocalizations {
       'Không có kết nối mạng. Vui lòng kiểm tra và thử lại.';
 
   @override
-  String get errorTimeout =>
-      'Yêu cầu mất quá nhiều thời gian. Vui lòng thử lại.';
+  String get errorTimeout => 'Yêu cầu đã quá thời gian chờ. Vui lòng thử lại.';
 
   @override
   String get errorUnauthorized =>
@@ -49,7 +48,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get errorForbidden => 'Bạn không có quyền thực hiện thao tác này.';
 
   @override
-  String get errorNotFound => 'Không tìm thấy dữ liệu yêu cầu.';
+  String get errorNotFound => 'Không tìm thấy nội dung yêu cầu.';
 
   @override
   String get errorValidation =>
@@ -73,7 +72,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get authSignInSubtitle =>
-      'Vui lòng xác nhận tài khoản để xem thông tin của mình.';
+      'Vui lòng xác thực tài khoản để xem thông tin của bạn.';
 
   @override
   String get authHeaderTitle => 'GO AI HR';
@@ -102,7 +101,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get authSsoPrompt =>
-      'Doanh nghiệp có SSO? Chọn \"Đăng nhập công ty\".';
+      'Công ty có đăng nhập một lần (SSO)? Chọn “Đăng nhập công ty”.';
 
   @override
   String get authSsoButton => 'Đăng nhập công ty';
@@ -112,14 +111,15 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get authFirstTimeBody =>
-      'HR cấp mã kích hoạt; xác minh số điện thoại rồi đặt PIN trên thiết bị.';
+      'HR cấp mã kích hoạt. Hãy xác minh số điện thoại rồi đặt mã PIN trên thiết bị.';
 
   @override
   String get authSharedDeviceNotice =>
       'Dùng chung điện thoại? Đăng xuất hoàn toàn sau mỗi phiên.';
 
   @override
-  String get authAccountRequired => 'Vui lòng nhập mã nhân viên hoặc tài khoản';
+  String get authAccountRequired =>
+      'Vui lòng nhập mã nhân viên hoặc tài khoản công ty';
 
   @override
   String get authPhoneRequired => 'Vui lòng nhập số điện thoại đã đăng ký';
@@ -129,7 +129,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get authSecurityDialogMessage =>
-      'Phiên làm việc và dữ liệu được bảo vệ bằng mã hóa đầu cuối tuân thủ tiêu chuẩn an toàn thông tin nhân sự doanh nghiệp.';
+      'Phiên làm việc và dữ liệu của bạn được bảo vệ bằng mã hóa đầu cuối theo chính sách bảo mật nhân sự của doanh nghiệp.';
 
   @override
   String get authEmailLabel => 'Email';
@@ -179,7 +179,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get authDemoHint =>
-      'Chế độ demo: nhập thông tin bất kỳ hoặc tiếp tục với tư cách khách.';
+      'Chế độ demo: nhập mã nhân viên/số điện thoại bất kỳ hoặc tiếp tục với tư cách khách.';
 
   @override
   String get authSignOut => 'Đăng xuất';
@@ -206,10 +206,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get homeSubtitle => 'GO AI Workforce dành cho nhân viên.';
 
   @override
-  String get homeChatTitle => 'Demo Chat';
+  String get homeChatTitle => 'Trò chuyện thử nghiệm';
 
   @override
-  String get homeChatSubtitle => 'Chat engine tổng quát với provider giả lập';
+  String get homeChatSubtitle => 'Công cụ trò chuyện dùng dịch vụ giả lập';
 
   @override
   String get homeSettingsTitle => 'Cài đặt';
@@ -218,11 +218,11 @@ class AppLocalizationsVi extends AppLocalizations {
   String get homeSettingsSubtitle => 'Ngôn ngữ và thông tin ứng dụng';
 
   @override
-  String get homeShowcaseTitle => 'Trình diễn nền tảng';
+  String get homeShowcaseTitle => 'Giới thiệu các thành phần giao diện';
 
   @override
   String get homeShowcaseSubtitle =>
-      'Các thành phần và trạng thái của design system';
+      'Các thành phần và trạng thái của hệ thống thiết kế';
 
   @override
   String get homeProfileTitle => 'Hồ sơ';
@@ -267,7 +267,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get profileNoEmail => 'Chưa cung cấp';
 
   @override
-  String get profileGuestBadge => 'Phiên khách';
+  String get profileGuestBadge => 'Phiên dùng của khách';
 
   @override
   String get chatTitle => 'Cuộc trò chuyện';
@@ -346,14 +346,14 @@ class AppLocalizationsVi extends AppLocalizations {
   String get chatUnpin => 'Bỏ ghim';
 
   @override
-  String get chatDelete => 'Xoá';
+  String get chatDelete => 'Xóa';
 
   @override
-  String get chatDeleteConfirmTitle => 'Xoá cuộc trò chuyện này?';
+  String get chatDeleteConfirmTitle => 'Xóa cuộc trò chuyện này?';
 
   @override
   String get chatDeleteConfirmMessage =>
-      'Cuộc trò chuyện sẽ bị xoá trên cả app và website, không thể khôi phục.';
+      'Cuộc trò chuyện sẽ bị xóa khỏi danh sách của bạn trên cả ứng dụng và website. Không thể hoàn tác thao tác này.';
 
   @override
   String get chatPinned => 'Đã ghim';
@@ -378,7 +378,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get notFoundGoHome => 'Về trang chủ';
 
   @override
-  String get showcaseTitle => 'Trình diễn nền tảng';
+  String get showcaseTitle => 'Giới thiệu các thành phần giao diện';
 
   @override
   String get showcaseButtons => 'Nút bấm';
@@ -412,10 +412,11 @@ class AppLocalizationsVi extends AppLocalizations {
       'Đây là hộp thoại xác nhận có thể tái sử dụng.';
 
   @override
-  String get showcaseShowSnackbar => 'Hiện snackbar';
+  String get showcaseShowSnackbar => 'Hiện thanh thông báo ngắn';
 
   @override
-  String get showcaseSnackbarMessage => 'Đây là snackbar có thể tái sử dụng.';
+  String get showcaseSnackbarMessage =>
+      'Đây là thanh thông báo ngắn có thể tái sử dụng.';
 
   @override
   String get showcaseSendNotification => 'Gửi thông báo trong ứng dụng';
@@ -425,7 +426,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get showcaseNotificationBody =>
-      'Thông báo trong ứng dụng được gửi qua một service có thể thay thế.';
+      'Thông báo trong ứng dụng được gửi qua một dịch vụ có thể thay thế.';
 
   @override
   String get showcaseAttachments => 'Tệp đính kèm';
@@ -437,7 +438,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get mainNavAskHr => 'Hỏi HR';
 
   @override
-  String get mainNavMyWork => 'Việc của tôi';
+  String get mainNavMyWork => 'Công việc của tôi';
 
   @override
   String get mainNavLearning => 'Học tập';
@@ -458,16 +459,17 @@ class AppLocalizationsVi extends AppLocalizations {
   String get mainNavProfile => 'Tài khoản';
 
   @override
-  String get headerSubtitle => 'Trợ lý AI Doanh nghiệp & Không gian làm việc';
+  String get headerSubtitle =>
+      'Trợ lý AI doanh nghiệp và không gian làm việc cho nhân viên';
 
   @override
   String get headerTokenQuota => 'Hạn mức token';
 
   @override
-  String get headerQuotaUnavailable => 'Không thể tải hạn mức';
+  String get headerQuotaUnavailable => 'Không tải được hạn mức';
 
   @override
-  String get headerQuotaExceeded => 'Vượt quá hạn mức';
+  String get headerQuotaExceeded => 'Đã vượt hạn mức';
 
   @override
   String get headerQuotaWarning => 'Cảnh báo hạn mức';
@@ -493,35 +495,35 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String chatAgentHistory(String name) {
-    return 'Lịch sử trò chuyện $name';
+    return 'Lịch sử trò chuyện với $name';
   }
 
   @override
-  String get profileApprovals => 'Yêu cầu phê duyệt';
+  String get profileApprovals => 'Yêu cầu chờ phê duyệt';
 
   @override
   String get profileSettings => 'Cài đặt';
 
   @override
-  String get elearningCourses => 'Khóa học đào tạo';
+  String get elearningCourses => 'Khóa học và đào tạo';
 
   @override
   String get elearningTests => 'Bài kiểm tra chứng chỉ';
 
   @override
-  String get myWorkTitle => 'Việc của tôi';
+  String get myWorkTitle => 'Công việc của tôi';
 
   @override
-  String get myWorkChecklistTitle => 'Checklist hội nhập';
+  String get myWorkChecklistTitle => 'Danh sách công việc hội nhập';
 
   @override
-  String get myWorkCasesTitle => 'Yêu cầu & Case của tôi';
+  String get myWorkCasesTitle => 'Hồ sơ và yêu cầu của tôi';
 
   @override
   String get myWorkApprovalsTitle => 'Chờ tôi phê duyệt';
 
   @override
-  String get homeNewsSection => 'BẢN TIN MỚI';
+  String get homeNewsSection => 'BẢN TIN CÔNG TY';
 
   @override
   String get homeViewAllNews => 'Xem tất cả';
@@ -539,8 +541,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get accountNews => 'Bản tin nội bộ';
 
   @override
-  String get askHrSearchPrompt =>
-      'Nhập câu hỏi… Ví dụ: quy trình xin nghỉ phép';
+  String get askHrSearchPrompt => 'Nhập câu hỏi… Ví dụ: quy định nghỉ phép';
 
   @override
   String get askHrPolicyChip => 'Chính sách';
@@ -578,10 +579,10 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeUpcomingWorkDetail =>
-      'Hoàn tất checklist nhận việc · hạn 10/10';
+      'Hoàn tất danh sách công việc nhận việc · hạn 10/10';
 
   @override
-  String get homeNoUpcomingWork => 'Không có việc nào trong 30 ngày tới';
+  String get homeNoUpcomingWork => 'Không có việc đến hạn trong 30 ngày tới';
 
   @override
   String get homeUpcomingUnavailable => 'Không tải được lịch';
@@ -598,7 +599,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get homePendingCaseDetail => 'Đang chờ HR phản hồi · dự kiến 09/10';
 
   @override
-  String get homeQuotaTitle => 'Hạn mức AI token';
+  String get homeQuotaTitle => 'Hạn mức token AI';
 
   @override
   String get homeNewsEmpty => 'Chưa có bản tin nào.';
@@ -621,17 +622,17 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get askHrPrivacyNotice =>
-      'Thông tin cá nhân cần xác minh thêm. Khiếu nại sẽ được mở Case bảo mật để HR xử lý.';
+      'Cần xác minh thêm khi truy cập thông tin cá nhân. Khiếu nại được lập thành hồ sơ bảo mật để HR xử lý.';
 
   @override
-  String get askHrViewPolicySources => 'Xem quy định & nguồn';
+  String get askHrViewPolicySources => 'Xem quy định và nguồn tham khảo';
 
   @override
   String get askHrAnswerTitle => 'Quy định nghỉ phép năm';
 
   @override
   String get askHrAnswerBody =>
-      'Theo chính sách đã phê duyệt, bạn gửi yêu cầu đến quản lý theo quy trình của công ty. Điều kiện cụ thể tùy loại hợp đồng và dữ liệu nghỉ còn lại.';
+      'Theo chính sách đã phê duyệt, bạn gửi yêu cầu đến quản lý theo quy trình công ty. Điều kiện cụ thể tùy thuộc loại hợp đồng và số ngày phép còn lại.';
 
   @override
   String get askHrSourceEyebrow => 'NGUỒN ĐƯỢC DUYỆT';
@@ -640,7 +641,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get askHrSourceTitle => 'Chính sách nghỉ phép • bản 2.1';
 
   @override
-  String get askHrSourceMeta => 'Hiệu lực: 01/09/2026 · Chủ sở hữu: HR';
+  String get askHrSourceMeta => 'Hiệu lực: 01/09/2026 · Phụ trách: HR';
 
   @override
   String get askHrSourcePath =>
@@ -648,7 +649,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get askHrSourceWarning =>
-      'Không tìm thấy bản hiệu lực hoặc có mâu thuẫn? Chuyển HR xác minh; không trả lời như quy định chắc chắn.';
+      'Không tìm thấy phiên bản còn hiệu lực hoặc có thông tin mâu thuẫn? Hãy chuyển HR xác minh; không xem câu trả lời là quy định đã được xác nhận.';
 
   @override
   String get askHrOpenSource => 'Mở tài liệu gốc';
@@ -657,14 +658,14 @@ class AppLocalizationsVi extends AppLocalizations {
   String get askHrCreateRequest => 'Tạo yêu cầu HR';
 
   @override
-  String get chatHubTitle => 'Danh sách chat';
+  String get chatHubTitle => 'Danh sách trò chuyện';
 
   @override
-  String get profileChatList => 'Danh sách chat';
+  String get profileChatList => 'Danh sách trò chuyện';
 
   @override
   String get profileChatListSubtitle =>
-      'Trợ lý AI & lịch sử trò chuyện (tạm thời)';
+      'Trợ lý AI và lịch sử trò chuyện (tạm thời)';
 
   @override
   String get myWorkOnboardingEyebrow => 'HỘI NHẬP';
@@ -674,7 +675,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get myWorkOnboardingTemplate =>
-      'Template: vị trí + địa điểm + loại hợp đồng · đã được HR duyệt';
+      'Mẫu: vị trí + địa điểm + loại hợp đồng · đã được HR duyệt';
 
   @override
   String myWorkOnboardingProgress(int done, int total) {
@@ -682,17 +683,17 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get myWorkOnboardingShowRest => 'Xem mục còn lại';
+  String get myWorkOnboardingShowRest => 'Xem các mục còn lại';
 
   @override
   String get myWorkOnboardingCollapse => 'Thu gọn';
 
   @override
   String get myWorkOnboardingEvidenceNote =>
-      '“Hoàn tất checklist” là ghi nhận bằng chứng; hồ sơ chính thức do hệ thống nguồn cập nhật sau kiểm tra.';
+      '“Hoàn tất danh sách công việc” ghi nhận minh chứng; hồ sơ chính thức được hệ thống nguồn cập nhật sau khi kiểm tra.';
 
   @override
-  String get myWorkCasesEmpty => 'Bạn chưa có Case nào.';
+  String get myWorkCasesEmpty => 'Bạn chưa có hồ sơ nào.';
 
   @override
   String myWorkCaseUpdated(String date) {
@@ -721,19 +722,19 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get myWorkCaseSecureBody =>
-      'Xem và gửi bổ sung trong phạm vi Case của chính bạn.';
+      'Bạn chỉ được xem và bổ sung thông tin trong hồ sơ của mình.';
 
   @override
   String get myWorkCaseAddDocs => 'Bổ sung tài liệu';
 
   @override
   String myWorkCaseDocsAdded(int count) {
-    return 'Đã đính kèm $count tệp vào Case';
+    return 'Đã đính kèm $count tệp vào hồ sơ';
   }
 
   @override
   String get myWorkCaseEscalationNote =>
-      'Quá hạn → A0 nhắc và chuyển cấp cho người phụ trách.';
+      'Quá hạn → A0 nhắc việc và chuyển yêu cầu xử lý ở cấp cao hơn đến người phụ trách.';
 
   @override
   String get myWorkNewRequestButton => 'Gửi yêu cầu HR mới';
@@ -752,7 +753,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get myWorkRequestTypeLeave => 'Nghỉ phép';
 
   @override
-  String get myWorkRequestTypePolicy => 'Chính sách & phúc lợi';
+  String get myWorkRequestTypePolicy => 'Chính sách và phúc lợi';
 
   @override
   String get myWorkRequestTypeComplaint => 'Khiếu nại (bảo mật)';
@@ -776,7 +777,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get myWorkRequestPrivacyNotice =>
-      'Chỉ chia sẻ nội dung cần thiết. Các thông tin nhạy cảm được chuyển đến HR theo quyền.';
+      'Chỉ chia sẻ thông tin cần thiết. Thông tin nhạy cảm được chuyển đến HR có quyền xử lý.';
 
   @override
   String get myWorkRequestSubmit => 'Gửi yêu cầu';
@@ -786,11 +787,11 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get myWorkRequestAfterBody =>
-      'Bạn nhận mã Case (vd. #HR-1042) · thời hạn phản hồi dự kiến: 2 ngày làm việc · người xử lý: HR được phân công.';
+      'Bạn nhận mã hồ sơ (ví dụ: #HR-1042) · thời gian phản hồi dự kiến: 2 ngày làm việc · người xử lý: HR được phân công.';
 
   @override
   String get myWorkRequestUrgentNote =>
-      'Khiếu nại/khẩn cấp: chuyển thẳng tuyến xử lý có thẩm quyền, không qua quản lý trực tiếp.';
+      'Khiếu nại/yêu cầu khẩn cấp được chuyển thẳng đến người có thẩm quyền xử lý, không qua quản lý trực tiếp.';
 
   @override
   String myWorkRequestSubmitted(String id) {
@@ -801,13 +802,14 @@ class AppLocalizationsVi extends AppLocalizations {
   String get myWorkRoleEmployee => 'Nhân viên';
 
   @override
-  String get myWorkRoleHrAdmin => 'HR / Admin';
+  String get myWorkRoleHrAdmin => 'HR / Quản trị viên';
 
   @override
-  String get myWorkRoleDemoHint => 'Chế độ demo: chọn vai trò để xem tab Việc';
+  String get myWorkRoleDemoHint =>
+      'Chế độ demo: chọn vai trò để xem trước thẻ Công việc của tôi';
 
   @override
-  String get hrApprovalsEyebrow => 'DÀNH CHO NGƯỜI CÓ QUYỀN';
+  String get hrApprovalsEyebrow => 'DÀNH CHO NGƯỜI CÓ THẨM QUYỀN PHÊ DUYỆT';
 
   @override
   String get hrApprovalsTitle => 'Chờ tôi phê duyệt';
@@ -822,7 +824,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get hrApprovalProbationBadge => 'Chờ duyệt';
 
   @override
-  String get hrApprovalChecklistTitle => 'Checklist có ngoại lệ';
+  String get hrApprovalChecklistTitle => 'Danh sách công việc có ngoại lệ';
 
   @override
   String get hrApprovalChecklistMeta => '#ON-320 · thiếu giấy tờ · hạn 09/10';
@@ -842,33 +844,34 @@ class AppLocalizationsVi extends AppLocalizations {
       'Không có nút “Duyệt tất cả” cho quyết định thử việc.';
 
   @override
-  String get hrProbationTitle => 'Review thử việc #PB-238';
+  String get hrProbationTitle => 'Đánh giá thử việc #PB-238';
 
   @override
-  String get hrProbationChecklist => 'Checklist 12/13 mục';
+  String get hrProbationChecklist => 'Danh sách kiểm tra: 12/13 mục';
 
   @override
   String get hrProbationTraining => 'Đào tạo bắt buộc: đã xác nhận';
 
   @override
-  String get hrProbationManagerOpinion => 'Ý kiến quản lý: cần bổ sung';
+  String get hrProbationManagerOpinion =>
+      'Ý kiến của quản lý: cần bổ sung thông tin';
 
   @override
   String get hrProbationMissingEvidence =>
-      'Còn bằng chứng thiếu. Vui lòng yêu cầu bổ sung trước khi quyết định.';
+      'Còn thiếu minh chứng. Vui lòng yêu cầu bổ sung thông tin trước khi quyết định.';
 
   @override
-  String get hrProbationCommentHint => 'Nhận xét & căn cứ của người duyệt';
+  String get hrProbationCommentHint => 'Nhận xét và căn cứ của người phê duyệt';
 
   @override
   String get hrProbationRequestMore => 'Yêu cầu bổ sung';
 
   @override
-  String get hrProbationEscalate => 'Chuyển HR/Legal xem xét';
+  String get hrProbationEscalate => 'Chuyển HR/Pháp chế xem xét';
 
   @override
   String get hrProbationDecisionNote =>
-      'Các lựa chọn quyết định chỉ xuất hiện sau khi đủ điều kiện, đúng quyền và xác nhận lại.';
+      'Các lựa chọn quyết định chỉ hiển thị khi đã đủ điều kiện, người dùng có đúng thẩm quyền và đã xác nhận lại.';
 
   @override
   String hrQueueOverdue(int count) {
@@ -881,20 +884,20 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get hrQueueCase1Title => 'Case #HR-1051';
+  String get hrQueueCase1Title => 'Hồ sơ #HR-1051';
 
   @override
   String get hrQueueCase1Meta =>
-      'Khiếu nại · chuyển tuyến bảo mật · hạn hôm nay';
+      'Khiếu nại · chuyển xử lý bảo mật · hạn hôm nay';
 
   @override
-  String get hrQueueCase2Title => 'Case #ON-320';
+  String get hrQueueCase2Title => 'Hồ sơ #ON-320';
 
   @override
-  String get hrQueueCase2Meta => 'Thiếu giấy tờ nhận việc · chủ sở hữu: HR A';
+  String get hrQueueCase2Meta => 'Thiếu giấy tờ nhận việc · phụ trách: HR A';
 
   @override
-  String get hrQueueCase3Title => 'Case #TR-102';
+  String get hrQueueCase3Title => 'Hồ sơ #TR-102';
 
   @override
   String get hrQueueCase3Meta => 'Khóa học chưa có bản nội dung đã duyệt';
@@ -904,18 +907,19 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get hrQueueMobileNote =>
-      'Mobile dùng để nhận và theo dõi; cấu hình tuyến, duyệt KB, điều tra phức tạp dùng Web Workspace.';
+      'Ứng dụng di động dùng để tiếp nhận và theo dõi. Cấu hình luồng xử lý, duyệt kho kiến thức và điều tra phức tạp được thực hiện trên không gian làm việc bản web.';
 
   @override
   String get learningMyTitle => 'Học tập của tôi';
 
   @override
   String learningMandatorySummary(int count, String date) {
-    return '$count khóa bắt buộc · hạn $date';
+    return '$count khóa học bắt buộc · hạn $date';
   }
 
   @override
-  String get learningNoMandatory => 'Không có khóa bắt buộc đang chờ.';
+  String get learningNoMandatory =>
+      'Không có khóa học bắt buộc nào chưa hoàn thành.';
 
   @override
   String get learningMandatoryBadge => 'Bắt buộc';
@@ -935,7 +939,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String learningQuizQuestions(int count) {
-    return 'bài kiểm tra $count câu';
+    return 'Bài kiểm tra: $count câu';
   }
 
   @override
@@ -962,7 +966,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get learningPolicyNote =>
-      'Điểm đạt, số lần làm lại và hiệu lực chứng nhận do chủ sở hữu nội dung phê duyệt trước khi phát hành.';
+      'Điểm đạt, giới hạn số lần làm lại và thời hạn hiệu lực chứng nhận do người phụ trách nội dung phê duyệt trước khi phát hành.';
 
   @override
   String get profileNewsTitle => 'Bản tin công ty';
@@ -993,10 +997,10 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get profilePushNote =>
-      'Push chỉ nêu “Có cập nhật mới”; mở app và xác thực để xem dữ liệu nhạy cảm.';
+      'Thông báo đẩy chỉ hiển thị “Có cập nhật mới”. Hãy mở ứng dụng và xác thực để xem dữ liệu nhạy cảm.';
 
   @override
-  String get profileLanguageSettings => 'Ngôn ngữ & cài đặt';
+  String get profileLanguageSettings => 'Ngôn ngữ và cài đặt';
 
   @override
   String get profileSecurity => 'Bảo mật';
@@ -1006,13 +1010,13 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get commonPressBackAgainToExit =>
-      'Nhấn thêm lần nữa để thoát ứng dụng';
+      'Nhấn nút Quay lại lần nữa để thoát ứng dụng';
 
   @override
   String get notificationOpenHint => 'Chạm để xem chi tiết';
 
   @override
-  String get chatAttachMedia => 'Ảnh/Video';
+  String get chatAttachMedia => 'Ảnh và video';
 
   @override
   String get chatAttachFile => 'Tệp';
@@ -1048,7 +1052,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get chatMediaUnavailable => 'Không tải được nội dung';
 
   @override
-  String get chatMicPermissionTitle => 'Cần quyền micro';
+  String get chatMicPermissionTitle => 'Cần quyền truy cập micro';
 
   @override
   String get chatMicPermissionMessage =>
@@ -1058,7 +1062,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get chatOpenSettings => 'Mở cài đặt';
 
   @override
-  String get chatMicPermissionDenied => 'Chưa có quyền dùng micro';
+  String get chatMicPermissionDenied => 'Quyền truy cập micro đã bị từ chối';
 
   @override
   String chatRecording(String duration) {
